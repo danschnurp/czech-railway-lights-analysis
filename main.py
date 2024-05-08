@@ -1,12 +1,12 @@
 from ultralytics import YOLO
 import cv2
 # Load a model
-model = YOLO('yolov5l.pt')  # load an official model
+model = YOLO('yolov8n.pt')  # load an official model
 
 
 
 # Load video
-video_path = 'path to video' 
+video_path = 'videos/4K  Broumov - Meziměstí  854 Hydra + 954 Bfbrdtn794.mp4' 
 cap = cv2.VideoCapture(video_path)
 
 import time
@@ -31,10 +31,10 @@ while cap.isOpened():
         if "traffic" in  str(class_names):
 
                 # Display the result
-                
-            cv2.imshow('YOLOv5', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            cv2.imwrite(f"./videos/{t1}.jpg", frame)    
+            # cv2.imshow('YOLOv5', frame)
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
         t1 = time.time()
 
 
