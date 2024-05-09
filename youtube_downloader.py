@@ -13,7 +13,7 @@ except:
     print("Connection Error") 
 
 # Get all streams and filter for mp4 files
-mp4_streams = yt.streams.all()
+mp4_streams = yt.streams.filter(resolution="720p").all()
 
 # get the video with the highest resolution
 d_video = mp4_streams[0]
