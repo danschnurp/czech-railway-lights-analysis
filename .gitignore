@@ -168,3 +168,4 @@ cython_debug/
 # project specifics
 videos/*
 *.pt
+*.pth

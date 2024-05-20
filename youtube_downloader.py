@@ -1,10 +1,18 @@
 from pytube import YouTube 
 
+import argparse
+
+
+parser = argparse.ArgumentParser(description='youtube_downloder')
+parser.add_argument('-l', '--link', default="https://youtu.be/8rtVqE2yclo")
+
+args = parser.parse_args()
+
 # where to save 
 SAVE_PATH = "./videos" #to_do 
 
 # link of the video to be downloaded 
-link = "https://youtu.be/8rtVqE2yclo" 
+link = args.link
 try: 
     # object creation using YouTube 
     yt = YouTube(link) 
