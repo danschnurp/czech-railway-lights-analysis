@@ -9,13 +9,17 @@ parser.add_argument('-m', '--movie', default="4K  Bezdružice - Plzeň  842 Kvat
 
 args = parser.parse_args()
 
+interesting_labels = {'traffic sign', 'traffic light'}
+
 name = args.movie
 
 if name[:-4] not in os.listdir("./videos/"):
     os.mkdir(f"./videos/{name[:-4]}/")
+    for i in interesting_labels:
+        os.mkdir(f"./videos/{name[:-4]}/{i}/")
 
 # Load a model
-model = YOLO('yolov8n.pt')  # load an official model
+model = YOLO('yolov8m.pt')  # load an official model
 
 
 
@@ -29,7 +33,7 @@ image_index = 0
 
 dropout_time = 0
 
-interesting_labels = {'stop sign', 'traffic light'}
+
 
 t1 = 10
 while cap.isOpened():
@@ -50,7 +54,7 @@ while cap.isOpened():
 
             if len(interesting_labels & set(class_names)) > 0:
 
-                dropout_time = 2
+                dropout_time = 1
 
                 for r in results:
                     
@@ -68,7 +72,7 @@ while cap.isOpened():
        
 
                 # Display the result
-                cv2.imwrite(f"./videos/{name[:-4]}/{image_index}.jpg", img)   
+                cv2.imwrite(f"./videos/{name[:-4]}/{list(interesting_labels & set(class_names))[0]}/{image_index}.jpg", img)   
                 image_index += 1 
  
         t1 = time.time()
