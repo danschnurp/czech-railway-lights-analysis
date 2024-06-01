@@ -12,4 +12,4 @@ https://zdopravy.cz/drazni-urad-zacina-resit-proc-na-nekterych-nadrazich-strojve
 
 https://www.idnes.cz/technet/technika/pozor-vlak-120-zeleznice-navestidla-azd.A230221_175818_tec_technika_vrja
 
-
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7411834/
