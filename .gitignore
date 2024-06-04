@@ -166,6 +166,7 @@ cython_debug/
 .DS_store
 
 # project specifics
+anotated/*
 videos/*
 *.pt
 *.pth
