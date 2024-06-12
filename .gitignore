@@ -170,3 +170,4 @@ anotated/*
 videos/*
 *.pt
 *.pth
+/results.json
