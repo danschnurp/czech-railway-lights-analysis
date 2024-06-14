@@ -171,3 +171,5 @@ videos/*
 *.pt
 *.pth
 /results.json
+/reconstructed/
+/today_results.json
