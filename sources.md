@@ -3,6 +3,15 @@ youtube channel parnici
 
 https://www.youtube.com/@parnicicz4773/videos
 
+youtube strojvedouci_com
+
+- https://www.youtube.com/@strojvedouci_com
+  - https://www.youtube.com/watch?v=Mhwh4KXrlb8
+  - https://www.youtube.com/watch?v=kiA4b0nSLXc
+  - https://www.youtube.com/watch?v=iUIbmWQSSAc
+  - https://www.youtube.com/watch?v=AcRW84NVQOw
+  - https://www.youtube.com/watch?v=e7qThiiPV7Q
+
 ----
 teorie lite
 
