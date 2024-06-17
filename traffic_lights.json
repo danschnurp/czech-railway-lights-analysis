@@ -1,10 +1,8 @@
   {
     "todo":
-    {
-    "4K / Radnice - Plzeň / 842 ,,Kvatro\"": "https://youtu.be/d74QRVAyCzo",
-
-    },
+    {},
     "names": {
+       "4K / Radnice - Plzeň / 842 ,,Kvatro\"": "https://youtu.be/d74QRVAyCzo",
           "4K / Plzeň - Plasy / Regioshark 844": "https://youtu.be/nyUiNxKDgAw",
              "4K / Bezdružice - Plzeň / 842 Kvatro": "https://youtu.be/10K7Uymgpro",
           "4K / Týn n. Vltavou - Protivín / 814 RegioNova": "https://youtu.be/Onpg5kKk-kA",
@@ -17,6 +15,26 @@
       "4K / Čáslav - Třemošnice / 810 ,,Šukafon\"": "https://youtu.be/KAqbwHpiGDM",
       "4K / Chornice - Velké Opatovice - Skalice n. Svitavou - Svitávky / 810 ,,Šukafon\"": "https://youtu.be/dlUwvJiDkOQ"
     },
+    "https://youtu.be/d74QRVAyCzo" : [
+    1887.167,
+    1945.633,
+    1993.2,
+    2082.333,
+    2083.9,
+    2085.433,
+    2107.133,
+    2108.667,
+    2140.167,
+    2151.4,
+    2206.533,
+    2244.167,
+    2349.533,
+    2351.133,
+    2492.067,
+    2493.567,
+    2606.233,
+    2607.733
+  ],
       "https://youtu.be/nyUiNxKDgAw": [
     77.967,
     78.7,
