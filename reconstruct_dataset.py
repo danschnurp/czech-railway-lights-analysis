@@ -17,6 +17,9 @@ parser.add_argument('--bounding_box_pictures', type=bool, default=True)
 
 args = parser.parse_args()
 
+if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
+    os.mkdir("./reconstructed")
+
 # where to save
 SAVE_PATH = "./reconstructed"
 
