@@ -3,15 +3,17 @@ import cv2
 from ultralytics.utils.plotting import Annotator
 import os
 import argparse
-from pytube import YouTube
+
 import json
+
+from utils import download_video
 
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
 parser.add_argument('--clean_pictures', type=bool, default=True)
 parser.add_argument('--bounding_box_pictures', type=bool, default=True)
 
@@ -109,34 +111,8 @@ def get_pictures(d_video, seek_seconds):
     cap.release()
 
 
-def download_video(link):
-    try:
-        # object creation using YouTube
-        yt = YouTube(link)
-    except:
-        # to handle exception
-        print(" YouTube Connection Error")
-
-        # Get all streams and filter for mp4 files
-    mp4_streams = yt.streams.filter(resolution="720p")
-
-    # get the video with the highest resolution
-    d_video = mp4_streams[0]
-
-    if d_video in os.listdir(SAVE_PATH):
-        return d_video
-
-    try:
-        print('downloading the video' + d_video.default_filename)
-
-        d_video.download(output_path=SAVE_PATH)
-        print('Video downloaded successfully!')
-    except Exception:
-        print("Some Error!")
-    return d_video
-
 
 for i in traffic_lights:
-    d_video = download_video(i)
+    d_video = download_video(i, SAVE_PATH)
     for j in traffic_lights[i]:
         get_pictures(d_video, j)
