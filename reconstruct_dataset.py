@@ -111,7 +111,6 @@ def get_pictures(d_video, seek_seconds):
     cap.release()
 
 
-
 for i in traffic_lights:
     d_video = download_video(i, SAVE_PATH)
     for j in traffic_lights[i]:
