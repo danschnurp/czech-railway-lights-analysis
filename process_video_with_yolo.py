@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('-l', '--link', default="https://youtu.be/8rtVqE2yclo")
-parser.add_argument('--skip_minutes', type=int, default=0)
+parser.add_argument('--skip_seconds', type=int, default=0)
 
 args = parser.parse_args()
 
@@ -46,10 +46,10 @@ cap = cv2.VideoCapture(video_path)
 
 image_index = 0
 dropout_time = 0
-seek_minutes = args.skip_minutes
+skip_seconds = args.skip_seconds
 #
 cap.set(cv2.CAP_PROP_POS_MSEC,
-        seek_minutes * 1000 * 60
+        skip_seconds * 1000
         )
 
 t1 = 10
