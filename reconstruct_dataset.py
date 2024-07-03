@@ -6,7 +6,7 @@ import argparse
 
 import json
 
-from utils import download_video
+from utils import download_video, crop_bounding_box, str2bool
 
 parser = argparse.ArgumentParser(description='')
 
@@ -14,10 +14,14 @@ parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
-parser.add_argument('--clean_pictures', type=bool, default=True)
-parser.add_argument('--bounding_box_pictures', type=bool, default=True)
+parser.add_argument('--clean_pictures', default=True)
+parser.add_argument('--bounding_box_pictures', default=True)
+parser.add_argument('--roi_pictures', default=True)
 
 args = parser.parse_args()
+args.clean_pictures = str2bool(args.clean_pictures)
+args.bounding_box_pictures = str2bool(args.bounding_box_pictures)
+args.roi_pictures = str2bool(args.roi_pictures)
 
 if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
     os.mkdir("./reconstructed")
@@ -96,10 +100,13 @@ def get_pictures(d_video, seek_seconds):
                     for r in results:
                         annotator = Annotator(frame, line_width=2)
                         boxes = r.boxes
-                        for box in boxes:
+                        for index, box in enumerate(boxes):
                             b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
                             c = box.cls
                             if model.names[int(c)] in interesting_labels:
+                                if args.roi_pictures:
+                                    cropped_roi = crop_bounding_box(b, frame)
+                                    cv2.imwrite(f"{save_name}_roi{index}.jpg", cropped_roi)
                                 annotator.box_label(b, model.names[int(c)])
 
                     img = annotator.result()

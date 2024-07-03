@@ -1,6 +1,25 @@
 import os
 
+import argparse
 from pytube import YouTube
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def crop_bounding_box(box, img):
+    x, y, w, h = box
+    x, y, w, h = int(x), int(y), int(w), int(h)
+    roi = img[y:h, x:w]
+    return roi
 
 
 def download_video(link, SAVE_PATH):
