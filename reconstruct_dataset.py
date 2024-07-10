@@ -42,7 +42,7 @@ def get_pictures(d_video, seek_seconds):
 
     nett_name = args.nett_name
 
-    video_name = d_video.default_filename
+    video_name = d_video
     # creating folder with video name
     if video_name[:-4] not in os.listdir(SAVE_PATH):
         os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}")

@@ -26,7 +26,7 @@ interesting_labels = {'traffic light'}
 
 nett_name = args.nett_name
 
-video_name = d_video.default_filename
+video_name = d_video
 # creating folder with video name
 if video_name[:-4] not in os.listdir("./videos/"):
     os.mkdir(f"./videos/{video_name[:-4]}")

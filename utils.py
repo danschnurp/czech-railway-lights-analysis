@@ -1,8 +1,10 @@
+import json
+
 import os
 
 import argparse
 from pytube import YouTube
-
+import subprocess
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -22,7 +24,7 @@ def crop_bounding_box(box, img):
     return roi
 
 
-def download_video(link, SAVE_PATH):
+def download_video_pytube(link, SAVE_PATH):
     try:
         # object creation using YouTube
         yt = YouTube(link)
@@ -47,3 +49,32 @@ def download_video(link, SAVE_PATH):
     except Exception:
         print("Some Error!")
     return d_video
+
+
+def get_youtube_video_info(youtube_url):
+    command = [
+        'yt-dlp',
+        '-j',
+        youtube_url
+    ]
+    result = subprocess.run(command, capture_output=True, text=True, check=True)
+    video_info = json.loads(result.stdout)
+    return video_info['title']
+
+
+def download_video(link, SAVE_PATH):
+    video_name = get_youtube_video_info(link)
+    video_name = video_name.strip().replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")
+    video_name += ".mp4"
+
+    if video_name in os.listdir(SAVE_PATH):
+        return video_name
+
+    command = [
+        'yt-dlp',
+        link,
+        '-f', 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]',
+        '-o', f'{SAVE_PATH}/' + video_name,
+    ]
+    subprocess.run(command, check=True)
+    return video_name
