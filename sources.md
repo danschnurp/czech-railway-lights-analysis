@@ -6,9 +6,6 @@ https://www.youtube.com/@parnicicz4773/videos
 youtube strojvedouci_com
 
 - https://www.youtube.com/@strojvedouci_com
-  - https://www.youtube.com/watch?v=Mhwh4KXrlb8
-  - https://www.youtube.com/watch?v=kiA4b0nSLXc
-  - https://www.youtube.com/watch?v=e7qThiiPV7Q
 
 ----
 teorie lite
@@ -29,6 +26,7 @@ https://www.idnes.cz/technet/technika/pozor-vlak-120-zeleznice-navestidla-azd.A2
 -----
 Related work 
 
+https://link.springer.com/article/10.1007/s42421-022-00054-7
 
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7411834/
 
