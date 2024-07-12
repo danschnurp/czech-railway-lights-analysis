@@ -1,8 +1,8 @@
 # Czech Railway Traffic light detections from YouTube channels Parníci CZ and strojvedoucicom
 This dataset provides traffic light detections extracted 
-from YouTube videos using the YOLOv5mu object detection
-model. The videos are in 720p resolution at 30 frames per
-second (fps). The dataset includes a JSON file named 
+from YouTube videos using the **YOLOv5mu** object detection
+model. The videos are in **720p resolution at 30 frames per
+second** (fps). The dataset includes a JSON file named 
 traffic_lights.json that contains information about the 
 videos and the detected traffic lights. Each entry in the 
 JSON file specifies a video name, its URL, and a list of 
@@ -36,9 +36,3 @@ https://www.youtube.com/@parnicicz4773/videos
   - **--clean_pictures** (default: True): Generate images without markings (original frames) (default: on).
   - **--bounding_box_pictures** (default: True): Generate images with bounding boxes around objects of interest (default: on).
   - **--roi_pictures** (default: True): Generate images containing only regions of interest (default: on).
-
-
-
-- yolov5mu with 720p, 30 fps
-- `traffic_lights.json` contains video names and urls with traffic light detections times as **seconds** from video start
-
