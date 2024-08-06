@@ -11,7 +11,21 @@ within the video.
 
 https://www.youtube.com/@parnicicz4773/videos
  
- https://www.youtube.com/@strojvedouci_com
+https://www.youtube.com/@strojvedouci_com
+
+### Folder structure
+- important files
+```
+.
+├── CzechRailwayTrafficLights.yaml - config for yolo training
+├── prepare_coco_format.py - prepares coco format from traffic_lights.json
+├── process_video_with_yolo.py - script for new semi manual video annotations
+├── reconstruct_dataset.py - reconstructs dataset by video names, detection method (yolov8n...) and classes
+├── report_results.py - creates today_results.json with current detections in ./videos folder 
+├── train_yolo.py - simple training script
+└── traffic_lights.json
+```
+
 
 ## Prerequisites
 
@@ -23,6 +37,7 @@ https://www.youtube.com/@parnicicz4773/videos
       ```
 - Python libraries
 ``pip install -r requirements.txt``
+- run - ``yt-dlp --cookies-from-browser chrome -j  'https://www.youtube.com/watch?v=1CuJmlU0rzM'`` - to ensure u are not robot
 
 ## Reconstructing the dataset
 
