@@ -12,8 +12,8 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
 parser.add_argument('--clean_pictures', default=True)
 parser.add_argument('--bounding_box_pictures', default=False)
 parser.add_argument('--roi_pictures', default=False)
@@ -26,7 +26,7 @@ args.roi_pictures = str2bool(args.roi_pictures)
 if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
     os.mkdir("./reconstructed")
 
-czech_railway_folder = "czech_railway"
+czech_railway_folder = "czech_railway_val"
 img_index = 0
 
 # where to save
