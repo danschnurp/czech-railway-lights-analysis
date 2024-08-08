@@ -1,8 +1,10 @@
+import sys
+
 import cv2
 import numpy as np
 import argparse
 
-
+# args setting
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('-i', "--input", help="input file video")
 parser.add_argument('--skip_seconds', type=int, default=0)
@@ -27,6 +29,8 @@ def main():
 
     # convolution filter
     kernel = np.array([
+        [-1, 1, 0, 1, -1],
+        [-1, 1, 0, 1, -1],
         [-1, 1, 0, 1, -1],
         [-1, 1, 0, 1, -1],
         [-1, 1, 0, 1, -1],
@@ -115,25 +119,28 @@ def main():
                               (sliding_window[3] + expt_startLeft, i + expt_startTop), (0, 0, 255),
                               1)
             count += 1
-        # ########
-        # following code sets parameters left and right automatically
-        # difference between max and min X coord ... this works well for straight lines
-        if max(np.array(left_points)[:, 0]) - min(np.array(left_points)[:, 0]) > line_mess or \
-                max(np.array(right_points)[:, 0]) - min(np.array(right_points)[:, 0]) > line_mess:
-            # changes direction to left in 2/3 of frame
-            if frame.shape[1] * 2 / 3 <= expt_startRight:
-                direction_left = True
-            # changes direction to right in 1/3 of frame
-            if frame.shape[1] / 3 >= expt_startRight:
-                direction_left = False
-            # moves in direction
-            if direction_left:
-                expt_startLeft -= offset_step
-                expt_startRight -= offset_step
-            else:
-                expt_startLeft += offset_step
-                expt_startRight += offset_step
-
+        try:
+            # ########
+            # following code sets parameters left and right automatically
+            # difference between max and min X coord ... this works well for straight lines
+            if max(np.array(left_points)[:, 0]) - min(np.array(left_points)[:, 0]) > line_mess or \
+                    max(np.array(right_points)[:, 0]) - min(np.array(right_points)[:, 0]) > line_mess:
+                # changes direction to left in 2/3 of frame
+                if frame.shape[1] * 2 / 3 <= expt_startRight:
+                    direction_left = True
+                # changes direction to right in 1/3 of frame
+                if frame.shape[1] / 3 >= expt_startRight:
+                    direction_left = False
+                # moves in direction
+                if direction_left:
+                    expt_startLeft -= offset_step
+                    expt_startRight -= offset_step
+                else:
+                    expt_startLeft += offset_step
+                    expt_startRight += offset_step
+        except IndexError:
+            print(f"black screen in {cap.video.get(cv2.CAP_PROP_POS_MSEC) / 1000.0}", file=sys.stderr,)
+            continue
         cv2.imshow('Video', frame)
         cv2.waitKey(1)
     print('finish')
