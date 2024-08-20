@@ -15,8 +15,8 @@ parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
 parser.add_argument('--clean_pictures', default=False)
-parser.add_argument('--bounding_box_pictures', default=True)
-parser.add_argument('--roi_pictures', default=False)
+parser.add_argument('--bounding_box_pictures', default=False)
+parser.add_argument('--roi_pictures', default=True)
 
 args = parser.parse_args()
 args.clean_pictures = str2bool(args.clean_pictures)
@@ -38,9 +38,9 @@ del traffic_lights["todo"]
 
 def get_pictures(d_video, seek_seconds):
 
-    interesting_labels = {'navestidlo'}
+    interesting_labels = {'traffic light'}
 
-    nett_name = "best.pt"
+    nett_name = args.nett_name
 
     video_name = d_video
     # creating folder with video name
@@ -54,7 +54,7 @@ def get_pictures(d_video, seek_seconds):
             os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/{i}/")
 
     # Load a model
-    model = YOLO("/Users/danielschnurpfeil/PycharmProjects/yolo_experiments/best.pt")  # load an official model
+    model = YOLO(nett_name)  # load an official model
 
     # Load video
     video_path = SAVE_PATH + '/' + video_name
