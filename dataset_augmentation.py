@@ -18,7 +18,6 @@ def rotate_and_crop(img, destination, angle, crop_type='fit'):
 
     name = f"{destination}{suffix}.jpg"
 
-
     height, width = img.shape[:2]
     center = (width / 2, height / 2)
 
@@ -52,7 +51,6 @@ def rotate_and_crop(img, destination, angle, crop_type='fit'):
             cropped = rotated[:int(bound_h * 0.9), :]
     else:
         cropped = rotated  # No cropping if invalid crop_type
-
 
     return cropped
 
@@ -93,7 +91,6 @@ def add_noise(img, destination):
     """
     name = f"{destination}_noise.jpg"
 
-
     # Convert to float32
     img_float = img.astype(np.float32) / 255.0
 
@@ -103,7 +100,6 @@ def add_noise(img, destination):
 
     # Convert back to uint8
     noisy_img = (noisy * 255).astype(np.uint8)
-
 
     return noisy_img
 
@@ -119,7 +115,5 @@ def brightness_contrast(img, destination, alpha, beta):
     """
     name = f"{destination}_bright_contrast.jpg"
 
-
     adjusted = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     return adjusted
-

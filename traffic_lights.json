@@ -1,6 +1,5 @@
   {
     "todo": {
-      "Cabview #20 / Pardubice-Slatiňany-Pardubice / poslední výluková jízda + davy / strojvedouci.com":"https://youtu.be/iBiYBF8UmNM",
       "Cabview #17 / Pardubice-Policka / railway lines 238&261 / strojvedouci.com": "https://www.youtube.com/watch?v=iUIbmWQSSAc",
       "Cabview #16 / Pardubice-Týniště n. O.-Hradec Králové / točna a depo / strojvedouci.com":"https://youtu.be/IqaCcSZT3Xg",
       "Cabview z vlaku #14 / Pardubice-Holice-Týniště n. O.-H. Králové-Pardubice / strojvedouci.com": "https://youtu.be/wDyj9k8nddk",
@@ -14,6 +13,7 @@
       "Cabview #2 / train / Zdarec u Skutce-Slatinany / strojvedouci.com": "https://youtu.be/WGQPfy1jZbc"
     },
     "names": {
+      "Cabview 20  Pardubice-Slatiňany-Pardubice  poslední výluková jízda + davy  strojvedoucicom":"https://youtu.be/iBiYBF8UmNM",
      "4K / Týn nad Vltavou - Číčenice / 810 RegioMouse": "https://youtu.be/aXNR2SLf-cU",
       "Cabview z vlaku 13  první sníh  Pardubice-Hlinsko-Pardubice  strojvedoucicom":"https://youtu.be/1CuJmlU0rzM",
   "Cabview 21  RegioFox  Havlíčkův Brod-Pardubice  strojvedoucicom": "https://www.youtube.com/watch?v=Mhwh4KXrlb8",
@@ -34,6 +34,49 @@
       "4K / Čáslav - Třemošnice / 810 ,,Šukafon\"": "https://youtu.be/KAqbwHpiGDM",
       "4K / Chornice - Velké Opatovice - Skalice n. Svitavou - Svitávky / 810 ,,Šukafon\"": "https://youtu.be/dlUwvJiDkOQ"
     },
+
+    "https://youtu.be/iBiYBF8UmNM": [
+    48.549,
+    101.268,
+    189.314,
+    192.693,
+    197.072,
+    201.243,
+    209.876,
+    214.965,
+    220.47,
+    249.916,
+    253.837,
+    257.424,
+    649.607,
+    679.22,
+    727.352,
+    755.255,
+    777.86,
+    944.068,
+    948.281,
+    951.868,
+    1082.248,
+    1136.469,
+    1142.516,
+    1146.187,
+    1150.066,
+    1204.328,
+    1208.791,
+    1356.063,
+    1580.496,
+    1584.875,
+    1610.484,
+    1716.006,
+    1806.471,
+    1812.102,
+    1815.314,
+    2719.342,
+    2827.199,
+    2830.87,
+    2923.379,
+    2927.8
+  ],
 
       "https://youtu.be/aXNR2SLf-cU": [
     12.617,
