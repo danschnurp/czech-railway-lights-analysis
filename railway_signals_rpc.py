@@ -16,9 +16,9 @@ def query(payload):
 t1 = time.time()
 print(datetime.datetime.now())
 image_bytes = query({
-    "inputs": "white light on traffic light and red light on another traffic light bellow on same light",
+    "inputs": "only green circle in black background like the traffic light",
 })
-# You can access the image with PIL.Image for example
+# only green circle on black background like the traffic light circle
 
 
 print(image_bytes)
