@@ -73,7 +73,7 @@ def download_video(link, SAVE_PATH):
     command = [
         'yt-dlp',
         link,
-        '-f', 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]',
+        '-f', 'bestvideo[height=1080][fps=60][ext=mp4]/best[height=1080][fps=60][ext=mp4]',
         '-o', f'{SAVE_PATH}/' + video_name,
     ]
     subprocess.run(command, check=True)

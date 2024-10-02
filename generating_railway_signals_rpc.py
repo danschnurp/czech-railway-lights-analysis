@@ -23,6 +23,6 @@ image_bytes = query({
 
 print(image_bytes)
 image = Image.open(io.BytesIO(image_bytes))
-image.save(f"./generated/{time.time_ns()}.png")
+image.save(f"./generated_images_synthetic/{time.time_ns()}.png")
 print(f"took {time.time() - t1} seconds")
 print(datetime.datetime.now())

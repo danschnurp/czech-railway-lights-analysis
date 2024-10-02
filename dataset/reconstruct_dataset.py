@@ -11,7 +11,7 @@ from utils import download_video, crop_bounding_box, str2bool
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
-parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
+parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
 parser.add_argument('--clean_pictures', default=False)

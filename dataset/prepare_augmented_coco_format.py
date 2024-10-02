@@ -1,32 +1,29 @@
 from ultralytics import YOLO
 import cv2
-from ultralytics.utils.plotting import Annotator
 import os
 import argparse
 
 import json
 
+from dataset_augmentation import rotate_and_crop, add_noise, brightness_contrast
 from utils import download_video, str2bool
 
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
-parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
+parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
-parser.add_argument('--clean_pictures', default=True)
-parser.add_argument('--bounding_box_pictures', default=False)
-parser.add_argument('--roi_pictures', default=False)
+
 
 args = parser.parse_args()
-args.clean_pictures = str2bool(args.clean_pictures)
-args.bounding_box_pictures = str2bool(args.bounding_box_pictures)
+
 args.roi_pictures = str2bool(args.roi_pictures)
 
 if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
     os.mkdir("./reconstructed")
 
-czech_railway_folder = "czech_railway_"
+czech_railway_folder = "czech_railway_dataset"
 img_index = 0
 
 # where to save
@@ -49,6 +46,32 @@ if czech_railway_folder not in os.listdir(SAVE_PATH):
         os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/labels/")
         os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/images/{i}/")
         os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/labels/{i}")
+
+
+def try_detect(img_index, postfix="blurr", img=None):
+    results = model.predict(img)
+    # Iterate over the results
+    for result in results:
+        boxes = result.boxes  # Boxes object for bbox outputs
+        class_indices = boxes.cls  # Class indices of the detections
+        class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+        if len(interesting_labels & set(class_names)) > 0:
+            # saves the result
+            save_name = f"{SAVE_PATH}/{czech_railway_folder}/"
+            cv2.imwrite(
+                f"{save_name}images/{list(interesting_labels & set(class_names))[0]}/{img_index}_{postfix}.jpg",
+                img)
+            for r in results:
+                boxes = r.boxes
+                with open(
+                        f"{save_name}labels/{list(interesting_labels & set(class_names))[0]}/{img_index}_{postfix}.txt",
+                        mode="w") as label_f:
+                    for index, box in enumerate(boxes):
+                        if result.names[int(box.cls)] in interesting_labels:
+                            label_f.write(
+                                f"{label_light} {box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]}"
+                                f" {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}\n")
+
 
 for i in traffic_lights:
     d_video = download_video(i, SAVE_PATH)
@@ -81,29 +104,18 @@ for i in traffic_lights:
             else:
                 # timestamp seconds from video beginning
                 timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
-                results = model.predict(frame)
-                # Iterate over the results
-                for result in results:
-                    boxes = result.boxes  # Boxes object for bbox outputs
-                    class_indices = boxes.cls  # Class indices of the detections
-                    class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
-                    print(class_names, "timestamp:", timestamp)
-                    if len(interesting_labels & set(class_names)) > 0:
-                        # saves the result
-                        save_name = f"{SAVE_PATH}/{czech_railway_folder}/"
-                        cv2.imwrite(
-                            f"{save_name}images/{list(interesting_labels & set(class_names))[0]}/{img_index}.jpg",
-                            frame)
-                        for r in results:
-                            boxes = r.boxes
-                            with open(
-                                    f"{save_name}labels/{list(interesting_labels & set(class_names))[0]}/{img_index}.txt",
-                                    mode="w") as label_f:
-                                for index, box in enumerate(boxes):
-                                    b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
-                                    if result.names[int(box.cls)] in interesting_labels:
-                                        label_f.write(f"{label_light} {box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]}"
-                                                  f" {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}\n")
-                        img_index += 1
+                try_detect(img_index, postfix="original", img=frame)
+                try_detect(img_index, postfix="rotate_right",
+                           img=rotate_and_crop(frame, "rotate_right", 10, 'fit'))  # Rotate right and fit
+                try_detect(img_index, postfix="rotate_left",
+                           img=rotate_and_crop(frame, "rotate_left", -10, 'fit')) # Rotate left and fit
+                try_detect(img_index, postfix="noise",
+                           img=add_noise(frame, "noise"))
+                try_detect(img_index, postfix="lighted",
+                           img=brightness_contrast(frame, "lighted", 1.5, 30))
+                img_index += 1
 
         cap.release()
+
+
+
