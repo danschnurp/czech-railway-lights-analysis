@@ -12,8 +12,8 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
 parser.add_argument('--clean_pictures', default=False)
 parser.add_argument('--bounding_box_pictures', default=False)
 parser.add_argument('--roi_pictures', default=True)
@@ -102,6 +102,15 @@ def get_pictures(d_video, seek_seconds):
                         boxes = r.boxes
                         for index, box in enumerate(boxes):
                             b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
+                            # enlarging ROI for digits and lines detections
+                            # Calculate original height
+                            original_height = b[3] - b[1]
+                            # Calculate 10% of the original height
+                            adjustment = 0.1 * original_height
+                            # Adjust top and bottom coordinates
+                            new_top = b[1] - float(adjustment)
+                            new_bottom = b[3] + float(adjustment)
+                            b = [b[0], new_top, b[2], new_bottom]
                             c = box.cls
                             if model.names[int(c)] in interesting_labels:
                                 if args.roi_pictures:
