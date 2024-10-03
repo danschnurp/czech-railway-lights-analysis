@@ -3,8 +3,38 @@ import json
 import os
 
 import argparse
+from easyocr import Reader
+import cv2
+import numpy as np
 from pytube import YouTube
 import subprocess
+
+
+def perform_ocr(reader: Reader, frame: np.ndarray, confidence_threshold=0.1):
+    results = reader.readtext(frame)
+    # Process and display results
+    for (bbox, text, prob) in results:
+        index_for_save = 0
+        if prob > confidence_threshold:
+            index_for_save += 1
+            # Unpack the bounding box
+            (top_left, top_right, bottom_right, bottom_left) = bbox
+            top_left = tuple(map(int, top_left))
+            bottom_right = tuple(map(int, bottom_right))
+
+            # Draw the bounding box
+            cv2.rectangle(frame, top_left, bottom_right, (0, 255, 0), 2)
+
+            # Put the text and probability
+            cv2.putText(frame, f"{text}", (top_left[0], top_left[1] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
+            print(f"Text: {text}")
+            print(f"Bounding Box: {bbox}")
+            print(f"Confidence: {prob}")
+            print("---")
+    return frame
+
 
 def str2bool(v):
     if isinstance(v, bool):

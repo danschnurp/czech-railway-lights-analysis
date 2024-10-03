@@ -5,3 +5,6 @@ opencv-python
 torch==2.2.2
 torchvision
 easyocr
+numpy
+requests
+pillow
