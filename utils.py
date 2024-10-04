@@ -47,10 +47,30 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
+def enlarge_bounding_box(bounding_box, bigger_top_percents=0.1, bigger_bottoms_percents=0.25):
+    # enlarging ROI for digits and lines detections
+    # Calculate original height
+    original_height = bounding_box[3] - bounding_box[1]
+    # Calculate 10% of the original height
+    adjustment = bigger_top_percents * original_height
+    bottom_adjustment = bigger_bottoms_percents * original_height
+    # Adjust top and bottom coordinates
+    new_top = bounding_box[1] - float(adjustment)
+    new_bottom = bounding_box[3] + float(bottom_adjustment)
+    return new_top, new_bottom
+
+
 def crop_bounding_box(box, img):
     x, y, w, h = box
     x, y, w, h = int(x), int(y), int(w), int(h)
     roi = img[y:h, x:w]
+
+    # cropped_roi = cropped_roi[int(cropped_roi.shape[0] * 0.7):]
+    # kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+    #
+    #
+    # cropped_roi = cv2.filter2D(cropped_roi, -1, kernel)
+
     return roi
 
 

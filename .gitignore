@@ -173,3 +173,4 @@ videos/*
 /results.json
 /reconstructed/
 /today_results.json
+/dataset/reconstructed/

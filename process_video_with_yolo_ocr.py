@@ -7,7 +7,7 @@ import cv2
 from ultralytics.utils.plotting import Annotator
 import os
 import argparse
-from utils import download_video, crop_bounding_box, perform_ocr
+from utils import download_video, crop_bounding_box, perform_ocr, enlarge_bounding_box
 import time
 
 parser = argparse.ArgumentParser(description='')
@@ -88,14 +88,7 @@ while cap.isOpened():
                     boxes = r.boxes
                     for index, box in enumerate(boxes):
                         b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
-                        # enlarging ROI for digits and lines detections
-                        # Calculate original height
-                        original_height = b[3] - b[1]
-                        # Calculate 10% of the original height
-                        adjustment = 0.1 * original_height
-                        # Adjust top and bottom coordinates
-                        new_top = b[1] - float(adjustment)
-                        new_bottom = b[3] + float(0.25 * original_height)
+                        new_top, new_bottom = enlarge_bounding_box(b)
                         b = [b[0], new_top, b[2], new_bottom]
                         c = box.cls
                         if model.names[int(c)] in interesting_labels:
