@@ -119,12 +119,22 @@ def download_video(link, SAVE_PATH):
 
     if video_name in os.listdir(SAVE_PATH):
         return video_name
+    try:
+        command = [
+            'yt-dlp',
+            link,
+            '-f', 'bestvideo[height=1080][fps=60][ext=mp4]/best[height=1080][fps=60][ext=mp4]',
+            '-o', f'{SAVE_PATH}/' + video_name,
+        ]
+        subprocess.run(command, check=True)
+    except:
+        print("full HD quality failed... trying 720p")
+        command = [
+            'yt-dlp',
+            link,
+            '-f', 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]',
+            '-o', f'{SAVE_PATH}/' + video_name,
+        ]
+        subprocess.run(command, check=True)
 
-    command = [
-        'yt-dlp',
-        link,
-        '-f', 'bestvideo[height=1080][fps=60][ext=mp4]/best[height=1080][fps=60][ext=mp4]',
-        '-o', f'{SAVE_PATH}/' + video_name,
-    ]
-    subprocess.run(command, check=True)
     return video_name

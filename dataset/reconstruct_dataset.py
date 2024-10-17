@@ -1,3 +1,5 @@
+import sys
+
 from ultralytics import YOLO
 import cv2
 from ultralytics.utils.plotting import Annotator
@@ -10,7 +12,7 @@ from utils import download_video, crop_bounding_box, str2bool, enlarge_bounding_
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default='yolov5mu.pt')
+parser.add_argument('--nett_name', default='yolov10n.pt')
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
@@ -63,7 +65,7 @@ def get_pictures(d_video, seek_seconds):
     image_index = 0
     #
     start_time = seek_seconds - args.sequence_seconds_before
-    print("starting from", seek_seconds)
+    print("from", seek_seconds, file=sys.stderr)
     if start_time < 0.:
         print("starting from beginning")
         start_time = 0
