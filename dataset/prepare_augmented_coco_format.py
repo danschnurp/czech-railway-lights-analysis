@@ -5,7 +5,7 @@ import argparse
 
 import json
 
-from dataset_augmentation import rotate_and_crop, add_noise, brightness_contrast
+from dataset_augmentation import rotate_and_crop, add_noise, brightness_contrast, darker_image
 from utils import download_video, str2bool
 
 parser = argparse.ArgumentParser(description='')
@@ -18,7 +18,6 @@ parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
 
 args = parser.parse_args()
 
-args.roi_pictures = str2bool(args.roi_pictures)
 
 if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
     os.mkdir("./reconstructed")
@@ -113,6 +112,8 @@ for i in traffic_lights:
                            img=add_noise(frame, "noise"))
                 try_detect(img_index, postfix="lighted",
                            img=brightness_contrast(frame, "lighted", 1.5, 30))
+                try_detect(img_index, postfix="darkened",
+                           img=darker_image(frame, "darkened", 1.0, -55))
                 img_index += 1
 
         cap.release()

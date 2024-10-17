@@ -17,11 +17,12 @@ def main():
     cap.video.set(cv2.CAP_PROP_POS_MSEC,
                   args.skip_seconds * 1000
                   )
-
+    r, frame = cap.read()
     # initialization for line detection
-    expt_startLeft = 0
-    expt_startRight = 400
-    expt_startTop = 350
+    offset = 400
+    expt_startLeft = int(frame.shape[1] / 2 - offset * 1.1)
+    expt_startRight = expt_startLeft + offset
+    expt_startTop = frame.shape[0] - offset
 
     # value initialize
     left_maxpoint = [0] * 50
@@ -42,7 +43,7 @@ def main():
     r = True
     first = True
     direction_left = False
-    offset_step = 10
+    offset_step = 60
     line_mess = 200
 
     while r is True:
@@ -126,10 +127,10 @@ def main():
             if max(np.array(left_points)[:, 0]) - min(np.array(left_points)[:, 0]) > line_mess or \
                     max(np.array(right_points)[:, 0]) - min(np.array(right_points)[:, 0]) > line_mess:
                 # changes direction to left in 2/3 of frame
-                if frame.shape[1] * 2 / 3 <= expt_startRight:
+                if frame.shape[1] * 2 / 3.5 <= expt_startRight:
                     direction_left = True
                 # changes direction to right in 1/3 of frame
-                if frame.shape[1] / 3 >= expt_startRight:
+                if frame.shape[1] / 3.5 >= expt_startRight:
                     direction_left = False
                 # moves in direction
                 if direction_left:

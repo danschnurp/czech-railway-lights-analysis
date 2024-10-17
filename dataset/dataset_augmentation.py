@@ -117,3 +117,15 @@ def brightness_contrast(img, destination, alpha, beta):
 
     adjusted = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
     return adjusted
+
+
+def darker_image(img, destination, alpha=1.0, beta=-55):
+    """
+    Adjusts brightness and contrast of the image.
+    :param img: input image
+    :param destination: output file path
+    :param alpha: contrast control (1.0-3.0)
+    :param beta: brightness control
+    :return: new filename
+    """
+    return cv2.addWeighted(img, alpha, np.zeros(img.shape, img.dtype), 0, beta)
