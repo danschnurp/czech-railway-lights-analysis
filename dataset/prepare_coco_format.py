@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default="yolov10n.pt")
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.005)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.005)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
 
 args = parser.parse_args()
 

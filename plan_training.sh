@@ -1,0 +1,1 @@
+qsub -v model="./yolov5mu.pt",epochs=10 ./train_on_meta.sh
