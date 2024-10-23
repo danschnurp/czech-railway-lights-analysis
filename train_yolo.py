@@ -48,7 +48,7 @@ def parse_args():
                         help='Path to data.yaml file')
     parser.add_argument('--img-size', type=int, default=640, help='Training image size (pixels)')
     # Model parameters
-    parser.add_argument('--weights', type=str, default='yolov5mu.pt', help='Initial weights path')
+    parser.add_argument('--model', type=str, default='yolov5mu.pt', help='Initial weights path')
     parser.add_argument('--resume', action='store_true', help='Resume training from last checkpoint')
     # Training parameters
     parser.add_argument('--epochs', type=int, default=3, help='Number of epochs to train for')
@@ -56,7 +56,7 @@ def parse_args():
     parser.add_argument('--workers', type=int, default=8, help='Number of worker threads')
     parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     # Optimization parameters
-    parser.add_argument('--freeze', default=None, help='Freezes the first N layers of the model or specified layers by index')  # todo
+    parser.add_argument('--freeze', default=None, help='Freezes the first N layers of the model or specified layers by index')  # todo https://github.com/ultralytics/ultralytics/tree/main/ultralytics/cfg/models
     parser.add_argument('--optimizer', type=str, default='auto', help='Optimizer (SGD, Adam, AdamW)')
     parser.add_argument('--lr0', type=float, default=0.01, help='Initial learning rate')
     parser.add_argument('--momentum', type=float, default=0.937, help='SGD momentum/Adam beta1')
