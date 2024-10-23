@@ -21,15 +21,19 @@ parser.add_argument('--bounding_box_pictures', default=False)
 parser.add_argument('--roi_pictures', default=True)
 
 args = parser.parse_args()
+# where to save
+SAVE_PATH = args.work_dir
+
 args.clean_pictures = str2bool(args.clean_pictures)
 args.bounding_box_pictures = str2bool(args.bounding_box_pictures)
 args.roi_pictures = str2bool(args.roi_pictures)
 
-if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
+if "reconstructed" not in os.listdir(SAVE_PATH) or not os.path.isdir(SAVE_PATH):
     os.mkdir("./reconstructed")
 
-# where to save
-SAVE_PATH = "./reconstructed"
+czech_railway_folder = "czech_railway_dataset"
+img_index = 0
+
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))

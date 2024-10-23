@@ -14,19 +14,17 @@ parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
-
+parser.add_argument('--work-dir', default="/Volumes/zalohy/dip")
+parser.add_argument('--label-light', type=int, default=80)
 
 args = parser.parse_args()
+# where to save
+SAVE_PATH = args.work_dir
 
-
-if "reconstructed" not in os.listdir("./") or not os.path.isdir("./reconstructed"):
-    os.mkdir("./reconstructed")
 
 czech_railway_folder = "czech_railway_dataset"
 img_index = 0
 
-# where to save
-SAVE_PATH = "./reconstructed"
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
@@ -35,7 +33,7 @@ del traffic_lights["names"]
 del traffic_lights["todo"]
 
 interesting_labels = {'traffic light'}
-label_light = 0
+label_light = args.label_light
 
 # creating folder with video name
 if czech_railway_folder not in os.listdir(SAVE_PATH):
