@@ -2,9 +2,10 @@ yt-dlp
 pytube
 ultralytics
 opencv-python
-torch==2.2.2
+torch
 torchvision
 easyocr
-numpy==2
+numpy
 requests
 pillow
+PyYAML
