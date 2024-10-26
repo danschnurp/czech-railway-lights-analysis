@@ -18,6 +18,7 @@ parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
 parser.add_argument('--clean_pictures', default=False)
 parser.add_argument('--bounding_box_pictures', default=False)
+parser.add_argument('--work-dir', default="/Volumes/zalohy/dip")
 parser.add_argument('--roi_pictures', default=True)
 
 args = parser.parse_args()
@@ -28,8 +29,7 @@ args.clean_pictures = str2bool(args.clean_pictures)
 args.bounding_box_pictures = str2bool(args.bounding_box_pictures)
 args.roi_pictures = str2bool(args.roi_pictures)
 
-if "reconstructed" not in os.listdir(SAVE_PATH) or not os.path.isdir(SAVE_PATH):
-    os.mkdir("./reconstructed")
+
 
 czech_railway_folder = "czech_railway_dataset"
 img_index = 0
@@ -49,9 +49,12 @@ def get_pictures(d_video, seek_seconds):
     nett_name = args.nett_name
 
     video_name = d_video
-    # creating folder with video name
-    if video_name[:-4] not in os.listdir(SAVE_PATH):
-        os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}")
+    try:
+        # creating folder with video name
+        if video_name[:-4] not in os.listdir(SAVE_PATH):
+            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}")
+    except FileExistsError as e:
+        print(e, "maybe different encoding")
 
     # creating folder with yolo type and label folders
     if nett_name[:-3] not in os.listdir(f"{SAVE_PATH}/{video_name[:-4]}"):
@@ -114,7 +117,10 @@ def get_pictures(d_video, seek_seconds):
                             if model.names[int(c)] in interesting_labels:
                                 if args.roi_pictures:
                                     cropped_roi = crop_bounding_box(b, frame)
-                                    cv2.imwrite(f"{save_name}_roi{index}.jpg", cropped_roi)
+                                    try:
+                                        cv2.imwrite(f"{save_name}_roi{index}.jpg", cropped_roi)
+                                    except cv2.error as e:
+                                        print(e)
                                 annotator.box_label(b, model.names[int(c)])
 
                     img = annotator.result()

@@ -40,11 +40,11 @@ def control_torch():
 # model.train(data="./CzechRailwayTrafficLights.yaml", epochs=args.epochs, imgsz=1280,
 #             device="cuda", batch=8, lr0=args.lr0, lrf=args.lrf, freeze=)
 
-
+workdir = "/auto/plzen1/home/dschnurp/dip/"
 def parse_args():
     parser = argparse.ArgumentParser(description='YOLO Training and Validation Arguments')
     # Dataset parameters
-    parser.add_argument('--data', type=str, default="./CzechRailwayTrafficLights.yaml",
+    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights.yaml",
                         help='Path to data.yaml file')
     parser.add_argument('--img-size', type=int, default=640, help='Training image size (pixels)')
     # Model parameters
