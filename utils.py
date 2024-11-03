@@ -3,11 +3,159 @@ import json
 import os
 
 import argparse
+from math import gcd
+from typing import Tuple
+
 from easyocr import Reader
 import cv2
 import numpy as np
 from pytube import YouTube
 import subprocess
+
+
+def calculate_aspect_ratio(img):
+    # Get image dimensions
+    height, width = img.shape[:2]
+    # Calculate the greatest common divisor
+    divisor = gcd(width, height)
+    # Calculate the simplified ratio
+    simple_width = width // divisor
+    simple_height = height // divisor
+    # Calculate decimal aspect ratio
+    decimal_ratio = width / height
+    return decimal_ratio, simple_width, simple_height
+
+
+def check_content_centered(img, tolerance_percentage=20):
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Get image dimensions
+    height, width = gray.shape
+
+    # Find non-zero pixels
+    non_zero_positions = np.where(gray > 0)[1]  # Get x-coordinates of non-zero pixels
+
+    if len(non_zero_positions) == 0:
+        return False, "No non-zero pixels found in the image"
+
+    # Calculate content boundaries
+    leftmost = np.min(non_zero_positions)
+    rightmost = np.max(non_zero_positions)
+    content_center = (leftmost + rightmost) // 2
+    image_center = width // 2
+
+    # Calculate the content width
+    content_width = rightmost - leftmost
+
+    # Calculate allowed deviation (tolerance zone)
+    tolerance = (width * tolerance_percentage) / 100
+
+    # Check if content center is within tolerance of image center
+    is_centered = abs(content_center - image_center) <= tolerance
+
+    # Prepare detailed analysis
+    report = {
+        'image_width': width,
+        'image_center': image_center,
+        'content_width': content_width,
+        'content_left': leftmost,
+        'content_right': rightmost,
+        'content_center': content_center,
+        'deviation': abs(content_center - image_center),
+        'tolerance': tolerance,
+        'is_centered': is_centered
+    }
+    # print(report)
+
+    # Create a visualization
+    visualization = img.copy()
+
+    # Draw lines for visualization
+    # Image center (green)
+    cv2.line(visualization, (image_center, 0), (image_center, height), (0, 255, 0), 2)
+
+    # Content center (blue)
+    cv2.line(visualization, (content_center, 0), (content_center, height), (255, 0, 0), 2)
+
+    # Tolerance zone (red)
+    left_tolerance = int(image_center - tolerance)
+    right_tolerance = int(image_center + tolerance)
+    cv2.line(visualization, (left_tolerance, 0), (left_tolerance, height), (0, 0, 255), 1)
+    cv2.line(visualization, (right_tolerance, 0), (right_tolerance, height), (0, 0, 255), 1)
+
+    return is_centered
+
+
+def get_jpg_files(path):
+    jpg_files = []
+
+    # Walk through directory and subdirectories
+    for root, dirs, files in os.walk(path):
+        # Find all jpg/jpeg files in current directory
+        for file in files:
+            if file.lower().endswith(('.jpg', '.jpeg')):
+                # Create full file path and add to list
+                full_path = os.path.join(root, file)
+                jpg_files.append(full_path)
+
+    return jpg_files
+
+
+def calculate_nonzero_percent(result):
+    # Get total number of pixels
+    total_pixels = result.shape[0] * result.shape[1]
+    nonzero_mask = np.any(result > 0, axis=2)
+    # Count non-zero pixels
+    # Using np.count_nonzero() on any channel since mask affects all channels
+    nonzero_pixels = np.count_nonzero(nonzero_mask)
+
+    # Calculate percentage
+    percent = (nonzero_pixels / total_pixels) * 100
+
+    return percent
+
+
+def split_train_val_test(
+        path="/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
+             "/czech_railway_dataset/train/images/metadata.txt"):
+    with open(path) as f:
+        metadata = f.readlines()
+
+    metadata = np.array(metadata)
+    np.random.shuffle(metadata)
+    train = metadata[:int(metadata.shape[0] * 0.9)]
+    test = metadata[int(metadata.shape[0] * 0.9):]
+
+    assert (len(train) + len(test)) == len(metadata)
+
+    # [os.replace(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
+    #          f"/czech_railway_dataset/train/images/traffic light/{i[:-1]}",
+    #             f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
+    #             f"/czech_railway_dataset/val/images/traffic light/{i[:-1]}"
+    #             ) for i in test]
+
+    [os.replace(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
+             f"/czech_railway_dataset/train/images/traffic light/{i[:-1]}",
+                f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
+                f"/czech_railway_dataset/val/images/traffic light/{i[:-1]}"
+                ) for i in test]
+
+
+#
+# for i in os.listdir("/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset"
+#                     "/reconstructed/czech_railway_dataset/val/images/traffic light"):
+#     # Full paths for old and new names
+#     old_path = os.path.join(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset"
+#                             f"/reconstructed"
+#              f"/czech_railway_dataset/train/labels/traffic light/", i[:-4] + ".txt")
+#     new_path = os.path.join(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset"
+#                             f"/reconstructed"
+#              f"/czech_railway_dataset/val/labels/traffic light/",  i[:-4] + ".txt")
+#
+#     # Rename the file
+#     os.replace(old_path, new_path)
 
 
 def perform_ocr(reader: Reader, frame: np.ndarray, confidence_threshold=0.1):

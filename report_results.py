@@ -3,7 +3,7 @@ import os
 import json
 
 base_dir = "./videos"
-
+yolo_v = "yolov10m"
 
 results = {}
 
