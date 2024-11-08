@@ -7,11 +7,14 @@ yolo_v = "yolov10m"
 
 results = {}
 
+#  For each item in
+# the directory, it checks if it is a subdirectory. If it is a subdirectory, it then iterates over the
+# contents of the "traffic light" directory within the specific subdirectory.
 for i in os.listdir(base_dir):
     if os.path.isdir(f"{base_dir}/{i}"):
         results[i] = []
         for j in os.listdir(f"{base_dir}/{i}/yolov5mu/traffic light/"):
             results[i].append((float(j.replace('_box.jpg', ''))))
         results[i] = sorted(results[i])
-with open("today_results.json", "w", encoding="utf-8") as f:
+with open("today_results.json", "w", encoding="cp1250") as f:
     json.dump(results, f, indent=2, ensure_ascii=False)

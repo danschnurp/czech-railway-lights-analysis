@@ -3,7 +3,7 @@ import cv2
 from ultralytics.utils.plotting import Annotator
 import os
 import argparse
-from utils import download_video
+from utils.general_utils import download_video
 import time
 
 parser = argparse.ArgumentParser(description='')

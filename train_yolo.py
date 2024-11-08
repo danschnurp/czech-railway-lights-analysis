@@ -24,24 +24,11 @@ def control_torch():
     print(f"Name of current CUDA device:{cuda.get_device_name(cuda_id)}")
     return "cuda"
 
-#
-# parser = argparse.ArgumentParser(description='training yolo')
-# parser.add_argument('-m', "--model", default="./yolov5default="./yolov5mu.pt"mu.pt")
-# parser.add_argument('-e', '--epochs', type=int, default=10)
-# parser.add_argument('-lr0', '--lr0', type=int, default=0.01)
-# parser.add_argument('-lrf', '--lrf', type=int, default=0.01)
-# args = parser.parse_args()
 
-
-# # Load a model
-# model = YOLO(args.model)
-#
-#
-# model.train(data="./CzechRailwayTrafficLights.yaml", epochs=args.epochs, imgsz=1280,
-#             device="cuda", batch=8, lr0=args.lr0, lrf=args.lrf, freeze=)
-
-workdir = "/auto/plzen1/home/dschnurp/dip/"
 def parse_args():
+
+    workdir = "/auto/plzen1/home/dschnurp/dip/"
+
     parser = argparse.ArgumentParser(description='YOLO Training and Validation Arguments')
     # Dataset parameters
     parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights.yaml",

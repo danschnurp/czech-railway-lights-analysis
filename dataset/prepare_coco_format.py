@@ -5,7 +5,7 @@ import argparse
 
 import json
 
-from utils import download_video, str2bool
+from utils.general_utils import download_video
 
 parser = argparse.ArgumentParser(description='')
 

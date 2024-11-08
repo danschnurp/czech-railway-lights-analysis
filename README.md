@@ -18,11 +18,11 @@ https://www.youtube.com/@strojvedouci_com
 ```
 .
 ├── CzechRailwayTrafficLights.yaml - config for yolo training
-├── prepare_coco_format.py - prepares coco format from traffic_lights.json
+├── dataset/prepare_coco_format.py - prepares coco format from traffic_lights.json
 ├── process_video_with_yolo.py - script for new semi manual video annotations
-├── reconstruct_dataset.py - reconstructs dataset by video names, detection method (yolov8n...) and classes
+├── dataset/reconstruct_dataset.py - reconstructs dataset by video names, detection method (yolov8n...) and classes
 ├── report_results.py - creates today_results.json with current detections in ./videos folder 
-├── train_yolo.py - simple training script
+├── train_yolo.py - training script
 └── traffic_lights.json
 ```
 

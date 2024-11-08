@@ -4,7 +4,7 @@ import cv2
 import os
 import argparse
 
-from utils import download_video
+from utils.general_utils import download_video
 import time
 
 parser = argparse.ArgumentParser(description='')

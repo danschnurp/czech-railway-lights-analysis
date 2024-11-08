@@ -7,7 +7,8 @@ import cv2
 from ultralytics.utils.plotting import Annotator
 import os
 import argparse
-from utils import download_video, crop_bounding_box, perform_ocr, enlarge_bounding_box
+from utils.general_utils import download_video
+from utils.image_utils import crop_bounding_box, perform_ocr, enlarge_bounding_box
 import time
 
 parser = argparse.ArgumentParser(description='')

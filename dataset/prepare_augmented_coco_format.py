@@ -6,7 +6,7 @@ import argparse
 import json
 
 from dataset_augmentation import rotate_and_crop, add_noise, brightness_contrast, darker_image
-from utils import download_video, str2bool
+from utils.general_utils import download_video
 
 parser = argparse.ArgumentParser(description='')
 

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 800,
+  "height": 400,
+  "title": {
+    "text": "Aspect Ratios in Czech Railway Traffic Light Dataset (Regression)",
+    "fontSize": 20,
+    "fontWeight": "bold",
+    "anchor": "middle",
+    "dy": -10
+  },
+  "data": {
+    "values": []
+  },
+  "layer": [
+    {
+      "mark": "point",
+      "encoding": {
+        "x": {
+          "field": "timestamp in video",
+          "type": "quantitative",
+          "title": "Timestamp in Video",
+          "scale": {
+            "domain": [
+              0,
+              10000
+            ]
+          }
+        },
+        "y": {
+          "field": "aspect ratio",
+          "type": "quantitative",
+          "title": "Aspect Ratio",
+          "scale": {
+            "domain": [
+              0,
+              0.6
+            ]
+          }
+        },
+        "color": {
+          "field": "video name",
+          "type": "nominal",
+          "legend": {
+            "title": "Video Names"
+          }
+        },
+         "tooltip": [
+          {"field": "video name", "type": "nominal", "title": "Video Name"},
+          {"field": "timestamp in video", "type": "quantitative", "title": "Timestamp in Video"},
+          {"field": "aspect ratio", "type": "quantitative", "title": "Aspect Ratio"}
+        ]
+      }
+    },
+
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 1.5
+      },
+      "transform": [
+        {
+          "regression": "aspect ratio",
+          "on": "timestamp in video",
+          "method": "linear"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "timestamp in video",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "aspect ratio",
+          "type": "quantitative"
+        },
+        "color": {
+          "value": "black"
+        }
+      }
+    }
+  ]
+}
