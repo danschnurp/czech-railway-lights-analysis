@@ -7,6 +7,8 @@ import torch
 import logging
 
 
+
+
 def control_torch():
     """
     test if cuda is available
@@ -43,7 +45,9 @@ def parse_args():
     parser.add_argument('--workers', type=int, default=8, help='Number of worker threads')
     parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     # Optimization parameters
-    parser.add_argument('--freeze', default=None, help='Freezes the first N layers of the model or specified layers by index')  # todo https://github.com/ultralytics/ultralytics/tree/main/ultralytics/cfg/models
+    # architecture https://github.com/ultralytics/ultralytics/tree/main/ultralytics/cfg/models yamls
+    parser.add_argument('--freeze', default=None, help='Freezes the first N layers of the model or specified layers '
+                                                       'by index')
     parser.add_argument('--optimizer', type=str, default='auto', help='Optimizer (SGD, Adam, AdamW)')
     parser.add_argument('--lr0', type=float, default=0.01, help='Initial learning rate')
     parser.add_argument('--momentum', type=float, default=0.937, help='SGD momentum/Adam beta1')
@@ -55,7 +59,8 @@ def parse_args():
     parser.add_argument('--save-period', type=int, default=-1, help='Save checkpoint every x epochs')
     # Validation parameters
     parser.add_argument('--conf-thres', type=float, default=0.001, help='Confidence threshold')  # todo
-    parser.add_argument('--iou-thres', type=float, default=0.6, help='NMS IoU threshold') # todo
+    parser.add_argument('--iou-thres', type=float, default=0.6, help='Non-Maximum Suppression IoU Intersection over '
+                                                                     'Union threshold') #
     # Augmentation parameters
     parser.add_argument('--hsv-h', type=float, default=0.015, help='HSV-Hue augmentation')
     parser.add_argument('--hsv-s', type=float, default=0.7, help='HSV-Saturation augmentation')
@@ -63,7 +68,6 @@ def parse_args():
     parser.add_argument('--degrees', type=float, default=0, help='Rotation augmentation')   # todo
     parser.add_argument('--translate', type=float, default=0.1, help='Translation augmentation')
     parser.add_argument('--scale', type=float, default=0.5, help='Scale augmentation')
-    parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation')
 
     args = parser.parse_args()
 
@@ -79,7 +83,7 @@ def setup_logging():
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler('training.log'),
+            logging.FileHandler('dfgdfg.log'),
             logging.StreamHandler()
         ]
     )
@@ -96,11 +100,11 @@ def train_yolo(args):
     try:
         # Load model
         if args.resume:
-            logging.info(f"Resuming training from {args.weights}")
-            model = YOLO(args.weights)
+            logging.info(f"Resuming training from {args.model}")
+            model = YOLO(args.model)
         else:
-            logging.info(f"Loading model from {args.weights}")
-            model = YOLO(args.weights)
+            logging.info(f"Loading model from {args.model}")
+            model = YOLO(args.model)
 
         # Load data configuration
         with open(args.data, 'r') as f:
