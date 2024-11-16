@@ -7,6 +7,38 @@ from easyocr import Reader
 import cv2
 
 
+def detect_white_triangles(image_path):
+    # Load the image
+    image = cv2.imread(image_path)
+    if image is None:
+        print("Error: Could not read the image.")
+        return
+
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Threshold the image with specified values
+    _, thresh = cv2.threshold(gray, 90, 250, cv2.THRESH_BINARY)
+
+    # Find contours in the thresholded image
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Copy the original image to draw results
+    result_image = image.copy()
+
+    for contour in contours:
+        # Approximate the contour to simplify its shape
+        epsilon = 0.04 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+
+        # Check if the approximated contour has 3 vertices (triangle)
+        if len(approx) == 3:
+            # Draw the triangle on the result image
+            cv2.drawContours(result_image, [approx], 0, (0, 0, 255), 3)
+    _, result_image = cv2.threshold(result_image, 254, 255, cv2.THRESH_BINARY)
+    return calculate_nonzero_percent(result_image)
+
+
 class MovementDetector:
 
     def __init__(self, frame, refresh_time=5):
@@ -31,8 +63,6 @@ class MovementDetector:
             print(".........vlak stojí........")
             return False
         return True
-
-
 
 
 def yellow(hsv):
@@ -307,5 +337,3 @@ def perform_ocr(reader: Reader, frame: np.ndarray, confidence_threshold=0.1):
             print(f"Confidence: {prob}")
             print("---")
     return frame
-
-

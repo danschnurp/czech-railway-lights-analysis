@@ -10,8 +10,8 @@ from utils.image_utils import MovementDetector
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default='yolov5mu.pt')
-parser.add_argument('-l', '--link', default="https://youtu.be/8rtVqE2yclo")
+parser.add_argument('--nett_name', default='yolov10m.pt')
+parser.add_argument('-l', '--link', default="https://www.youtube.com/watch?v=iUIbmWQSSAc")
 parser.add_argument('--skip_seconds', type=int, default=0)
 
 args = parser.parse_args()
