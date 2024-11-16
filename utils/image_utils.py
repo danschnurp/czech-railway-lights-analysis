@@ -1,8 +1,39 @@
+import time
+
 import numpy as np
 from math import gcd
 
 from easyocr import Reader
 import cv2
+
+
+class MovementDetector:
+
+    def __init__(self, frame, refresh_time=5):
+        self.reference_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        self.t1 = time.time()
+        self.refresh_time = refresh_time
+
+    def detect_movement(self, frame):
+        if time.time() - self.t1 > self.refresh_time:
+            self.t1 = time.time()
+            return True
+        # Convert the current frame to grayscale
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Calculate the difference between the current frame and the reference frame
+        diff = cv2.absdiff(gray_frame, self.reference_frame)
+
+        # Threshold the difference image to create a binary mask
+        _, thresh = cv2.threshold(diff, 25, 255, cv2.THRESH_BINARY)
+        movement_prob = np.count_nonzero(thresh) / thresh.shape[0] / thresh.shape[1]
+        if movement_prob < 0.05:
+            print(".........vlak stojí........")
+            return False
+        return True
+
+
+
 
 def yellow(hsv):
     # Define the range for yellow colors

@@ -6,6 +6,8 @@ import argparse
 from utils.general_utils import download_video
 import time
 
+from utils.image_utils import MovementDetector
+
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
@@ -53,12 +55,18 @@ cap.set(cv2.CAP_PROP_POS_MSEC,
         )
 
 t1 = 10
+
+ret, frame = cap.read()
+
+mov_detector = MovementDetector(frame=frame)
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         break
     if time.time() - t1 - dropout_time > 0.05:
-        dropout_time = 0
+        movement = mov_detector.detect_movement(frame)
+        dropout_time = 10 if not movement else 0
         # timestamp seconds from video beginning
         timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
         results = model.predict(frame)
