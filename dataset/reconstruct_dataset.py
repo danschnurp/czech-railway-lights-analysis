@@ -135,4 +135,5 @@ def get_pictures(d_video, seek_seconds):
 for i in traffic_lights:
     d_video = download_video(i, SAVE_PATH)
     for j in traffic_lights[i]:
-        get_pictures(d_video, j)
+        if d_video is not None:
+            get_pictures(d_video, j)

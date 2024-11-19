@@ -25,10 +25,10 @@ def log_metadata(path_attributes, aspect_ratio, detected_color):
     """
     return {
         "aspect ratio": float(f"{float(aspect_ratio):.3f}"),
-        "video name": path_attributes[0],
-        "detection method": path_attributes[1],
-        "class": path_attributes[2],
-        "timestamp in video": float(f"{float(path_attributes[3][:path_attributes[3].find('_')]):.3f}"),
+        "video name": path_attributes[-4],
+        "detection method": path_attributes[-3],
+        "class": path_attributes[-2],
+        "timestamp in video": float(f"{float(path_attributes[-1][:path_attributes[-1].find('_')]):.3f}"),
         "color": detected_color
     }
 
@@ -108,6 +108,7 @@ def detect_red(color=red):
     files = get_jpg_files(
         f"{workdir}")
     for i in files:
+        i = i.replace("\\", "/")
         image = cv2.imread(i)
         aspect_ratio, w, h = calculate_aspect_ratio(image)
         # image = replace_white_with_black(image)
@@ -151,6 +152,7 @@ def detect_green(color=green):
     files = get_jpg_files(
         f"{workdir}")
     for i in files:
+        i = i.replace("\\", "/")
         image = cv2.imread(i)
         aspect_ratio, w, h = calculate_aspect_ratio(image)
         # image = replace_white_with_black(image)
