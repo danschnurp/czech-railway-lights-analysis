@@ -1,3 +1,5 @@
+import sys
+
 from ultralytics import YOLO
 import cv2
 import os
@@ -11,10 +13,11 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default="yolov5mu.pt")
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.002)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.002)
 parser.add_argument('--work-dir', default="/Volumes/zalohy/dip")
 parser.add_argument('--label-light', type=int, default=80)
+parser.add_argument('--train-test-split', type=int, default=0.75)
 
 args = parser.parse_args()
 
@@ -39,10 +42,25 @@ label_light = args.label_light
 if czech_railway_folder not in os.listdir(SAVE_PATH):
     os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}")
     for i in interesting_labels:
-        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/images/")
-        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/labels/")
-        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/images/{i}/")
-        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/labels/{i}")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/images/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/labels/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/images/{i}/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/labels/{i}")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/{i}/")
+        os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/{i}")
+
+
+image_counter = 0
+for i in traffic_lights:
+    image_counter += len(i)
+
+last_train_sample = int(image_counter * args.train_test_split)
+
+image_counter = 0
 
 for i in traffic_lights:
     d_video = download_video(i, SAVE_PATH)
@@ -53,13 +71,14 @@ for i in traffic_lights:
     video_path = SAVE_PATH + '/' + d_video
 
     for seek_seconds in traffic_lights[i]:
+        image_counter += 1
         video_name = d_video
         #
         cap = cv2.VideoCapture(video_path)
         start_time = seek_seconds - args.sequence_seconds_before
-        print("starting from", seek_seconds)
+        print("starting from", seek_seconds, file=sys.stderr)
         if start_time < 0.:
-            print("starting from beginning")
+            print("starting from beginning", file=sys.stderr)
             start_time = 0
         cap.set(cv2.CAP_PROP_POS_MSEC,
                 start_time * 1000)
@@ -70,7 +89,7 @@ for i in traffic_lights:
                 break
             # end of sequence
             if (cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.) > (args.sequence_seconds_after + seek_seconds):
-                print(f"finished {seek_seconds}")
+                print(f"finished {seek_seconds}\n", file=sys.stderr)
                 break
             else:
                 # timestamp seconds from video beginning
@@ -84,7 +103,11 @@ for i in traffic_lights:
                     print(class_names, "timestamp:", timestamp)
                     if len(interesting_labels & set(class_names)) > 0:
                         # saves the result
-                        save_name = f"{SAVE_PATH}/{czech_railway_folder}/"
+
+                        if image_counter > last_train_sample:
+                            save_name = f"{SAVE_PATH}/{czech_railway_folder}/val/"
+                        else:
+                            save_name = f"{SAVE_PATH}/{czech_railway_folder}/train/"
                         cv2.imwrite(
                             f"{save_name}images/{list(interesting_labels & set(class_names))[0]}/{img_index}.jpg",
                             frame)
