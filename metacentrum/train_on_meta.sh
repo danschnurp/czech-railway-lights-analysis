@@ -16,5 +16,5 @@ source /auto/plzen1/home/dschnurp/venv/bin/activate  && \
 pip install -r requirements.txt --compile --no-cache-dir  && \
 /auto/plzen1/home/dschnurp/dip/train_yolo.py --model $model --epochs $epochs  && \
 cp -r ./runs /auto/plzen1/home/dschnurp/dip/runs/$thistime
-
+"
 

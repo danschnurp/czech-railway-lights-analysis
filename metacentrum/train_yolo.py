@@ -7,8 +7,6 @@ import torch
 import logging
 
 
-
-
 def control_torch():
     """
     test if cuda is available
