@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -q gpu@pbs-m1.metacentrum.cz
-#PBS -l walltime=3:0:0
+#PBS -l walltime=1:0:0
 #PBS -l select=1:ncpus=1:ngpus=1:mem=16gb:scratch_ssd=40gb
 #PBS -N diplomka
 
@@ -16,6 +16,5 @@ pip install ultralytics  && \
 pip install opencv-python-headless==4.8.1.78 && \
 pip install gcd && \
 mkdir ./runs/$thistime && \
-python /auto/plzen1/home/dschnurp/dip/fine_tune_yolo.py --model $model --epochs $epochs  && \
-cp -r ./runs /auto/plzen1/home/dschnurp/dip/runs/$thistime
+python /auto/plzen1/home/dschnurp/dip/fine_tune_yolo.py --model $model --epochs $epochs --project ./runs/$thistime
 "
