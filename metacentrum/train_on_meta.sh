@@ -5,16 +5,17 @@
 #PBS -N diplomka
 
 
-CONTAINER=/cvmfs/singularity.metacentrum.cz/NGC/PyTorch:24.04-py3.SIF
+CONTAINER=/cvmfs/singularity.metacentrum.cz/NGC/PyTorch:24.10-py3.SIF
 
 ls /cvmfs/singularity.metacentrum.cz
 
 singularity run --nv $CONTAINER bash -c "
 cd /auto/plzen1/home/dschnurp/dip/  && \
+pip install torch && \
+pip install ultralytics  && \
+pip install opencv-python-headless==4.8.1.78 && \
+pip install gcd && \
 mkdir ./runs/$thistime && \
-source /auto/plzen1/home/dschnurp/venv/bin/activate  && \
-pip install -r requirements.txt --compile --no-cache-dir  && \
-/auto/plzen1/home/dschnurp/dip/train_yolo.py --model $model --epochs $epochs  && \
+python /auto/plzen1/home/dschnurp/dip/fine_tune_yolo.py --model $model --epochs $epochs  && \
 cp -r ./runs /auto/plzen1/home/dschnurp/dip/runs/$thistime
 "
-
