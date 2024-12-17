@@ -1,0 +1,235 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.367,
+      "video name": "Cabview 18  Pardubice-Polic\u030cka  trat\u030c 238 261  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4535.633,
+      "color": "red",
+      "ytlink": "https://www.youtube.com/watch?v=iUIbmWQSSAc",
+      "roi index": 0
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.342,
+      "video name": "4K  Bezdruz\u030cice - Plzen\u030c  842 Kvatro",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2312.267,
+      "color": "red",
+      "ytlink": "https://youtu.be/10K7Uymgpro",
+      "roi index": 0
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.284,
+      "video name": "Cabview 19  Pardubice-Polic\u030cka duben 2023  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 30.597,
+      "color": "red",
+      "ytlink": "https://www.youtube.com/watch?v=kiA4b0nSLXc",
+      "roi index": 0
+    },
+    {
+      "ID": 6,
+      "aspect ratio": 0.303,
+      "video name": "Cabview 19  Pardubice-Polic\u030cka duben 2023  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 44.511,
+      "color": "red",
+      "ytlink": "https://www.youtube.com/watch?v=kiA4b0nSLXc",
+      "roi index": 1
+    },
+    {
+      "ID": 7,
+      "aspect ratio": 0.371,
+      "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2878.033,
+      "color": "red",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg",
+      "roi index": 0
+    },
+    {
+      "ID": 8,
+      "aspect ratio": 0.292,
+      "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 93.75,
+      "color": "red",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg",
+      "roi index": 0
+    },
+    {
+      "ID": 9,
+      "aspect ratio": 0.41,
+      "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 928.367,
+      "color": "red",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg",
+      "roi index": 0
+    },
+    {
+      "ID": 10,
+      "aspect ratio": 0.318,
+      "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4754.6,
+      "color": "red",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg",
+      "roi index": 0
+    },
+    {
+      "ID": 11,
+      "aspect ratio": 0.352,
+      "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4753.783,
+      "color": "red",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg",
+      "roi index": 0
+    },
+    {
+      "ID": 12,
+      "aspect ratio": 0.341,
+      "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4916.85,
+      "color": "red",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg",
+      "roi index": 0
+    },
+    {
+      "ID": 13,
+      "aspect ratio": 0.392,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Ty\u0301nis\u030cte\u030c n O-H Kra\u0301love\u0301-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4921.0,
+      "color": "red",
+      "ytlink": "https://youtu.be/wDyj9k8nddk",
+      "roi index": 2
+    },
+    {
+      "ID": 14,
+      "aspect ratio": 0.512,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Ty\u0301nis\u030cte\u030c n O-H Kra\u0301love\u0301-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 950.233,
+      "color": "red",
+      "ytlink": "https://youtu.be/wDyj9k8nddk",
+      "roi index": 0
+    },
+    {
+      "ID": 15,
+      "aspect ratio": 0.434,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Ty\u0301nis\u030cte\u030c n O-H Kra\u0301love\u0301-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 119.083,
+      "color": "red",
+      "ytlink": "https://youtu.be/wDyj9k8nddk",
+      "roi index": 0
+    },
+    {
+      "ID": 16,
+      "aspect ratio": 0.549,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Ty\u0301nis\u030cte\u030c n O-H Kra\u0301love\u0301-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 50.5,
+      "color": "red",
+      "ytlink": "https://youtu.be/wDyj9k8nddk",
+      "roi index": 0
+    },
+    {
+      "ID": 19,
+      "aspect ratio": 0.566,
+      "video name": "4K  Ty\u0301n n Vltavou - Protivi\u0301n  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1678.0,
+      "color": "red",
+      "ytlink": "https://youtu.be/Onpg5kKk-kA",
+      "roi index": 0
+    },
+    {
+      "ID": 20,
+      "aspect ratio": 0.368,
+      "video name": "4K  Chornice - Velke\u0301 Opatovice - Skalice n Svitavou - Svita\u0301vky  810 S\u030cukafon\"",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6841.867,
+      "color": "red",
+      "ytlink": "https://youtu.be/dlUwvJiDkOQ",
+      "roi index": 3
+    },
+    {
+      "ID": 22,
+      "aspect ratio": 0.404,
+      "video name": "Cabview 17  Chrudim-Havli\u0301c\u030cku\u030av Brod-Chrudim  trat\u030c 238  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6438.5,
+      "color": "red",
+      "ytlink": "https://www.youtube.com/watch?v=AcRW84NVQOw",
+      "roi index": 0
+    },
+    {
+      "ID": 23,
+      "aspect ratio": 0.387,
+      "video name": "4K  Plzen\u030c - Plasy  Regioshark 844",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 969.967,
+      "color": "red",
+      "ytlink": "https://youtu.be/nyUiNxKDgAw",
+      "roi index": 1
+    },
+    {
+      "ID": 24,
+      "aspect ratio": 0.37,
+      "video name": "4K  Plzen\u030c - Plasy  Regioshark 844",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1003.133,
+      "color": "red",
+      "ytlink": "https://youtu.be/nyUiNxKDgAw",
+      "roi index": 2
+    },
+    {
+      "ID": 25,
+      "aspect ratio": 0.359,
+      "video name": "4K  Plzen\u030c - Plasy  Regioshark 844",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 991.5,
+      "color": "red",
+      "ytlink": "https://youtu.be/nyUiNxKDgAw",
+      "roi index": 1
+    },
+    {
+      "ID": 26,
+      "aspect ratio": 0.453,
+      "video name": "4K  Pr\u030ci\u0301kosice - Rokycany  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 23.367,
+      "color": "red",
+      "ytlink": "https://youtu.be/aBk-URn8g1I",
+      "roi index": 0
+    }
+  ]
+}

@@ -34,47 +34,6 @@ def get_jpg_files(path):
     return jpg_files
 
 
-def split_train_val_test(
-        path="/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
-             "/czech_railway_dataset/train/images/metadata.txt"):
-    with open(path) as f:
-        metadata = f.readlines()
-
-    metadata = np.array(metadata)
-    np.random.shuffle(metadata)
-    train = metadata[:int(metadata.shape[0] * 0.9)]
-    test = metadata[int(metadata.shape[0] * 0.9):]
-
-    assert (len(train) + len(test)) == len(metadata)
-
-    # [os.replace(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
-    #          f"/czech_railway_dataset/train/images/traffic light/{i[:-1]}",
-    #             f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
-    #             f"/czech_railway_dataset/val/images/traffic light/{i[:-1]}"
-    #             ) for i in test]
-
-    [os.replace(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
-                f"/czech_railway_dataset/train/images/traffic light/{i[:-1]}",
-                f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed"
-                f"/czech_railway_dataset/val/images/traffic light/{i[:-1]}"
-                ) for i in test]
-
-
-#
-# for i in os.listdir("/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset"
-#                     "/reconstructed/czech_railway_dataset/val/images/traffic light"):
-#     # Full paths for old and new names
-#     old_path = os.path.join(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset"
-#                             f"/reconstructed"
-#              f"/czech_railway_dataset/train/labels/traffic light/", i[:-4] + ".txt")
-#     new_path = os.path.join(f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset"
-#                             f"/reconstructed"
-#              f"/czech_railway_dataset/val/labels/traffic light/",  i[:-4] + ".txt")
-#
-#     # Rename the file
-#     os.replace(old_path, new_path)
-
-
 def str2bool(v):
     """
     The function `str2bool` converts a string representation of a boolean value to a boolean type in
