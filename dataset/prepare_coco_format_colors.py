@@ -1,4 +1,5 @@
 import sys
+import unicodedata
 
 from ultralytics import YOLO
 import cv2

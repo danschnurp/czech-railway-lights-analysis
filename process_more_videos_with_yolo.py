@@ -12,7 +12,7 @@ from utils.image_utils import MovementDetector
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default='yolov10m.pt')
+parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
 parser.add_argument('--work_dir', default="/Volumes/zalohy/dip")
 parser.add_argument('--skip_seconds', type=int, default=0)

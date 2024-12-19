@@ -3,9 +3,55 @@ import json
 import os
 
 import argparse
-import numpy as np
+import unicodedata
+
 from pytube import YouTube
 import subprocess
+
+
+def normalize_text(text):
+    return unicodedata.normalize('NFC', text.replace("⧸", "")
+                          .replace("/", "")
+                          .replace("#", "")
+                          .replace(",", "")
+                          .replace(".", ""))
+
+def normalize_list_of_texts(texts):
+    return [normalize_text(text) for text in texts]
+
+def get_times_by_video_name(sequences_jsom_path):
+    with open(sequences_jsom_path, encoding="utf-8", mode="r") as f:
+        traffic_lights = dict(json.load(f))
+
+    video_names = traffic_lights["names"]
+    normalized_video_names = {
+        unicodedata.normalize('NFC', k.replace("⧸", "")
+                              .replace("/", "")
+                              .replace("#", "")
+                              .replace(",", "")
+                              .replace(".", "")): v
+        for k, v in video_names.items()
+    }
+
+    items_to_modify = []
+    for ytlink, times in traffic_lights.items():
+        if ytlink in normalized_video_names.values():
+            video_name = list(normalized_video_names.keys())[list(normalized_video_names.values()).index(ytlink)]
+            items_to_modify.append((ytlink, video_name))
+
+    for ytlink, video_name in items_to_modify:
+        traffic_lights[video_name] = traffic_lights.pop(ytlink)
+
+    return traffic_lights
+
+
+
+def print_statistics():
+    with open("./traffic_lights.json", encoding="utf-8", mode="r") as f:
+        traffic_lights = dict(json.load(f))
+    del traffic_lights["names"]
+    del traffic_lights["todo"]
+    print("current size of traffic lights dataset is", sum([len(traffic_lights[i]) for i in traffic_lights]))
 
 
 def get_jpg_files(path):

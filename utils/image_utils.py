@@ -5,13 +5,81 @@ import time
 import numpy as np
 from math import gcd
 
-from easyocr import Reader
 import cv2
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator
 
 
+def annotate_pictures(args, save_path, interesting_label = 'traffic light'):
+    from utils.general_utils import get_times_by_video_name, get_jpg_files, normalize_list_of_texts
 
+    nett_name = args.nett_name
+    detected_nett_name = "yolov10m"
+    traffic_lights = get_times_by_video_name(args.sequences_jsom_path)
+    del traffic_lights["names"]
+    del traffic_lights["todo"]
+    # Load a model
+    model = YOLO(nett_name)
+
+    for video_name in traffic_lights:
+        if video_name not in normalize_list_of_texts(os.listdir(args.in_dir)):
+            raise FileNotFoundError(f"Video {video_name} not found in {args.in_dir}")
+        try:
+            # creating folder with video name
+            if video_name not in os.listdir(save_path):
+                os.mkdir(f"{save_path}/{video_name}")
+        except FileExistsError as e:
+            print(e, "maybe different encoding")
+
+        # creating folder with yolo type and label folders
+        if nett_name[:-3] not in os.listdir(f"{save_path}/{video_name}"):
+            os.mkdir(f"{save_path}/{video_name}/{nett_name[:-3]}/")
+            os.mkdir(f"{save_path}/{video_name}/{nett_name[:-3]}/{interesting_label}/")
+
+        image_index = 0
+        for timestamp in traffic_lights[video_name]:
+
+            frame = cv2.imread(f"{args.in_dir}/{video_name}/{detected_nett_name}/{interesting_label}/{timestamp}_clean.jpg")
+
+            results = model.predict(frame)
+            # Iterate over the results
+            for result in results:
+                boxes = result.boxes  # Boxes object for bbox outputs
+                class_indices = boxes.cls  # Class indices of the detections
+                class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+                print(class_names, "timestamp:", timestamp)
+                if len({interesting_label} & set(class_names)) > 0:
+                    # saves the result
+                    save_name = f"{save_path}/{video_name}/{nett_name[:-3]}/" \
+                                f"{list({interesting_label} & set(class_names))[0]}/{timestamp}"
+                    dropout_time = 0.1
+                    if args.clean_pictures:
+                        cv2.imwrite(
+                            save_name + "_clean.jpg",
+                            frame)
+                    for r in results:
+                        annotator = Annotator(frame, line_width=2)
+                        boxes = r.boxes
+                        for index, box in enumerate(boxes):
+                            b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
+                            # new_top, new_bottom = enlarge_bounding_box(b)
+                            # b = [b[0], new_top, b[2], new_bottom]
+                            c = box.cls
+                            if model.names[int(c)] == interesting_label:
+                                if args.roi_pictures:
+                                    cropped_roi = crop_bounding_box(b, frame)
+                                    try:
+                                        cv2.imwrite(f"{save_name}_roi{index}.jpg", cropped_roi)
+                                    except cv2.error as e:
+                                        print(e)
+                                annotator.box_label(b, model.names[int(c)])
+
+                    img = annotator.result()
+                    if args.bounding_box_pictures:
+                        # saves the result with bounding box
+                        cv2.imwrite(save_name + "_box.jpg", img)
+
+                    image_index += 1
 
 def get_pictures(d_video, seek_seconds, args, SAVE_PATH):
 
@@ -382,7 +450,7 @@ def crop_bounding_box(box, img):
     return roi
 
 
-def perform_ocr(reader: Reader, frame: np.ndarray, confidence_threshold=0.1):
+def perform_ocr(reader, frame: np.ndarray, confidence_threshold=0.1):
     """
     The `perform_ocr` function takes an image frame, performs optical character recognition using a
     reader object, and displays the recognized text with bounding boxes if the confidence level is above

@@ -3,14 +3,12 @@ import os
 import shutil
 import cv2
 import unicodedata
+import argparse
 
 from utils.image_utils import detect_color, red, yellow, green, orange, yellow_orange, \
     crop_top_half, crop_sides_percentage, calculate_nonzero_percent, check_content_centered, calculate_aspect_ratio, \
     detect_red_without_stats
 from utils.general_utils import get_jpg_files
-
-workdir = "/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed/roi_unanotated/"
-output_dir = f"/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed/"
 
 
 def log_metadata(path_attributes, aspect_ratio, detected_color, counter):
@@ -119,8 +117,7 @@ def detect_red(color=red):
         bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image, i)) for i in bad_colors]
 
         is_centered = check_content_centered(result_color)
-        if calculate_nonzero_percent(result_color) > 0.2 \
-                and 0.4 > max(bad_colors_result_perc) and is_centered:
+        if calculate_nonzero_percent(result_color) > 0.2 > max(bad_colors_result_perc) and is_centered:
             counter += 1
             stats.append(log_metadata(path_attributes=i[len(workdir):].split("/"), aspect_ratio=aspect_ratio,
                                       detected_color=str(color.__name__), counter=counter))
@@ -128,7 +125,7 @@ def detect_red(color=red):
             save_image(counter, output_dir, color, image, result_color)
     print(f"{str(color.__name__)} found:", counter, "from total", len(files), )
     print("stats:")
-    [print(i, stats) for i in stats]
+    [print(i) for i in stats]
     return stats
 
 
@@ -172,11 +169,11 @@ def detect_green(color=green):
             save_image(counter, output_dir, color, image, result_color)
     print(f"{str(color.__name__)} found:", counter, "from total", len(files), )
     print("stats:")
-    [print(i, stats) for i in stats]
+    [print(i) for i in stats]
     return stats
 
 
-def save_to_vis(vis_type= "_aspect_ratio_based_on_videos"):
+def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=None):
     with open(f"visualization{vis_type}.json") as f:
         vis = json.load(f)
         vis["data"]["values"] = [*r, *g, *y]
@@ -230,34 +227,50 @@ def add_roi_index():
         if not detect_red_without_stats(i):
             os.remove(i)
             print(i)
-        # else:
-        #     img = cv2.imread(i)
-        #     cv2.imshow("", img)
-        #     cv2.waitKey(0)
         for j in colored_data:
-            if j["video name"] == split[8]:
-                if float(split[11].split("_")[0]) == j['timestamp in video']:
+            if j["video name"] == split[-4]:
+                if float(split[-1].split("_")[0]) == j['timestamp in video']:
                     #  todo add multiple roi possibilities
-                    j["roi index"] = int(split[11].split("_")[1].split(".")[0][-1])
+                    try:
+                        j["roi index"].append(int(split[-1].split("_")[1].split(".")[0][-1]))
+                    except KeyError:
+                        j["roi index"] = [int(split[-1].split("_")[1].split(".")[0][-1])]
     with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
         json.dump({"data":colored_data}, f, indent=2)
 
 
+def update_metadata():
+    """
+    The function `update_metadata` updates the metadata by performing the following steps:
+    1. Reads the metadata from a JSON file.
+    2. Updates the verified metadata.
+    3. Adds YouTube links to the metadata.
+    4. Adds ROI (Region of Interest) indices to the metadata.
+    """
+    with open(f"{output_dir}/metadata.json", encoding='utf-8', mode="r") as f:
+        metadata = dict(json.load(f))
+    update_verified_metadata(metadata)
+    add_yt_links()
+    add_roi_index()
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--workdir", default="../dataset/reconstructed/roi_unanotated/",
+                        type=str, help="Path to the directory with images to process")
+    parser.add_argument("--output_dir", default="../dataset/reconstructed/",
+                        type=str, help="Path to the output directory")
+    args = parser.parse_args()
+    workdir = args.workdir
+    output_dir = args.output_dir
     print()
-    # r = detect_red()
+    r = detect_red()
     # print("-----------------------------------------------")
     # g = detect_green()
     # print("-----------------------------------------------")
     # y = detect_green(color=yellow)
     # save_to_vis()
-    # save_to_vis(vis_type="_aspect_ratio_based_on_colors")
+    # save_to_vis(vis_type="_aspect_ratio_based_on_colors", r=r, g=g, y=y)
     #
     # with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
     #     json.dump({"data":[*r, *g, *y]}, f, indent=2)
 
-    # with open("../dataset/reconstructed/metadata.json", encoding='utf-8', mode="r") as f:
-    #     update_verified_metadata(dict(json.load(f)))
-
-    # add_yt_links()
-    add_roi_index()

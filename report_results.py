@@ -7,12 +7,6 @@ yolo_v = "yolov10m"
 
 results = {}
 
-with open("./traffic_lights.json", encoding="utf-8", mode="r") as f:
-    traffic_lights = dict(json.load(f))
-del traffic_lights["names"]
-del traffic_lights["todo"]
-print("current size of traffic lights dataset is", sum([len(traffic_lights[i]) for i in traffic_lights]))
-
 
 #  For each item in
 # the directory, it checks if it is a subdirectory. If it is a subdirectory, it then iterates over the
