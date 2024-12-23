@@ -81,6 +81,85 @@ def annotate_pictures(args, save_path, interesting_label = 'traffic light'):
 
                     image_index += 1
 
+
+def detect_keyframes_histogram(cap, threshold=0.2, timeout=1000):
+    prev_hist = None
+    frame_count = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret or frame_count > timeout:
+            break
+
+        frame_count += 1
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Compute the histogram for the current frame
+        hist = cv2.calcHist([gray_frame], [0], None, [256], [0, 256])
+        hist = cv2.normalize(hist, hist).flatten()
+
+        if prev_hist is not None:
+            # Compute correlation between histograms
+            score = cv2.compareHist(prev_hist, hist, cv2.HISTCMP_CORREL)
+
+            # Detect keyframe if similarity is below threshold
+            if score < threshold:
+                return frame
+
+        prev_hist = hist  # Update previous histogram
+
+
+def get_picture(cap, model, args, interesting_labels, video_name, nett_name, image_index, SAVE_PATH):
+
+
+    _, frame = cap.read()
+
+    timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
+    results = model.predict(frame)
+    # Iterate over the results
+    for result in results:
+        boxes = result.boxes  # Boxes object for bbox outputs
+        class_indices = boxes.cls  # Class indices of the detections
+        class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+        print(class_names, "timestamp:", timestamp)
+        if len(interesting_labels & set(class_names)) > 0:
+            # saves the result
+            save_name = f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/" \
+                        f"{list(interesting_labels & set(class_names))[0]}/{timestamp}"
+            dropout_time = 0.1
+            if args.clean_pictures:
+                cv2.imwrite(
+                    save_name + "_clean.jpg",
+                    frame)
+            for r in results:
+                annotator = Annotator(frame, line_width=2)
+                boxes = r.boxes
+                for index, box in enumerate(boxes):
+                    b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
+                    # new_top, new_bottom = enlarge_bounding_box(b)
+                    # b = [b[0], new_top, b[2], new_bottom]
+                    c = box.cls
+                    if model.names[int(c)] in interesting_labels:
+                        if args.roi_pictures:
+                            cropped_roi = crop_bounding_box(b, frame)
+                            try:
+                                cv2.imwrite(f"{save_name}_roi{index}.jpg", cropped_roi)
+                            except cv2.error as e:
+                                print(e)
+                        annotator.box_label(b, model.names[int(c)])
+
+            img = annotator.result()
+            if args.bounding_box_pictures:
+                # saves the result with bounding box
+                cv2.imwrite(save_name + "_box.jpg", img)
+
+            image_index += 1
+
+            return image_index
+
+    return 0
+
+
 def get_pictures(d_video, seek_seconds, args, SAVE_PATH):
 
     interesting_labels = {'traffic light'}

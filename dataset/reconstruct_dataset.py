@@ -1,23 +1,29 @@
 import argparse
 import json
+import os
+import sys
+
+import cv2
+from ultralytics import YOLO
 
 from utils.general_utils import download_video, str2bool
-from utils.image_utils import get_pictures
+from utils.image_utils import get_picture
 
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.002)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.002)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
 parser.add_argument('--clean_pictures', default=False)
 parser.add_argument('--bounding_box_pictures', default=False)
-parser.add_argument('--work_dir', default="/Volumes/zalohy/dip")
+parser.add_argument('--in-dir', default="../videos")
+parser.add_argument('--out-dir', default="../reconstructed")
 parser.add_argument('--roi_pictures', default=True)
 
 args = parser.parse_args()
 # where to save
-SAVE_PATH = args.work_dir
+SAVE_PATH = args.out_dir
 
 args.clean_pictures = str2bool(args.clean_pictures)
 args.bounding_box_pictures = str2bool(args.bounding_box_pictures)
@@ -34,9 +40,64 @@ with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
 del traffic_lights["names"]
 del traffic_lights["todo"]
 
-
+summary = {}
+detected_count = 0
 for i in traffic_lights:
-    d_video = download_video(i, SAVE_PATH)
+    d_video = download_video(i, args.in_dir)
+
+    interesting_labels = {'traffic light'}
+
+    nett_name = args.nett_name
+
+    video_name = d_video
+    try:
+        # creating folder with video name
+        if video_name[:-4] not in os.listdir(SAVE_PATH):
+            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}")
+    except FileExistsError as e:
+        print(e, "maybe different encoding")
+
+    # creating folder with yolo type and label folders
+    if nett_name[:-3] not in os.listdir(f"{SAVE_PATH}/{video_name[:-4]}"):
+        os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/")
+        for i in interesting_labels:
+            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/{i}/")
+
+    # Load a model
+    model = YOLO(nett_name)  # load an official model
+
+    # Load video
+    video_path = args.in_dir + '/' + video_name
+    cap = cv2.VideoCapture(video_path)
+
     for j in traffic_lights[i]:
         if d_video is not None:
-            get_pictures(d_video, j, args, SAVE_PATH)
+
+            image_index = 0
+            #
+            start_time = j
+            print("from", j, file=sys.stderr)
+            if start_time < 0.:
+                print("starting from beginning")
+                start_time = 0
+            cap.set(cv2.CAP_PROP_POS_MSEC,
+                    start_time * 1000.)
+
+            detected_count += get_picture(cap, model, args, interesting_labels, video_name,
+                                          nett_name, image_index, SAVE_PATH)
+    cap.release()
+    summary[d_video] = {"original": len(traffic_lights[i]),
+                        "detected": detected_count,
+                        "lost_pictures": int(len(traffic_lights[i]) - detected_count)}
+    print("------------------------------------------------------")
+    print("------------------------------------------------------")
+    print("------------------------------------------------------")
+    print("---------------------summary--------------------------")
+    print(json.dumps(summary[d_video], indent=2))
+    print("------------------------------------------------------")
+    print("------------------------------------------------------")
+    print("------------------------------------------------------")
+    detected_count = 0
+with open(args.in_dir + "/summary.json", mode="w") as f:
+    json.dump(summary, f, indent=2)
+
