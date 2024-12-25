@@ -382,6 +382,16 @@ def crop_sides_percentage(img, crop_percentage=10):
     return img[:, crop_width:width - crop_width]
 
 
+def crop_top_bottom_percentage(img, crop_percentage=10):
+    # Get image dimensions
+    height, width = img.shape[:2]
+    # Calculate crop height (percentage from top and bottom)
+    crop_height = int(height * (crop_percentage / 100))
+    # Crop the image
+    # Start from crop_height from top
+    # End at height - crop_height from bottom
+    return img[crop_height:height - crop_height, :]
+
 def enlarge_bounding_box(bounding_box, bigger_top_percents=0.1, bigger_bottoms_percents=0.25):
     """
     The function `enlarge_bounding_box` adjusts the top and bottom coordinates of a bounding box based

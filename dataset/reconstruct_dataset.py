@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import time
 
 import cv2
 from ultralytics import YOLO
@@ -13,8 +14,8 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.001)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.001)
+parser.add_argument('--sequence_seconds_before', type=float, default=0.5)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.5)
 parser.add_argument('--clean_pictures', default=False)
 parser.add_argument('--bounding_box_pictures', default=False)
 parser.add_argument('--in-dir', default="../videos")
@@ -60,8 +61,8 @@ for i in traffic_lights:
     # creating folder with yolo type and label folders
     if nett_name[:-3] not in os.listdir(f"{SAVE_PATH}/{video_name[:-4]}"):
         os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/")
-        for i in interesting_labels:
-            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/{i}/")
+        for k in interesting_labels:
+            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/{k}/")
 
     # Load a model
     model = YOLO(nett_name)  # load an official model
@@ -69,26 +70,43 @@ for i in traffic_lights:
     # Load video
     video_path = args.in_dir + '/' + video_name
     cap = cv2.VideoCapture(video_path)
-
     for j in traffic_lights[i]:
         if d_video is not None:
 
-            image_index = 0
-            #
+            strange_pictures = []
             start_time = j
-            print("from", j, file=sys.stderr)
             if start_time < 0.:
                 print("starting from beginning")
                 start_time = 0
             cap.set(cv2.CAP_PROP_POS_MSEC,
                     start_time * 1000.)
+            detected = get_picture(cap, model, args, interesting_labels, video_name,
+                                   nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
+            detected_count += detected
+            if detected == 0:
+                cap.set(cv2.CAP_PROP_POS_MSEC,
+                        (start_time - args.sequence_seconds_before) * 1000.)
+                detected = get_picture(cap, model, args, interesting_labels, video_name,
+                                       nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
+                print("second try:", j, file=sys.stderr)
+                strange_pictures.append(j)
+                detected_count += detected
+                if detected == 0:
+                    cap.set(cv2.CAP_PROP_POS_MSEC,
+                            (start_time + args.sequence_seconds_after) * 1000.)
+                    detected = get_picture(cap, model, args, interesting_labels, video_name,
+                                           nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
+                    detected_count += detected
+                    print("third try:", j, file=sys.stderr)
+                    strange_pictures.append(j)
+                if detected == 0:
+                    print("failed:", j, file=sys.stderr)
 
-            detected_count += get_picture(cap, model, args, interesting_labels, video_name,
-                                          nett_name, image_index, SAVE_PATH)
     cap.release()
     summary[d_video] = {"original": len(traffic_lights[i]),
                         "detected": detected_count,
-                        "lost_pictures": int(len(traffic_lights[i]) - detected_count)}
+                        "lost_pictures": int(len(traffic_lights[i]) - detected_count),
+                        "strange_pictures": strange_pictures}
     print("------------------------------------------------------")
     print("------------------------------------------------------")
     print("------------------------------------------------------")

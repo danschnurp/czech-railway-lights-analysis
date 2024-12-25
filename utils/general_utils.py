@@ -178,7 +178,9 @@ def download_video(link, SAVE_PATH):
     quality download fails.
     """
     video_name = get_youtube_video_info(link)
-    video_name = video_name.strip().replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")
+    video_name = (video_name.strip().replace("⧸", "")
+                  .replace("/", "").replace("#", "")
+                  .replace(",", "").replace(".", "").replace("\"", ""))
     video_name += ".mp4"
 
     if video_name in os.listdir(SAVE_PATH):
