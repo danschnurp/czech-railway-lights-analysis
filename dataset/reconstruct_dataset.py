@@ -14,12 +14,12 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
-parser.add_argument('--sequence_seconds_before', type=float, default=0.5)
-parser.add_argument('--sequence_seconds_after', type=float, default=0.5)
-parser.add_argument('--clean_pictures', default=False)
-parser.add_argument('--bounding_box_pictures', default=False)
-parser.add_argument('--in-dir', default="../videos")
-parser.add_argument('--out-dir', default="../reconstructed")
+parser.add_argument('--sequence_seconds_before', type=float, default=0.45)
+parser.add_argument('--sequence_seconds_after', type=float, default=0.45)
+parser.add_argument('--clean_pictures', default=True)
+parser.add_argument('--bounding_box_pictures', default=True)
+parser.add_argument('--in-dir', default="/Volumes/zalohy/dip")
+parser.add_argument('--out-dir', default="/Volumes/zalohy/dip")
 parser.add_argument('--roi_pictures', default=True)
 
 args = parser.parse_args()
@@ -70,10 +70,10 @@ for i in traffic_lights:
     # Load video
     video_path = args.in_dir + '/' + video_name
     cap = cv2.VideoCapture(video_path)
+    strange_pictures = []
+    failed_pictures = []
     for j in traffic_lights[i]:
         if d_video is not None:
-
-            strange_pictures = []
             start_time = j
             if start_time < 0.:
                 print("starting from beginning")
@@ -89,24 +89,30 @@ for i in traffic_lights:
                 detected = get_picture(cap, model, args, interesting_labels, video_name,
                                        nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
                 print("second try:", j, file=sys.stderr)
-                strange_pictures.append(j)
-                detected_count += detected
+
                 if detected == 0:
                     cap.set(cv2.CAP_PROP_POS_MSEC,
                             (start_time + args.sequence_seconds_after) * 1000.)
                     detected = get_picture(cap, model, args, interesting_labels, video_name,
                                            nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
                     detected_count += detected
-                    print("third try:", j, file=sys.stderr)
-                    strange_pictures.append(j)
-                if detected == 0:
-                    print("failed:", j, file=sys.stderr)
 
+                    if detected == 0:
+                        print("failed:", j, file=sys.stderr)
+                        failed_pictures.append(j)
+                    else:
+                        print("third try:", j, file=sys.stderr)
+                        strange_pictures.append(j)
+                else:
+                    strange_pictures.append(j)
+                    detected_count += detected
     cap.release()
     summary[d_video] = {"original": len(traffic_lights[i]),
                         "detected": detected_count,
-                        "lost_pictures": int(len(traffic_lights[i]) - detected_count),
-                        "strange_pictures": strange_pictures}
+                        "lost_pictures": failed_pictures.copy(),
+                        "lost_pictures_count": int(len(traffic_lights[i]) - detected_count),
+                        "strange_pictures": strange_pictures.copy()}
+
     print("------------------------------------------------------")
     print("------------------------------------------------------")
     print("------------------------------------------------------")

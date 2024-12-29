@@ -10,11 +10,12 @@ from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator
 
 
-def annotate_pictures(args, save_path, interesting_label = 'traffic light'):
+def annotate_pictures(args, save_path, interesting_label = 'traffic light',     detected_nett_name = "yolov5mu",
+                      tolerance = 0.5):
     from utils.general_utils import get_times_by_video_name, get_jpg_files, normalize_list_of_texts
 
     nett_name = args.nett_name
-    detected_nett_name = "yolov10m"
+
     traffic_lights = get_times_by_video_name(args.sequences_jsom_path)
     del traffic_lights["names"]
     del traffic_lights["todo"]
@@ -37,9 +38,15 @@ def annotate_pictures(args, save_path, interesting_label = 'traffic light'):
             os.mkdir(f"{save_path}/{video_name}/{nett_name[:-3]}/{interesting_label}/")
 
         image_index = 0
+        input_dir = f"{args.in_dir}/{video_name}/{detected_nett_name}/{interesting_label}/"
+        real_timestamps = [float(i.split("_")[0]) for i in os.listdir(input_dir)]
         for timestamp in traffic_lights[video_name]:
-
-            frame = cv2.imread(f"{args.in_dir}/{video_name}/{detected_nett_name}/{interesting_label}/{timestamp}_clean.jpg")
+            try:
+                nearest_index = real_timestamps[[1 if -tolerance < i - timestamp < tolerance else 0
+                                                 for i in real_timestamps].index(1)]
+            except ValueError:
+                continue
+            frame = cv2.imread(f"{args.in_dir}/{video_name}/{detected_nett_name}/{interesting_label}/{nearest_index:.3f}_clean.jpg")
 
             results = model.predict(frame)
             # Iterate over the results

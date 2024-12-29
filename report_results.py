@@ -2,10 +2,14 @@
 import os
 import json
 
+from utils.general_utils import print_statistics
+
 base_dir = "./videos"
 yolo_v = "yolov10m"
 
 results = {}
+
+print_statistics()
 
 
 #  For each item in

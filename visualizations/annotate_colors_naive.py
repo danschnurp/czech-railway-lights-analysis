@@ -7,7 +7,7 @@ import argparse
 
 from utils.image_utils import detect_color, red, yellow, green, orange, yellow_orange, \
     crop_top_half, crop_sides_percentage, calculate_nonzero_percent, check_content_centered, calculate_aspect_ratio, \
-    detect_red_without_stats
+    detect_red_without_stats, crop_top_bottom_percentage
 from utils.general_utils import get_jpg_files
 
 
@@ -109,11 +109,15 @@ def detect_red(color=red):
     files = get_jpg_files(
         f"{workdir}")
     for i in files:
+        if i.split("_")[-1] == "clean.jpg" or i.split("_")[-1] == "box.jpg":
+            continue
+
         i = i.replace("\\", "/")
         image = cv2.imread(i)
         aspect_ratio, w, h = calculate_aspect_ratio(image)
         # image = replace_white_with_black(image)
-        result_color = crop_sides_percentage(crop_top_half(detect_color(image, color_filter=color)))
+        result_color = crop_sides_percentage(crop_top_bottom_percentage(detect_color(image, color_filter=color),crop_percentage=20)
+                                                                        , crop_percentage=15)
         bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image, i)) for i in bad_colors]
 
         is_centered = check_content_centered(result_color)
@@ -153,11 +157,14 @@ def detect_green(color=green):
     files = get_jpg_files(
         f"{workdir}")
     for i in files:
+        if i.split("_")[-1] == "clean.jpg" or i.split("_")[-1] == "box.jpg":
+            continue
+
         i = i.replace("\\", "/")
         image = cv2.imread(i)
         aspect_ratio, w, h = calculate_aspect_ratio(image)
         # image = replace_white_with_black(image)
-        result_color = crop_sides_percentage(detect_color(image, color_filter=color))
+        result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image, color_filter=color), crop_percentage=15), crop_percentage=5)
         bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image, i)) for i in bad_colors]
 
         if calculate_nonzero_percent(result_color) > 0.2 \
@@ -165,8 +172,10 @@ def detect_green(color=green):
             counter += 1
             path_attributes = i[len(workdir):].split("/")
             stats.append(log_metadata(path_attributes, aspect_ratio, str(color.__name__), counter=counter))
-
-            save_image(counter, output_dir, color, image, result_color)
+            cv2.imshow("green", image)
+            res = cv2.waitKey(0)
+            if res == ord("s"):
+                save_image(counter, output_dir, color, image, result_color)
     print(f"{str(color.__name__)} found:", counter, "from total", len(files), )
     print("stats:")
     [print(i) for i in stats]
@@ -181,7 +190,7 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
         json.dump(vis, f, indent=2)
 
 
-def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/red"):
+def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/green"):
     metadata = metadata["data"]
     picture_ids = []
     for i in os.listdir(verified_dir):
@@ -255,22 +264,28 @@ def update_metadata():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir", default="../dataset/reconstructed/roi_unanotated/",
+    parser.add_argument("--workdir", default="/Volumes/zalohy 1/dip/all_yolov5",
                         type=str, help="Path to the directory with images to process")
     parser.add_argument("--output_dir", default="../dataset/reconstructed/",
                         type=str, help="Path to the output directory")
     args = parser.parse_args()
     workdir = args.workdir
     output_dir = args.output_dir
-    print()
-    r = detect_red()
+
+
+    # print()
+    # update_metadata()
+
+
+
+    # r = detect_red()
     # print("-----------------------------------------------")
     # g = detect_green()
     # print("-----------------------------------------------")
-    # y = detect_green(color=yellow)
+    y = detect_green(color=yellow)
     # save_to_vis()
     # save_to_vis(vis_type="_aspect_ratio_based_on_colors", r=r, g=g, y=y)
-    #
+
     # with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
     #     json.dump({"data":[*r, *g, *y]}, f, indent=2)
 

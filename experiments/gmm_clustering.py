@@ -7,8 +7,8 @@ from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from general_utils import get_jpg_files
-from image_utils import crop_sides_percentage, calculate_aspect_ratio, crop_top_bottom_percentage
+from utils.general_utils import get_jpg_files
+from utils.image_utils import crop_sides_percentage, crop_top_bottom_percentage
 
 
 def extract_rgb_histogram(image_path, bins):
@@ -16,6 +16,8 @@ def extract_rgb_histogram(image_path, bins):
     Extract RGB histogram features from an image.
     Using fewer bins (32 instead of 256) to reduce feature dimensionality.
     """
+    if image_path.split("_")[-1] == "clean.jpg" or image_path.split("_")[-1] == "box.jpg":
+        return None
     # Read and convert image to RGB
     img = cv2.imread(str(image_path))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -68,6 +70,8 @@ def cluster_images(image_paths, n_clusters, bins):
     for path in image_paths:
         try:
             hist_features = extract_rgb_histogram(path, bins)
+            if hist_features is None:
+                continue
             features.append(hist_features)
             valid_paths.append(path)
         except Exception as e:
@@ -144,7 +148,7 @@ def analyze_clusters(features, clusters, gmm):
     plt.show()
 
 
-def main(image_paths, n_clusters=20, bins=256):
+def main(image_paths, n_clusters=3, bins=256):
     """
     Main function to run the complete clustering pipeline.
     """
@@ -173,7 +177,7 @@ def main(image_paths, n_clusters=20, bins=256):
 
 
 if __name__ == '__main__':
-    image_paths = get_jpg_files("../reconstructed")
-
+    image_paths = get_jpg_files("/Volumes/zalohy 1/dip/all_yolov5")
+    print(len(image_paths))
 
     main(image_paths)
