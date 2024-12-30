@@ -78,17 +78,6 @@
       "ytlink": "https://youtu.be/d74QRVAyCzo"
     },
     {
-      "ID": 11,
-      "aspect ratio": 0.33,
-      "video name": "4K  Rokycany - Pr\u030ci\u0301kosice  814 RegioNova",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 33.833,
-      "color": "red",
-      "roi coordinates": "0.5662878155708313 0.3385286033153534 0.015429305844008923 0.08263515681028366",
-      "ytlink": "https://youtu.be/Da3skZV-M44"
-    },
-    {
       "ID": 15,
       "aspect ratio": 0.371,
       "video name": "Cabview 16  Pardubice-Ty\u0301nis\u030cte\u030c n O-Hradec Kra\u0301love\u0301  toc\u030cna a depo  strojvedoucicom",
@@ -252,17 +241,6 @@
       "color": "red",
       "roi coordinates": "0.6157885789871216 0.3292534649372101 0.022673606872558594 0.12585875391960144",
       "ytlink": "https://youtu.be/iBiYBF8UmNM"
-    },
-    {
-      "ID": 33,
-      "aspect ratio": 0.468,
-      "video name": "Cabview 21  RegioFox  Havli\u0301c\u030cku\u030av Brod-Pardubice  strojvedoucicom",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 1424.222,
-      "color": "red",
-      "roi coordinates": null,
-      "ytlink": "https://www.youtube.com/watch?v=Mhwh4KXrlb8"
     },
     {
       "ID": 36,
@@ -991,17 +969,6 @@
       "ytlink": "https://www.youtube.com/watch?v=iUIbmWQSSAc"
     },
     {
-      "ID": 101,
-      "aspect ratio": 0.368,
-      "video name": "Cabview 18  Pardubice-Polic\u030cka  trat\u030c 238 261  strojvedoucicom",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 3053.667,
-      "color": "green",
-      "roi coordinates": "0.9364852905273438 0.30885598063468933 0.028951644897460938 0.10965856164693832",
-      "ytlink": "https://www.youtube.com/watch?v=iUIbmWQSSAc"
-    },
-    {
       "ID": 102,
       "aspect ratio": 0.432,
       "video name": "Cabview 18  Pardubice-Polic\u030cka  trat\u030c 238 261  strojvedoucicom",
@@ -1021,17 +988,6 @@
       "timestamp in video": 3387.7,
       "color": "green",
       "roi coordinates": "0.5642872452735901 0.33334705233573914 0.013028462417423725 0.05698143318295479",
-      "ytlink": "https://www.youtube.com/watch?v=iUIbmWQSSAc"
-    },
-    {
-      "ID": 104,
-      "aspect ratio": 0.439,
-      "video name": "Cabview 18  Pardubice-Polic\u030cka  trat\u030c 238 261  strojvedoucicom",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 4389.1,
-      "color": "green",
-      "roi coordinates": null,
       "ytlink": "https://www.youtube.com/watch?v=iUIbmWQSSAc"
     },
     {
