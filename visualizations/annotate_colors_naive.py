@@ -1,17 +1,20 @@
 import json
 import os
 import shutil
+import sys
+
 import cv2
-import unicodedata
 import argparse
 
+from ultralytics import YOLO
+
 from utils.image_utils import detect_color, red, yellow, green, orange, yellow_orange, \
-    crop_top_half, crop_sides_percentage, calculate_nonzero_percent, check_content_centered, calculate_aspect_ratio, \
-    detect_red_without_stats, crop_top_bottom_percentage
+    crop_sides_percentage, calculate_nonzero_percent, check_content_centered, calculate_aspect_ratio, \
+    crop_top_bottom_percentage
 from utils.general_utils import get_jpg_files
 
 
-def log_metadata(path_attributes, aspect_ratio, detected_color, counter):
+def log_metadata(path_attributes, aspect_ratio, detected_color, counter, roi):
     """
     The function `log_metadata` creates a dictionary with metadata information such as aspect ratio,
     video name, detection method, class, and timestamp in video based on input parameters.
@@ -30,7 +33,8 @@ def log_metadata(path_attributes, aspect_ratio, detected_color, counter):
         "detection method": path_attributes[-3],
         "class": path_attributes[-2],
         "timestamp in video": float(f"{float(path_attributes[-1][:path_attributes[-1].find('_')]):.3f}"),
-        "color": detected_color
+        "color": detected_color,
+        "roi coordinates": roi
     }
 
 
@@ -87,53 +91,20 @@ def save_image(counter, output_dir, color, image, result_color, original=True, m
             image)
 
 
-def detect_red(color=red):
-    """
-    function detects and processes images with a specified color, providing statistics and
-    saving the results.
-
-    :param color: It looks like the code snippet you provided is a function named `detect_red` that
-    seems to be part of an image processing script. The function is designed to detect images with a
-    specific color (red in this case) and perform various operations on them
-    :return: The function `detect_red` returns a dictionary containing statistics for images that meet
-    certain criteria for the color red. The key of the dictionary is the string representation of the
-    color name ("red" in this case), and the value is a dictionary of image statistics.
-    """
-    bad_colors = {yellow, red, orange, yellow_orange, green}
-
-    bad_colors -= {color}
-    prepare_dirs(color)
-
-    stats = []
-    counter = 0
-    files = get_jpg_files(
-        f"{workdir}")
-    for i in files:
-        if i.split("_")[-1] == "clean.jpg" or i.split("_")[-1] == "box.jpg":
-            continue
-
-        i = i.replace("\\", "/")
-        image = cv2.imread(i)
-        aspect_ratio, w, h = calculate_aspect_ratio(image)
-        # image = replace_white_with_black(image)
-        result_color = crop_sides_percentage(crop_top_bottom_percentage(detect_color(image, color_filter=color),crop_percentage=20)
-                                                                        , crop_percentage=15)
-        bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image, i)) for i in bad_colors]
-
-        is_centered = check_content_centered(result_color)
-        if calculate_nonzero_percent(result_color) > 0.2 > max(bad_colors_result_perc) and is_centered:
-            counter += 1
-            stats.append(log_metadata(path_attributes=i[len(workdir):].split("/"), aspect_ratio=aspect_ratio,
-                                      detected_color=str(color.__name__), counter=counter))
-
-            save_image(counter, output_dir, color, image, result_color)
-    print(f"{str(color.__name__)} found:", counter, "from total", len(files), )
-    print("stats:")
-    [print(i) for i in stats]
-    return stats
+def get_box_coordinates(image, model, roi_index):
+    results = model.predict(image)
+    # Iterate over the results
+    for result in results:
+        boxes = result.boxes  # Boxes object for bbox outputs
+        class_indices = boxes.cls  # Class indices of the detections
+        class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+        box = boxes[roi_index]
+        if (class_names[roi_index]) == "traffic light":
+            return f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}"
 
 
-def detect_green(color=green):
+
+def detect_single_color(color=green, crop_sides_value_percentage=15, crop_top_bottom_value_percentage=5):
     """
     This Python function detects images with a specified color and extracts metadata and statistics for
     the detected images.
@@ -161,21 +132,36 @@ def detect_green(color=green):
             continue
 
         i = i.replace("\\", "/")
-        image = cv2.imread(i)
-        aspect_ratio, w, h = calculate_aspect_ratio(image)
+        image_roi = cv2.imread(i)
+        image_clean = cv2.imread(f"{i[:i.find('roi')]}clean.jpg")
+        image_box = cv2.imread(f"{i[:i.find('roi')]}box.jpg")
+        roi_index = int(i[(i.find('roi') + len('roi')):i.find('.jpg')])
+
+        aspect_ratio, w, h = calculate_aspect_ratio(image_roi)
         # image = replace_white_with_black(image)
-        result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image, color_filter=color), crop_percentage=15), crop_percentage=5)
-        bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image, i)) for i in bad_colors]
+        result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=color),
+                                                                        crop_percentage=crop_sides_value_percentage),
+                                                  crop_percentage=crop_top_bottom_value_percentage)
+        bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
 
         if calculate_nonzero_percent(result_color) > 0.2 \
                 and 0.4 > max(bad_colors_result_perc) and check_content_centered(result_color):
             counter += 1
             path_attributes = i[len(workdir):].split("/")
-            stats.append(log_metadata(path_attributes, aspect_ratio, str(color.__name__), counter=counter))
-            cv2.imshow("green", image)
+
+            cv2.imshow(str(color.__name__), cv2.resize(image_box, (1960 // 2, 1080//2)))
+            # cv2.imshow(str(color.__name__), image_roi)
             res = cv2.waitKey(0)
             if res == ord("s"):
-                save_image(counter, output_dir, color, image, result_color)
+                try:
+                    this_roi = get_box_coordinates(image_clean, model, roi_index)
+                    save_image(counter, output_dir, color, image_roi, result_color, )
+                    stats.append(log_metadata(path_attributes, aspect_ratio, str(color.__name__), counter=counter,
+                                              roi=this_roi))
+                except IndexError:
+                    continue
+
+
     print(f"{str(color.__name__)} found:", counter, "from total", len(files), )
     print("stats:")
     [print(i) for i in stats]
@@ -190,102 +176,31 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
         json.dump(vis, f, indent=2)
 
 
-def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/green"):
-    metadata = metadata["data"]
-    picture_ids = []
-    for i in os.listdir(verified_dir):
-        try:
-
-            #     strip .jpg extension
-            picture_ids.append(int(i[:-4]))
-        except ValueError:
-            continue
-    picture_ids.sort()
-    verified_metadata = []
-    for i in metadata:
-        if i["color"] == verified_dir.split("/")[-1] and i["ID"]  in picture_ids:
-            verified_metadata.append(i)
-            print(i)
-
-    with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":verified_metadata}, f, indent=2)
-
-
-def add_yt_links():
-    with open("../traffic_lights.json", encoding="utf-8", mode="r") as f:
-        traffic_lights = dict(json.load(f))
-
-    video_names = traffic_lights["names"]
-    with open(f"{output_dir}/today_results.json", encoding='utf-8', mode="r") as f:
-        colored_data = dict(json.load(f))["data"]
-
-    video_names = [unicodedata.normalize('NFC', i.replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")) for i in  video_names.keys()]
-    video_names = dict(zip(video_names, traffic_lights["names"].values()))
-    for i in colored_data:
-        i["ytlink"] = video_names[str(unicodedata.normalize('NFC',i["video name"])).replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")]
-
-    with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":colored_data}, f, indent=2)
-
-def add_roi_index():
-    with open(f"{output_dir}/today_results.json", encoding='utf-8', mode="r") as f:
-        colored_data = dict(json.load(f))["data"]
-    files = get_jpg_files("/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed/roi_red")
-    for i in files:
-        split = i.split("/")
-        if not detect_red_without_stats(i):
-            os.remove(i)
-            print(i)
-        for j in colored_data:
-            if j["video name"] == split[-4]:
-                if float(split[-1].split("_")[0]) == j['timestamp in video']:
-                    #  todo add multiple roi possibilities
-                    try:
-                        j["roi index"].append(int(split[-1].split("_")[1].split(".")[0][-1]))
-                    except KeyError:
-                        j["roi index"] = [int(split[-1].split("_")[1].split(".")[0][-1])]
-    with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":colored_data}, f, indent=2)
-
-
-def update_metadata():
-    """
-    The function `update_metadata` updates the metadata by performing the following steps:
-    1. Reads the metadata from a JSON file.
-    2. Updates the verified metadata.
-    3. Adds YouTube links to the metadata.
-    4. Adds ROI (Region of Interest) indices to the metadata.
-    """
-    with open(f"{output_dir}/metadata.json", encoding='utf-8', mode="r") as f:
-        metadata = dict(json.load(f))
-    update_verified_metadata(metadata)
-    add_yt_links()
-    add_roi_index()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir", default="/Volumes/zalohy 1/dip/all_yolov5",
+    parser.add_argument("--workdir", default="/Volumes/zalohy/dip/all_yolov5",
                         type=str, help="Path to the directory with images to process")
     parser.add_argument("--output_dir", default="../dataset/reconstructed/",
                         type=str, help="Path to the output directory")
     args = parser.parse_args()
     workdir = args.workdir
     output_dir = args.output_dir
+    model = YOLO("../experiments/yolov5mu.pt")
 
+    r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
+    print("-----------------------------------------------")
+    g = detect_single_color()
+    print("-----------------------------------------------")
+    y = detect_single_color(color=yellow)
 
-    # print()
-    # update_metadata()
+    with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
+        json.dump({"data":[*r, *g, *y]}, f, indent=2)
 
-
-
-    # r = detect_red()
-    # print("-----------------------------------------------")
-    # g = detect_green()
-    # print("-----------------------------------------------")
-    y = detect_green(color=yellow)
     # save_to_vis()
     # save_to_vis(vis_type="_aspect_ratio_based_on_colors", r=r, g=g, y=y)
 
-    # with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
-    #     json.dump({"data":[*r, *g, *y]}, f, indent=2)
+
+
+
 
