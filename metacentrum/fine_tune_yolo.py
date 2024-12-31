@@ -27,19 +27,19 @@ def control_torch():
 
 def parse_args():
 
-    workdir = "/auto/plzen1/home/dschnurp/dip/"
+    workdir = "./"
 
     parser = argparse.ArgumentParser(description='YOLO Training and Validation Arguments')
     # Dataset parameters
-    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights.yaml",
+    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights_stop_go.yaml",
                         help='Path to data.yaml file')
-    parser.add_argument('--img-size', type=int, default=640, help='Training image size (pixels)')
+    parser.add_argument('--img-size', type=int, default=1920, help='Training image size (pixels)')
     # Model parameters
     parser.add_argument('--model', type=str, default='yolov5mu.pt', help='Initial weights path')
     parser.add_argument('--resume', action='store_true', help='Resume training from last checkpoint')
     # Training parameters
-    parser.add_argument('--epochs', type=int, default=3, help='Number of epochs to train for')
-    parser.add_argument('--batch-size', type=int, default=16, help='Batch size')
+    parser.add_argument('--epochs', type=int, default=15, help='Number of epochs to train for')
+    parser.add_argument('--batch-size', type=int, default=1, help='Batch size')
     parser.add_argument('--workers', type=int, default=8, help='Number of worker threads')
     parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     # Optimization parameters
@@ -60,12 +60,12 @@ def parse_args():
     parser.add_argument('--iou-thres', type=float, default=0.6, help='Non-Maximum Suppression IoU Intersection over '
                                                                      'Union threshold') #
     # Augmentation parameters
-    parser.add_argument('--hsv-h', type=float, default=0.015, help='HSV-Hue augmentation')
-    parser.add_argument('--hsv-s', type=float, default=0.7, help='HSV-Saturation augmentation')
-    parser.add_argument('--hsv-v', type=float, default=0.4, help='HSV-Value augmentation')
+    parser.add_argument('--hsv-h', type=float, default=0, help='HSV-Hue augmentation')
+    parser.add_argument('--hsv-s', type=float, default=0, help='HSV-Saturation augmentation')
+    parser.add_argument('--hsv-v', type=float, default=0, help='HSV-Value augmentation')
     parser.add_argument('--degrees', type=float, default=0, help='Rotation augmentation')   # todo
-    parser.add_argument('--translate', type=float, default=0.1, help='Translation augmentation')
-    parser.add_argument('--scale', type=float, default=0.5, help='Scale augmentation')
+    parser.add_argument('--translate', type=float, default=0, help='Translation augmentation')
+    parser.add_argument('--scale', type=float, default=0, help='Scale augmentation')
     parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation')
     args = parser.parse_args()
 
