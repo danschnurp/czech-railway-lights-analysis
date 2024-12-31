@@ -170,6 +170,7 @@ anotated/*
 videos/*
 *.pt
 *.pth
+*.torchscript
 /results.json
 /reconstructed/
 /today_results.json
