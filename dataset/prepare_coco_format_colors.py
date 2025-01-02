@@ -37,11 +37,11 @@ with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
 
 original_label = 'traffic light'
 target_labels = {
-    'red':"stop",
+    'warning_go':"warning_go",
                  # 'green':"go"
                  }
 target_ids = {
-    'red': 0,
+    'warning_go': 2,
     # 'green': 1
 }
 

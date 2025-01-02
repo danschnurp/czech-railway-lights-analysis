@@ -16,7 +16,7 @@ workdir = args.workdir
 output_dir = args.output_dir
 
 
-def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/green"):
+def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/warning_go"):
     metadata = metadata["data"]
     picture_ids = []
     for i in os.listdir(verified_dir):
@@ -71,7 +71,7 @@ def add_yt_links():
 #         json.dump({"data":colored_data}, f, indent=2)
 
 
-def update_metadata(verified_dir = "../dataset/reconstructed/red"):
+def update_metadata(verified_dir = "../dataset/reconstructed/warning_go"):
     """
     The function `update_metadata` updates the metadata by performing the following steps:
     1. Reads the metadata from a JSON file.

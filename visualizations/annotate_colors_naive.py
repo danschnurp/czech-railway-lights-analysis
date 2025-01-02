@@ -48,11 +48,11 @@ def prepare_dirs(color):
     directories based on the name of the color
     """
     if os.path.exists(
-            f"{output_dir}{str(color.__name__)}"):
+            f"{output_dir}{str(color)}"):
         shutil.rmtree(
-            f"{output_dir}{str(color.__name__)}")
+            f"{output_dir}{str(color)}")
     os.mkdir(
-        f"{output_dir}{str(color.__name__)}")
+        f"{output_dir}{str(color)}")
 
 
 def save_image(counter, output_dir, color, image, result_color, original=True, mini_roi=False):
@@ -81,13 +81,9 @@ def save_image(counter, output_dir, color, image, result_color, original=True, m
     `result_color` image with the filename `{output_dir}/{color_name}/{counter}_mini_roi, defaults to
     False (optional)
     """
-    if mini_roi:
-        cv2.imwrite(
-            f"{output_dir}/{str(color.__name__)}/{counter}_mini_roi.jpg",
-            result_color)
     if original:
         cv2.imwrite(
-            f"{output_dir}/{str(color.__name__)}/{counter}.jpg",
+            f"{output_dir}/{str(color)}/{counter}.jpg",
             image)
 
 
@@ -104,7 +100,7 @@ def get_box_coordinates(image, model, roi_index):
 
 
 
-def detect_single_color(color=green, crop_sides_value_percentage=15, crop_top_bottom_value_percentage=5):
+def detect_single_color(colors={green, yellow_orange}, crop_sides_value_percentage=15, crop_top_bottom_value_percentage=5):
     """
     This Python function detects images with a specified color and extracts metadata and statistics for
     the detected images.
@@ -118,11 +114,13 @@ def detect_single_color(color=green, crop_sides_value_percentage=15, crop_top_bo
     the color name "green", and the value is a dictionary of statistics for each image that meets the
     criteria.
     """
+    class_name = "warning_go"
     bad_colors = {yellow, red, orange, yellow_orange, green}
 
-    bad_colors -= {color}
+    for i in colors:
+        bad_colors -= {i}
 
-    prepare_dirs(color)
+    prepare_dirs(class_name)
     stats = []
     counter = 0
     files = get_jpg_files(
@@ -138,31 +136,36 @@ def detect_single_color(color=green, crop_sides_value_percentage=15, crop_top_bo
         roi_index = int(i[(i.find('roi') + len('roi')):i.find('.jpg')])
 
         aspect_ratio, w, h = calculate_aspect_ratio(image_roi)
+        verdict = []
+        for j in colors:
         # image = replace_white_with_black(image)
-        result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=color),
+            result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=j),
                                                                         crop_percentage=crop_sides_value_percentage),
                                                   crop_percentage=crop_top_bottom_value_percentage)
-        bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
+            bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
+            result_color_perc =    calculate_nonzero_percent(result_color)
+            centered = check_content_centered(result_color)
+            if result_color_perc > 0.2  and 0.4 > max(bad_colors_result_perc) and  centered:
+                verdict.append(True)
+            else:
+                verdict.append(False)
 
-        if calculate_nonzero_percent(result_color) > 0.2 \
-                and 0.4 > max(bad_colors_result_perc) and check_content_centered(result_color):
-            counter += 1
+        cv2.imshow(class_name, cv2.resize(image_box, (1960 // 2, 1080//2)))
+        if all(verdict):
+            res = cv2.waitKey(0)
             path_attributes = i[len(workdir):].split("/")
 
-            cv2.imshow(str(color.__name__), cv2.resize(image_box, (1960 // 2, 1080//2)))
-            # cv2.imshow(str(color.__name__), image_roi)
-            res = cv2.waitKey(0)
             if res == ord("s"):
-                try:
+
+                    counter += 1
                     this_roi = get_box_coordinates(image_clean, model, roi_index)
-                    save_image(counter, output_dir, color, image_roi, result_color, )
-                    stats.append(log_metadata(path_attributes, aspect_ratio, str(color.__name__), counter=counter,
+                    save_image(counter, output_dir, class_name, image_roi, 1, )
+                    stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
                                               roi=this_roi))
-                except IndexError:
-                    continue
 
 
-    print(f"{str(color.__name__)} found:", counter, "from total", len(files), )
+
+    print(f"{class_name} found:", counter, "from total", len(files), )
     print("stats:")
     [print(i) for i in stats]
     return stats
@@ -188,14 +191,14 @@ if __name__ == '__main__':
     output_dir = args.output_dir
     model = YOLO("../experiments/yolov5mu.pt")
 
-    r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
+    # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
     g = detect_single_color()
     print("-----------------------------------------------")
-    y = detect_single_color(color=yellow)
+
 
     with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":[*r, *g, *y]}, f, indent=2)
+        json.dump({"data":[ *g]}, f, indent=2)
 
     # save_to_vis()
     # save_to_vis(vis_type="_aspect_ratio_based_on_colors", r=r, g=g, y=y)

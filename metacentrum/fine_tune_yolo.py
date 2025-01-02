@@ -56,7 +56,7 @@ def parse_args():
     parser.add_argument('--exist-ok', action='store_true', help='Allow existing project')
     parser.add_argument('--save-period', type=int, default=-1, help='Save checkpoint every x epochs')
     # Validation parameters
-    parser.add_argument('--conf-thres', type=float, default=0.001, help='Confidence threshold')  # todo
+    parser.add_argument('--conf-thres', type=float, default=0.1, help='Confidence threshold')  # todo
     parser.add_argument('--iou-thres', type=float, default=0.6, help='Non-Maximum Suppression IoU Intersection over '
                                                                      'Union threshold') #
     # Augmentation parameters
