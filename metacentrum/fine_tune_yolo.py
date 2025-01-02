@@ -1,5 +1,5 @@
 from torch import cuda, version
-from ultralytics import YOLO
+from ultralytics import YOLOv10
 import argparse
 from pathlib import Path
 import yaml
@@ -33,12 +33,12 @@ def parse_args():
     # Dataset parameters
     parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights_stop_go.yaml",
                         help='Path to data.yaml file')
-    parser.add_argument('--img-size', type=int, default=1920, help='Training image size (pixels)')
+    parser.add_argument('--img-size', type=int, default=1080, help='Training image size (pixels)')
     # Model parameters
-    parser.add_argument('--model', type=str, default='yolov5mu.pt', help='Initial weights path')
+    parser.add_argument('--model', type=str, default="yolov10m.pt", help='Initial weights path')
     parser.add_argument('--resume', action='store_true', help='Resume training from last checkpoint')
     # Training parameters
-    parser.add_argument('--epochs', type=int, default=15, help='Number of epochs to train for')
+    parser.add_argument('--epochs', type=int, default=30, help='Number of epochs to train for')
     parser.add_argument('--batch-size', type=int, default=1, help='Batch size')
     parser.add_argument('--workers', type=int, default=8, help='Number of worker threads')
     parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
@@ -99,10 +99,10 @@ def train_yolo(args):
         # Load model
         if args.resume:
             logging.info(f"Resuming training from {args.model}")
-            model = YOLO(args.model)
+            model = YOLOv10(args.model)
         else:
             logging.info(f"Loading model from {args.model}")
-            model = YOLO(args.model)
+            model = YOLOv10(args.model)
 
         # Load data configuration
         with open(args.data, 'r') as f:
