@@ -45,6 +45,18 @@ def get_times_by_video_name(sequences_jsom_path):
     return traffic_lights
 
 
+def compare_traffic_lights():
+    with open("../traffic_lights_raw.json", "r", encoding="utf-8") as f:
+        raw = json.load(f)
+    lights = get_times_by_video_name("../traffic_lights.json")
+    del lights["names"]
+    del lights["todo"]
+
+    return {i:list(set(raw[i]) - set(lights[i])) for i in raw}
+
+
+# compare_traffic_lights()
+
 
 def print_statistics():
     with open("./traffic_lights.json", encoding="utf-8", mode="r") as f:

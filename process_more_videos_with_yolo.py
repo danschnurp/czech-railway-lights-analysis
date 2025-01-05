@@ -14,12 +14,14 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
 parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
-parser.add_argument('--work_dir', default="/Volumes/zalohy/dip")
+parser.add_argument('--in-dir', default="./videos")
+parser.add_argument('--out-dir', default="./reconstructed/all_yolov5m")
 parser.add_argument('--skip_seconds', type=int, default=0)
 
 args = parser.parse_args()
 
-SAVE_PATH = args.work_dir
+SAVE_PATH = args.out_dir
+LOAD_PATH = args.in_dir
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
@@ -53,7 +55,7 @@ def annotate_video():
     model = YOLO(nett_name)  # load an official model
 
     # Load video
-    video_path = SAVE_PATH + '/' + video_name
+    video_path = LOAD_PATH + '/' + video_name
     cap = cv2.VideoCapture(video_path)
 
     image_index = 0
@@ -64,7 +66,7 @@ def annotate_video():
             skip_seconds * 1000
             )
 
-    t1 = 10
+    t1 = 5
 
     ret, frame = cap.read()
 
@@ -76,7 +78,10 @@ def annotate_video():
             break
         if time.time() - t1 - dropout_time > 0.05:
             movement = mov_detector.detect_movement(frame)
-            dropout_time = 10 if not movement else 0
+            if not movement:
+                dropout_time = 5
+                continue
+            dropout_time = 0.5
             # timestamp seconds from video beginning
             timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
             results = model.predict(frame)
@@ -90,7 +95,7 @@ def annotate_video():
                     # saves the result
                     save_name = f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/" \
                                 f"{list(interesting_labels & set(class_names))[0]}/{timestamp}"
-                    dropout_time = 0.1
+                    dropout_time = 0.5
                     cv2.imwrite(
                         save_name + "_clean.jpg",
                         frame)
@@ -107,5 +112,5 @@ def annotate_video():
 
 
 for i in traffic_lights:
-    d_video = download_video(i, SAVE_PATH)
+    d_video = download_video(i, LOAD_PATH)
     annotate_video()

@@ -345,7 +345,7 @@ class MovementDetector:
         # Threshold the difference image to create a binary mask
         _, thresh = cv2.threshold(diff, 25, 255, cv2.THRESH_BINARY)
         movement_prob = np.count_nonzero(thresh) / thresh.shape[0] / thresh.shape[1]
-        if movement_prob < 0.05:
+        if movement_prob < 0.15:
             print(".........vlak stojí........")
             return False
         return True
