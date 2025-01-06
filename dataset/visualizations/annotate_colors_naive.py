@@ -6,6 +6,7 @@ import sys
 import cv2
 import argparse
 
+from tqdm import tqdm
 from ultralytics import YOLO
 
 from utils.image_utils import detect_color, red, yellow, green, orange, yellow_orange, \
@@ -48,11 +49,11 @@ def prepare_dirs(color):
     directories based on the name of the color
     """
     if os.path.exists(
-            f"{output_dir}{str(color)}"):
+            f"{output_dir}/{str(color)}"):
         shutil.rmtree(
-            f"{output_dir}{str(color)}")
+            f"{output_dir}/{str(color)}")
     os.mkdir(
-        f"{output_dir}{str(color)}")
+        f"{output_dir}/{str(color)}")
 
 
 def save_image(counter, output_dir, color, image, result_color, original=True, mini_roi=False):
@@ -88,19 +89,22 @@ def save_image(counter, output_dir, color, image, result_color, original=True, m
 
 
 def get_box_coordinates(image, model, roi_index):
-    results = model.predict(image)
+    result = model.predict(image)
+    result = result[0]
     # Iterate over the results
-    for result in results:
-        boxes = result.boxes  # Boxes object for bbox outputs
-        class_indices = boxes.cls  # Class indices of the detections
-        class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+    boxes = result.boxes  # Boxes object for bbox outputs
+    class_indices = boxes.cls  # Class indices of the detections
+    class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+    try:
         box = boxes[roi_index]
-        if (class_names[roi_index]) == "traffic light":
-            return f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}"
+    except IndexError:
+       return None
+    if (class_names[roi_index]) == "traffic light":
+        return f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}"
 
 
-
-def detect_single_color(colors={green, yellow_orange}, crop_sides_value_percentage=15, crop_top_bottom_value_percentage=5):
+def detect_single_color(colors={green, yellow_orange}, class_name = "warning_go",
+                        crop_sides_value_percentage=15, crop_top_bottom_value_percentage=5):
     """
     This Python function detects images with a specified color and extracts metadata and statistics for
     the detected images.
@@ -114,7 +118,7 @@ def detect_single_color(colors={green, yellow_orange}, crop_sides_value_percenta
     the color name "green", and the value is a dictionary of statistics for each image that meets the
     criteria.
     """
-    class_name = "warning_go"
+
     bad_colors = {yellow, red, orange, yellow_orange, green}
 
     for i in colors:
@@ -125,7 +129,7 @@ def detect_single_color(colors={green, yellow_orange}, crop_sides_value_percenta
     counter = 0
     files = get_jpg_files(
         f"{workdir}")
-    for i in files:
+    for i in tqdm(files):
         if i.split("_")[-1] == "clean.jpg" or i.split("_")[-1] == "box.jpg":
             continue
 
@@ -149,16 +153,17 @@ def detect_single_color(colors={green, yellow_orange}, crop_sides_value_percenta
                 verdict.append(True)
             else:
                 verdict.append(False)
-
-        cv2.imshow(class_name, cv2.resize(image_box, (1960 // 2, 1080//2)))
         if all(verdict):
+            cv2.imshow(class_name, cv2.resize(image_box, (int(1960 / 1.5), int(1080 / 1.5))))
             res = cv2.waitKey(0)
-            path_attributes = i[len(workdir):].split("/")
 
+            cv2.destroyAllWindows()
             if res == ord("s"):
-
+                    path_attributes = i[len(workdir):].split("/")
                     counter += 1
                     this_roi = get_box_coordinates(image_clean, model, roi_index)
+                    if this_roi is None:
+                        continue
                     save_image(counter, output_dir, class_name, image_roi, 1, )
                     stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
                                               roi=this_roi))
@@ -182,18 +187,18 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir", default="/Volumes/zalohy/dip/all_yolov5",
+    parser.add_argument("--workdir", default="../reconstructed/all_yolov5mu_raw",
                         type=str, help="Path to the directory with images to process")
-    parser.add_argument("--output_dir", default="../dataset/reconstructed/",
+    parser.add_argument("--output_dir", default="../dataset/reconstructed",
                         type=str, help="Path to the output directory")
     args = parser.parse_args()
     workdir = args.workdir
     output_dir = args.output_dir
-    model = YOLO("../experiments/yolov5mu.pt")
+    model = YOLO("../../yolov5mu.pt")
 
     # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    g = detect_single_color()
+    g = detect_single_color(colors={red}, class_name="stop")
     print("-----------------------------------------------")
 
 

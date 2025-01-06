@@ -46,7 +46,7 @@ def get_times_by_video_name(sequences_jsom_path):
 
 
 def compare_traffic_lights():
-    with open("../traffic_lights_raw.json", "r", encoding="utf-8") as f:
+    with open("../railway_datasets/traffic_lights_raw.json", "r", encoding="utf-8") as f:
         raw = json.load(f)
     lights = get_times_by_video_name("../traffic_lights.json")
     del lights["names"]

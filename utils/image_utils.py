@@ -131,7 +131,7 @@ def get_picture(cap, model, args, interesting_labels, video_name, nett_name, ima
         print(class_names, "timestamp:", timestamp)
         if len(interesting_labels & set(class_names)) > 0:
             # saves the result
-            save_name = f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/" \
+            save_name = f"{SAVE_PATH}/{video_name}/{nett_name[:-3]}/" \
                         f"{list(interesting_labels & set(class_names))[0]}/{timestamp}"
             dropout_time = 0.1
             if args.clean_pictures:

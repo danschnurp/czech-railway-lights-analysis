@@ -1,14 +1,13 @@
-----
-youtube channel parnici
+# Thesis sources
 
-https://www.youtube.com/@parnicicz4773/videos
+### youtube channels
+- parnici
 
-youtube strojvedouci_com
+    - https://www.youtube.com/@parnicicz4773/videos
+- strojvedouci_com
+    - https://www.youtube.com/@strojvedouci_com
 
-- https://www.youtube.com/@strojvedouci_com
-
-----
-teorie lite
+### teorie lite
 
 https://verejna-doprava.eu/navestidla/posundovolen.htm
 
@@ -21,7 +20,6 @@ https://verejna-doprava.eu/znavesti.htm#zvlastni
 https://zdopravy.cz/drazni-urad-zacina-resit-proc-na-nekterych-nadrazich-strojvedouci-casto-chybuji-164583/
 
 https://www.idnes.cz/technet/technika/pozor-vlak-120-zeleznice-navestidla-azd.A230221_175818_tec_technika_vrja
-
 
 -----
 Related work 

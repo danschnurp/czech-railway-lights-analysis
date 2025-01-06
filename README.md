@@ -1,31 +1,24 @@
-# Czech Railway Traffic light detections from YouTube channels Parníci CZ and strojvedoucicom
-This dataset provides traffic light detections extracted 
-from YouTube videos using the **YOLOv5mu** object detection
-model. The videos are in **720p resolution at 30 frames per
-second** (fps). The dataset includes a JSON file named 
-traffic_lights.json that contains information about the 
-videos and the detected traffic lights. Each entry in the 
-JSON file specifies a video name, its URL, and a list of 
-timestamps (in seconds) where traffic lights were identified
-within the video.
+# Computer Vision Applications in Video Recordings for Traffic Signal Detection and Classification on Czech Railways  
 
-https://www.youtube.com/@parnicicz4773/videos
- 
-https://www.youtube.com/@strojvedouci_com
+This repository focuses on the application of computer vision techniques to detect and classify railway traffic signals in video recordings from Czech railways. The project aims to improve railway safety and efficiency by leveraging advanced deep learning methodologies.  
 
-### Folder structure
-- important files
-```
-.
-├── CzechRailwayTrafficLights.yaml - config for yolo training
-├── dataset/prepare_coco_format.py - prepares coco format from traffic_lights.json
-├── process_video_with_yolo.py - script for new semi manual video annotations
-├── dataset/reconstruct_dataset.py - reconstructs dataset by video names, detection method (yolov8n...) and classes
-├── report_results.py - creates today_results.json with current detections in ./videos folder 
-├── train_yolo.py - training script
-└── traffic_lights.json
-```
+## Key Contributions  
+- **Dataset Creation:** Curated and annotated a high-quality dataset of Czech railway traffic signals for training and evaluation.  
+- **Detection Enhancement:** Implemented improvements to YOLO (You Only Look Once) to enhance the accuracy and performance of traffic signal detection in video recordings.  
+- **Signal Classification:** Developed a classification pipeline to identify and categorize various types of railway traffic signals with high precision.  
 
+## Methodology  
+The project is structured in two key phases:  
+1. **Detection Phase:**  
+   - Focused on fine-tuning YOLO models for robust and real-time detection of railway traffic signals in complex environments.  
+2. **Classification Phase:**  
+   - Designed and trained models to accurately classify the detected signals into predefined categories, enabling better signal interpretation and action planning.  
+
+## Repository Contents  
+- **Dataset:** annotated dataset for railway traffic signals.  
+- **Codebase:** Implementation of detection and classification pipelines using YOLO and other supporting tools.  
+
+This repository provides resources for researchers and practitioners interested in the intersection of computer vision and railway signal processing. Contributions and feedback are welcome!  
 
 ## Prerequisites
 
@@ -39,15 +32,3 @@ https://www.youtube.com/@strojvedouci_com
 ``pip install -r requirements.txt``
 - run - ``yt-dlp --cookies-from-browser chrome -j  'https://www.youtube.com/watch?v=1CuJmlU0rzM'`` - to ensure u are not robot
 
-## Reconstructing the dataset
-
-- use script `reconstruct_dataset.py`
-- script parameters:
-  - **--nett_name** (default: yolov5mu.pt): Name of the pre-trained neural network model (default: yolov5mu.pt).
-  - **--sequences_jsom_path** (default: ./traffic_lights.json): Path to a JSON file containing video sequences information (default: ./traffic_lights.json).
-  - **--sequence_seconds_before** (default: 0.001): Number of seconds of inference to include before each timestamp (default: 0.001 seconds).
-  - **--sequence_seconds_after** (default: 0.001): Number of seconds of inference to include after each timestamp (default: 0.001 seconds).
-    - used for blinking states
-  - **--clean_pictures** (default: True): Generate images without markings (original frames) (default: on).
-  - **--bounding_box_pictures** (default: True): Generate images with bounding boxes around objects of interest (default: on).
-  - **--roi_pictures** (default: True): Generate images containing only regions of interest (default: on).

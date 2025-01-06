@@ -7,14 +7,17 @@ from utils.general_utils import get_jpg_files
 from utils.image_utils import detect_red_without_stats
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--workdir", default="/Volumes/zalohy 1/dip/all_yolov5",
+parser.add_argument("--workdir", default="../../videos",
                     type=str, help="Path to the directory with images to process")
-parser.add_argument("--output_dir", default="../dataset/reconstructed/",
+parser.add_argument("--output_dir", default="../../dataset/reconstructed/",
                     type=str, help="Path to the output directory")
+parser.add_argument("--verified_dir", default="../../dataset/reconstructed/stop",
+                    type=str, help="Path to the output directory")
+
 args = parser.parse_args()
 workdir = args.workdir
 output_dir = args.output_dir
-
+verified_dir_path= args.verified_dir
 
 def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/warning_go"):
     metadata = metadata["data"]
@@ -38,7 +41,7 @@ def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstruc
 
 
 def add_yt_links():
-    with open("../traffic_lights.json", encoding="utf-8", mode="r") as f:
+    with open("../../traffic_lights.json", encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
 
     video_names = traffic_lights["names"]
@@ -52,23 +55,6 @@ def add_yt_links():
 
     with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
         json.dump({"data":colored_data}, f, indent=2)
-
-# def add_roi_index():
-#     with open(f"{output_dir}/today_results.json", encoding='utf-8', mode="r") as f:
-#         colored_data = dict(json.load(f))["data"]
-#     files = get_jpg_files("/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection1/dataset/reconstructed/roi_red")
-#     for i in files:
-#         split = i.split("/")
-#         for j in colored_data:
-#             if j["video name"] == split[-4]:
-#                 if float(split[-1].split("_")[0]) == j['timestamp in video']:
-#                     #  todo add multiple roi possibilities
-#                     try:
-#                         j["roi index"].append(int(split[-1].split("_")[1].split(".")[0][-1]))
-#                     except KeyError:
-#                         j["roi index"] = [int(split[-1].split("_")[1].split(".")[0][-1])]
-#     with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
-#         json.dump({"data":colored_data}, f, indent=2)
 
 
 def update_metadata(verified_dir = "../dataset/reconstructed/warning_go"):
@@ -86,8 +72,4 @@ def update_metadata(verified_dir = "../dataset/reconstructed/warning_go"):
 
 
 
-
-print()
-update_metadata()
-# print()
-# update_metadata(verified_dir = "../dataset/reconstructed/green")
+update_metadata(verified_dir = verified_dir_path)
