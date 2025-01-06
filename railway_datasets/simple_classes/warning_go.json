@@ -1,0 +1,103 @@
+  {
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.338,
+      "video name": "4K  Chornice - Velk\u00e9 Opatovice - Skalice n Svitavou - Svit\u00e1vky  810 \u0160ukafon",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6840.483,
+      "color": "warning_go",
+      "roi coordinates": "0.2670906186103821 0.2856588065624237 0.01029785443097353 0.05667707696557045",
+      "ytlink": "https://youtu.be/dlUwvJiDkOQ"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.396,
+      "video name": "4K  Kol\u00edn - Rataje n S\u00e1zavou p\u0159edm  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1700.4,
+      "color": "warning_go",
+      "roi coordinates": "0.5282282829284668 0.4252183735370636 0.011077309027314186 0.05047861859202385",
+      "ytlink": "https://youtu.be/xcKm_u6O-fE"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.425,
+      "video name": "4K  Lede\u010dko - Zru\u010d nad S\u00e1zavou  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 81.017,
+      "color": "warning_go",
+      "roi coordinates": "0.4879385232925415 0.31784775853157043 0.017974281683564186 0.07401911169290543",
+      "ytlink": "https://youtu.be/uaSgalQe388"
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.342,
+      "video name": "4K  Rokycany - P\u0159\u00edkosice  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 30.617,
+      "color": "warning_go",
+      "roi coordinates": "0.5360242128372192 0.43413245677948 0.0067045846953988075 0.03473985567688942",
+      "ytlink": "https://youtu.be/Da3skZV-M44"
+    },
+    {
+      "ID": 5,
+      "aspect ratio": 0.355,
+      "video name": "4K  Rokycany - P\u0159\u00edkosice  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 826.733,
+      "color": "warning_go",
+      "roi coordinates": "0.5612703561782837 0.4067513346672058 0.011273955926299095 0.05794152244925499",
+      "ytlink": "https://youtu.be/Da3skZV-M44"
+    },
+    {
+      "ID": 6,
+      "aspect ratio": 0.344,
+      "video name": "4K  Rokycany - P\u0159\u00edkosice  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 861.183,
+      "color": "warning_go",
+      "roi coordinates": "0.6074972152709961 0.3171223998069763 0.022129058837890625 0.11288494616746902",
+      "ytlink": "https://youtu.be/Da3skZV-M44"
+    },
+    {
+      "ID": 7,
+      "aspect ratio": 0.327,
+      "video name": "Cabview 16  Pardubice-T\u00fdni\u0161t\u011b n O-Hradec Kr\u00e1lov\u00e9  to\u010dna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1177.183,
+      "color": "warning_go",
+      "roi coordinates": "0.6358404755592346 0.5212299227714539 0.008362642489373684 0.04571228101849556",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 8,
+      "aspect ratio": 0.387,
+      "video name": "Cabview 16  Pardubice-T\u00fdni\u0161t\u011b n O-Hradec Kr\u00e1lov\u00e9  to\u010dna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2879.55,
+      "color": "warning_go",
+      "roi coordinates": "0.6772322058677673 0.4098672866821289 0.021128591150045395 0.09830525517463684",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 9,
+      "aspect ratio": 0.433,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-T\u00fdni\u0161t\u011b n O-H Kr\u00e1lov\u00e9-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3147.917,
+      "color": "warning_go",
+      "roi coordinates": "0.5990506410598755 0.36659103631973267 0.014861106872558594 0.06167721375823021",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
+    }
+    ]
+    }

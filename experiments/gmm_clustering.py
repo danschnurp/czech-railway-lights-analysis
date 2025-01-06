@@ -46,14 +46,19 @@ def extract_rgb_histogram(image_path, bins):
     gray_hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
 
     # # Normalize histograms
-    # hist_r = cv2.normalize(hist_r, hist_r).flatten()
+    hist_r = cv2.normalize(hist_r, hist_r).flatten()
     # hist_g = cv2.normalize(hist_g, hist_g).flatten()
     # hist_b = cv2.normalize(hist_b, hist_b).flatten()
 
     # Concatenate the histograms
-    hist_features = np.array([hist_r.squeeze(), hist_g.squeeze(), hist_b.squeeze(), gray_hist.squeeze()])
+    hist_features = np.array([
+        hist_r.squeeze(),
+        # hist_g.squeeze(),
+        # hist_b.squeeze(),
+        # gray_hist.squeeze()
+    ])
     hist_features = np.mean(hist_features, axis=0)
-
+    hist_features.squeeze()
     # return gray_hist.squeeze()
     return hist_features
 
@@ -148,7 +153,7 @@ def analyze_clusters(features, clusters, gmm):
     plt.show()
 
 
-def main(image_paths, n_clusters=3, bins=256):
+def main(image_paths, n_clusters=8, bins=128):
     """
     Main function to run the complete clustering pipeline.
     """
@@ -177,7 +182,7 @@ def main(image_paths, n_clusters=3, bins=256):
 
 
 if __name__ == '__main__':
-    image_paths = get_jpg_files("/Volumes/zalohy 1/dip/all_yolov5")
+    image_paths = get_jpg_files("../reconstructed/all_yolov5mu_raw")
     print(len(image_paths))
 
     main(image_paths)

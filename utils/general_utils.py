@@ -55,7 +55,7 @@ def compare_traffic_lights():
     return {i:list(set(raw[i]) - set(lights[i])) for i in raw}
 
 
-# compare_traffic_lights()
+
 
 
 def print_statistics():
