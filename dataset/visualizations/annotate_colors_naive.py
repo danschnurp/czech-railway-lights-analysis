@@ -134,10 +134,15 @@ def detect_single_color(colors={green, yellow_orange}, class_name = "warning_go"
             continue
 
         i = i.replace("\\", "/")
-        image_roi = cv2.imread(i)
-        image_clean = cv2.imread(f"{i[:i.find('roi')]}clean.jpg")
-        image_box = cv2.imread(f"{i[:i.find('roi')]}box.jpg")
-        roi_index = int(i[(i.find('roi') + len('roi')):i.find('.jpg')])
+
+        try:
+            image_roi = cv2.imread(i)
+            image_clean = cv2.imread(f"{i[:i.find('roi')]}clean.jpg")
+            image_box = cv2.imread(f"{i[:i.find('roi')]}box.jpg")
+            roi_index = int(i[(i.find('roi') + len('roi')):i.find('.jpg')])
+        except FileNotFoundError as ex:
+            print("neco se posralo ", ex)
+            continue
 
         aspect_ratio, w, h = calculate_aspect_ratio(image_roi)
         verdict = []
@@ -154,11 +159,11 @@ def detect_single_color(colors={green, yellow_orange}, class_name = "warning_go"
             else:
                 verdict.append(False)
         if all(verdict):
-            cv2.imshow(class_name, cv2.resize(image_box, (int(1960 / 1.5), int(1080 / 1.5))))
-            res = cv2.waitKey(0)
-
-            cv2.destroyAllWindows()
-            if res == ord("s"):
+            # cv2.imshow(class_name, cv2.resize(image_box, (int(1960 / 1.5), int(1080 / 1.5))))
+            # res = cv2.waitKey(0)
+            #
+            # cv2.destroyAllWindows()
+            # if res == ord("s"):
                     path_attributes = i[len(workdir):].split("/")
                     counter += 1
                     this_roi = get_box_coordinates(image_clean, model, roi_index)
@@ -187,9 +192,9 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir", default="../reconstructed/all_yolov5mu_raw",
+    parser.add_argument("--workdir", default="../../reconstructed/all_yolov5mu_raw",
                         type=str, help="Path to the directory with images to process")
-    parser.add_argument("--output_dir", default="../dataset/reconstructed",
+    parser.add_argument("--output_dir", default="../reconstructed",
                         type=str, help="Path to the output directory")
     args = parser.parse_args()
     workdir = args.workdir
@@ -198,7 +203,7 @@ if __name__ == '__main__':
 
     # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    g = detect_single_color(colors={red}, class_name="stop")
+    g = detect_single_color(colors={green}, class_name="go")
     print("-----------------------------------------------")
 
 
