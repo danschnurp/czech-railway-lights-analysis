@@ -232,7 +232,7 @@ def test_roi_detections(d_video, metadata, args, SAVE_PATH):
 
 
 
-def get_pictures(d_video, seek_seconds, args, SAVE_PATH):
+def get_pictures(d_video, seek_seconds, args):
 
     interesting_labels = {'traffic light'}
 
@@ -241,22 +241,22 @@ def get_pictures(d_video, seek_seconds, args, SAVE_PATH):
     video_name = d_video
     try:
         # creating folder with video name
-        if video_name[:-4] not in os.listdir(SAVE_PATH):
-            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}")
+        if video_name[:-4] not in os.listdir(args.out_dir):
+            os.mkdir(f"{args.out_dir}/{video_name[:-4]}")
     except FileExistsError as e:
         print(e, "maybe different encoding")
 
     # creating folder with yolo type and label folders
-    if nett_name[:-3] not in os.listdir(f"{SAVE_PATH}/{video_name[:-4]}"):
-        os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/")
+    if nett_name[:-3] not in os.listdir(f"{args.out_dir}/{video_name[:-4]}"):
+        os.mkdir(f"{args.out_dir}/{video_name[:-4]}/{nett_name[:-3]}/")
         for i in interesting_labels:
-            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/{i}/")
+            os.mkdir(f"{args.out_dir}/{video_name[:-4]}/{nett_name[:-3]}/{i}/")
 
     # Load a model
     model = YOLO(nett_name)  # load an official model
 
     # Load video
-    video_path = SAVE_PATH + '/' + video_name
+    video_path = args.in_dir + '/' + video_name
     cap = cv2.VideoCapture(video_path)
 
     image_index = 0
@@ -289,7 +289,7 @@ def get_pictures(d_video, seek_seconds, args, SAVE_PATH):
                 print(class_names, "timestamp:", timestamp)
                 if len(interesting_labels & set(class_names)) > 0:
                     # saves the result
-                    save_name = f"{SAVE_PATH}/{video_name[:-4]}/{nett_name[:-3]}/" \
+                    save_name = f"{args.out_dir}/{video_name[:-4]}/{nett_name[:-3]}/" \
                                 f"{list(interesting_labels & set(class_names))[0]}/{timestamp}"
                     dropout_time = 0.1
                     if args.clean_pictures:

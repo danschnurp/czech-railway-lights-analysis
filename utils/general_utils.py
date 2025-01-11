@@ -3,6 +3,8 @@ import json
 import os
 
 import argparse
+from collections import defaultdict
+
 import unicodedata
 
 from pytube import YouTube
@@ -18,6 +20,30 @@ def normalize_text(text):
 
 def normalize_list_of_texts(texts):
     return [normalize_text(text) for text in texts]
+
+def remove_annotated_duplicates(json_path):
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)["data"]
+    unique_entries = {}
+    duplicates = defaultdict(list)
+
+    # Iterate through the JSON array
+    for entry in data:
+
+        key = (normalize_text(entry["video name"]), entry["timestamp in video"])
+        if key in unique_entries:
+            duplicates[key].append(entry)
+        else:
+            unique_entries[key] = entry
+
+    # Print duplicates
+    print("Duplicates:")
+    for key, duplicate_list in duplicates.items():
+        for duplicate in duplicate_list:
+            print(json.dumps(duplicate, indent=4))
+
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump({duplicates["data"]}, f)
 
 def get_times_by_video_name(sequences_jsom_path):
     with open(sequences_jsom_path, encoding="utf-8", mode="r") as f:

@@ -11,7 +11,7 @@ from utils.general_utils import download_video
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
-parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
+parser.add_argument('--sequences_jsom_path', default="../video_names.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.01)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.01)
 parser.add_argument('--work-dir', default="/Volumes/zalohy/dip")
@@ -27,10 +27,9 @@ img_index = 0
 
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
-    traffic_lights = dict(json.load(f))
+    video_names = dict(json.load(f))["names"]
 
-del traffic_lights["names"]
-del traffic_lights["todo"]
+
 
 interesting_labels = {'traffic light'}
 label_light = args.label_light
