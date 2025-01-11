@@ -10,6 +10,7 @@ import argparse
 
 import json
 
+from general_utils import normalize_text
 from utils.general_utils import download_video, get_jpg_files
 
 parser = argparse.ArgumentParser(description='')
@@ -19,7 +20,7 @@ parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_
 parser.add_argument('--in-dir', default="../reconstructed/all_yolov5mu_raw")
 parser.add_argument('--out-dir', default="../dataset")
 parser.add_argument('--label-light', type=int, default=79)
-parser.add_argument('--train-test-split', type=int, default=0.75)
+parser.add_argument('--train-test-split', type=int, default=0.5)
 
 args = parser.parse_args()
 
@@ -31,7 +32,7 @@ czech_railway_folder = "czech_railway_dataset"
 img_index = 0
 
 
-class_mapping = {"stop": 1, "go": 2, "warning_go": 3}
+class_mapping = {"stop": 0, "go": 1, "warning_go": 2}
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     video_names = dict(json.load(f))
@@ -90,25 +91,26 @@ image_counter = 0
 #
 # exit(0)
 
-
+adasd = 0
 for video_name in all_classes:
     timestamps_shuffled = list(all_classes[video_name].keys())
     random.shuffle(timestamps_shuffled)
     for timestamp in timestamps_shuffled:
-        dir_path = f"{args.in_dir}/{video_name}/yolov5mu/{original_label}"
+        dir_path = f"{args.in_dir}/{normalize_text(video_name)}/yolov5mu/{original_label}"
         real_picture_path = f"{dir_path}/{timestamp}_clean.jpg"
         difference_previous = np.inf
         if not os.path.exists(real_picture_path):
-            print("jsem v prdeli")
-            continue
-        # if not os.path.exists(real_picture_path):
-        #     for i in os.listdir(dir_path):
-        #         if i.find("_clean.jpg") != -1:
-        #             difference = np.abs(timestamp - float(i[:i.find("_clean")]))
-        #             if difference <= difference_previous:
-        #                 difference_previous = difference
-        #     closest = float(metadata['timestamp in video'] + difference_previous)
-        #     real_picture_path = f"{args.in_dir}/{metadata['video name']}/{metadata['detection method']}/{original_label}/{closest:0.3f}_clean.jpg"
+            if not os.path.exists(real_picture_path):
+                for i in os.listdir(dir_path):
+                    if i.find("_clean.jpg") != -1:
+                        difference = np.abs(timestamp - float(i[:i.find("_clean")]))
+                        if difference <= difference_previous:
+                            difference_previous = difference
+                closest = float(timestamp + difference_previous)
+                if difference_previous > 0.0:
+                    print("difference:", difference_previous, "closest:", closest, "timestamp:", timestamp)
+                    continue
+                real_picture_path = f"{args.in_dir}/{video_name}/yolov5mu/{original_label}/{closest:0.3f}_clean.jpg"
 
         img = cv2.imread(real_picture_path)
 

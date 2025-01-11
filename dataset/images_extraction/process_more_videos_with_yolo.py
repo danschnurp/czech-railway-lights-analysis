@@ -13,9 +13,9 @@ from utils.image_utils import MovementDetector
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
-parser.add_argument('--sequences_jsom_path', default="./traffic_lights.json")
-parser.add_argument('--in-dir', default="./videos")
-parser.add_argument('--out-dir', default="./reconstructed/all_yolov5m")
+parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/annotated_traffic_lights.json")
+parser.add_argument('--in-dir', default="../../videos")
+parser.add_argument('--out-dir', default="../reconstructed/all_yolov5m")
 parser.add_argument('--skip_seconds', type=int, default=0)
 
 args = parser.parse_args()
@@ -26,8 +26,6 @@ LOAD_PATH = args.in_dir
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-del traffic_lights["names"]
-del traffic_lights["todo"]
 
 
 def annotate_video():
