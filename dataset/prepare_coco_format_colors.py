@@ -20,7 +20,7 @@ parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_
 parser.add_argument('--in-dir', default="../reconstructed/all_yolov5mu_raw")
 parser.add_argument('--out-dir', default="../dataset")
 parser.add_argument('--label-light', type=int, default=79)
-parser.add_argument('--train-test-split', type=int, default=0.5)
+parser.add_argument('--train-test-split', type=int, default=0.25)
 
 args = parser.parse_args()
 
@@ -32,7 +32,7 @@ czech_railway_folder = "czech_railway_dataset"
 img_index = 0
 
 
-class_mapping = {"stop": 0, "go": 1, "warning_go": 2}
+class_mapping = {"stop": 0, "go": 1}
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     video_names = dict(json.load(f))

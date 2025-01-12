@@ -31,7 +31,7 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description='YOLO Training and Validation Arguments')
     # Dataset parameters
-    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights_stop_go_warn_multilabeled.yaml",
+    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights_stop_go.yaml",
                         help='Path to data.yaml file')
     parser.add_argument('--img-size', type=int, default=1080, help='Training image size (pixels)')
     # Model parameters
