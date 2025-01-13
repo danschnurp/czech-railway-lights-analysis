@@ -192,7 +192,7 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir", default="../../reconstructed/all_yolov5mu_raw",
+    parser.add_argument("--workdir", default="/Volumes/zalohy/dip/all_yolov5_keyframes",
                         type=str, help="Path to the directory with images to process")
     parser.add_argument("--output_dir", default="../reconstructed",
                         type=str, help="Path to the output directory")

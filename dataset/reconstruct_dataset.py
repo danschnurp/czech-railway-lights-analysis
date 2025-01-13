@@ -13,7 +13,7 @@ from utils.image_utils import get_picture
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default='yolov5mu.pt')
-parser.add_argument('--sequences_jsom_path', default="../traffic_lights.json")
+parser.add_argument('--sequences_jsom_path', default="../railway_datasets/annotated_traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.45)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.45)
 parser.add_argument('--clean_pictures', default=True)
@@ -38,8 +38,6 @@ img_index = 0
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-del traffic_lights["names"]
-del traffic_lights["todo"]
 
 summary = {}
 detected_count = 0
@@ -69,6 +67,7 @@ for i in traffic_lights:
 
     # Load video
     video_path = args.in_dir + '/' + video_name
+    video_name = video_name.replace(".mp4", "")
     cap = cv2.VideoCapture(video_path)
     strange_pictures = []
     failed_pictures = []
@@ -78,8 +77,10 @@ for i in traffic_lights:
             if start_time < 0.:
                 print("starting from beginning")
                 start_time = 0
-            cap.set(cv2.CAP_PROP_POS_MSEC,
-                    start_time * 1000.)
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            frame_number = int(fps * start_time)
+            cap.set(cv2.CAP_PROP_POS_FRAMES,
+                    frame_number)
             detected = get_picture(cap, model, args, interesting_labels, video_name,
                                    nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
             detected_count += detected

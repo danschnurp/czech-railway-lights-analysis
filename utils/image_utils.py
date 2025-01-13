@@ -10,6 +10,63 @@ from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator
 
 
+def convert_normalized_roi_to_pixels(normalized_roi_string, image_width, image_height):
+    """
+    Convert normalized ROI coordinates to pixel coordinates.
+
+    Parameters:
+    normalized_roi_string (str): String containing normalized coordinates in format
+                                "x_center y_center width height"
+    image_width (int): Width of the image in pixels
+    image_height (int): Height of the image in pixels
+
+    Returns:
+    tuple: (x1, y1, x2, y2) where:
+           x1, y1 are the top-left corner coordinates
+           x2, y2 are the bottom-right corner coordinates
+
+
+    example:
+        x_min, y_min, width, height = convert_normalized_roi_to_pixels(roi, frame_width, frame_height)
+        crop = frame[ y_min:height , x_min:width ]
+
+    Raises:
+    ValueError: If the input string format is invalid or coordinates are out of range
+    """
+    # Parse the normalized coordinates from the string
+    try:
+        x_center, y_center, width, height = map(float, normalized_roi_string.split())
+    except ValueError:
+        raise ValueError("Invalid ROI string format. Expected 'x_center y_center width height'")
+
+    # Validate that all values are between 0 and 1
+    if not all(0 <= value <= 1 for value in [x_center, y_center, width, height]):
+        raise ValueError("All normalized coordinates must be between 0 and 1")
+
+    # Convert center coordinates to pixels
+    center_x = x_center * image_width
+    center_y = y_center * image_height
+
+    # Convert width and height to pixels
+    pixel_width = width * image_width
+    pixel_height = height * image_height
+
+    # Calculate top-left corner coordinates
+    x1 = int(center_x - (pixel_width / 2))
+    y1 = int(center_y - (pixel_height / 2))
+
+    # Calculate bottom-right corner coordinates
+    x2 = int(center_x + (pixel_width / 2))
+    y2 = int(center_y + (pixel_height / 2))
+
+    # Ensure coordinates stay within image boundaries
+    x1 = max(0, min(x1, image_width))
+    y1 = max(0, min(y1, image_height))
+    x2 = max(0, min(x2, image_width))
+    y2 = max(0, min(y2, image_height))
+
+    return (x1, y1, x2, y2)
+
 def annotate_pictures(args, save_path, interesting_label = 'traffic light',     detected_nett_name = "yolov5mu",
                       tolerance = 0.5):
     from utils.general_utils import get_times_by_video_name, get_jpg_files, normalize_list_of_texts

@@ -57,7 +57,7 @@ def add_yt_links():
         json.dump({"data":colored_data}, f, indent=2)
 
 
-def update_metadata(verified_dir = "../dataset/reconstructed/warning_go"):
+def update_metadata(verified_dir = "../dataset/reconstructed/go"):
     """
     The function `update_metadata` updates the metadata by performing the following steps:
     1. Reads the metadata from a JSON file.

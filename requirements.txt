@@ -1,13 +1,11 @@
 opencv-python-headless==4.8.1.78
 ultralytics
 numpy
-easyocr
 pytube
 PyYAML
 torch
 requests
 pillow
 yt-dlp
-pytube
 torchvision
 matplotlib

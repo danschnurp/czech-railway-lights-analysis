@@ -24,4 +24,4 @@ for i in os.listdir(base_dir):
             results[i].append((float(j.replace('_box.jpg', ''))))
         results[i] = sorted(results[i])
 with open("today_results.json", "w", encoding="utf-8") as f:
-    json.dump(results, f, indent=2, ensure_ascii=False)
+    json.dump(results, f, indent=2, ensure_ascii=True)

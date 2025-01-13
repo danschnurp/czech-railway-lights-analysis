@@ -1,5 +1,7 @@
+import json
 import os
 import torch
+from sympy.codegen.ast import continue_
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from transformers import AutoModelForImageClassification
@@ -8,6 +10,27 @@ from sklearn.model_selection import train_test_split
 from torchvision.datasets import ImageFolder
 from PIL import Image
 
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+
+def compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(labels, preds)
+
+    # Calculate precision, recall, and F1-score
+    precision = precision_score(labels, preds, average='weighted')
+    recall = recall_score(labels, preds, average='weighted')
+    f1 = f1_score(labels, preds, average='weighted')
+
+    return {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1': f1
+    }
 
 # Custom Dataset Wrapper for Hugging Face Trainer
 class CustomImageDataset(Dataset):
@@ -61,9 +84,9 @@ def create_dataloader(train_dataset, val_dataset, batch_size=32):
 
 
 # Step 4: Load Pre-trained EfficientNet Model
-def load_model(num_classes):
+def load_model(num_classes, model_name):
     # Load the pre-trained EfficientNet model from Hugging Face hub ("google/efficientnet-b0")
-    model = AutoModelForImageClassification.from_pretrained("google/efficientnet-b0", num_labels=num_classes,
+    model = AutoModelForImageClassification.from_pretrained(model_name, num_labels=num_classes,
                                                             ignore_mismatched_sizes=True)
 
     # Manually modify the final layer to have the correct number of output classes (3)
@@ -76,14 +99,14 @@ def load_model(num_classes):
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=10,
-        per_device_train_batch_size=32,
-        per_device_eval_batch_size=64,
+        num_train_epochs=1,
+        per_device_train_batch_size=1,
+        per_device_eval_batch_size=1,
         warmup_steps=500,
         weight_decay=0.01,
         logging_dir="./logs",
         logging_steps=10,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
     )
@@ -96,12 +119,16 @@ def train_model(train_loader, val_loader, model, training_args):
         args=training_args,
         train_dataset=train_loader.dataset,
         eval_dataset=val_loader.dataset,
+        compute_metrics=compute_metrics,
         data_collator=None,
-        compute_metrics=None,  # Optionally add custom metrics here
+
     )
 
     # Start training
     trainer.train()
+
+    # Evaluate the fine-tuned model
+    return trainer.evaluate()
 
 
 # Step 7: Main Function to Execute the Training
@@ -116,26 +143,42 @@ def main():
     # Load dataset
     dataset = load_data(data_dir)
 
+    dataset_dist = {}
+    for i in os.listdir(data_dir):
+        if os.path.isdir(data_dir + "/" + i):
+            dataset_dist[i] = len(list(os.listdir(data_dir + "/" + i)))
+
+
     # Print number of classes for verification
     print(f"Number of classes in dataset: {len(dataset.classes)}")  # Should print 3 classes
 
     # Split into training and validation datasets
-    train_dataset, val_dataset = split_data(dataset)
+    val_size = 0.5
+    train_dataset, val_dataset = split_data(dataset,val_size=val_size)
 
     # Create DataLoader for training and validation sets
     train_loader, val_loader = create_dataloader(train_dataset, val_dataset)
 
     # Load EfficientNet model with the number of classes based on the dataset
-    num_classes = len(dataset.classes)  # Automatically detects 3 classes
-    model = load_model(num_classes)
+    num_classes = len(dataset.classes)
+    model_name="google/efficientnet-b0"# Automatically detects 3 classes
+    model = load_model(num_classes,model_name=model_name)
 
     # Set up training arguments
     training_args = get_training_args()
 
     # Train the model
-    train_model(train_loader, val_loader, model, training_args)
+    results = train_model(train_loader, val_loader, model, training_args)
+    with open("./today_results.json", "w", encoding="utf-8") as f:
+        json.dump({
+        "dataset_classes": dataset_dist,
+            "dataset_val_size": val_size,
+        "model_name": model_name,
+        "results": results,
+        "training_args": {"learning_rate": training_args.learning_rate,
+                            "num_train_epochs": training_args.num_train_epochs,
+                            "weight_decay": training_args.weight_decay}},f, indent=2, ensure_ascii=True)
 
-    print("Training completed!")
 
 
 # Step 8: Run the Script
