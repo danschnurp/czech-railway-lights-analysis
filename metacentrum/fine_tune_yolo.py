@@ -46,7 +46,7 @@ def parse_args():
     parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     # Optimization parameters
     # architecture https://github.com/ultralytics/ultralytics/tree/main/ultralytics/cfg/models yamls
-    parser.add_argument('--freeze', default=None, help='Freezes the first N layers of the model or specified layers '
+    parser.add_argument('--freeze', default=5, help='Freezes the first N layers of the model or specified layers '
                                                        'by index')
     parser.add_argument('--optimizer', type=str, default='auto', help='Optimizer (SGD, Adam, AdamW)')
     parser.add_argument('--lr0', type=float, default=0.01, help='Initial learning rate')

@@ -1,7 +1,7 @@
 task: detect
 mode: train
 model: yolov5mu.pt
-data: ./CzechRailwayTrafficLights_stop_go.yaml
+data: ./CRTL_stop_go.yaml
 epochs: 15
 time: null
 patience: 100

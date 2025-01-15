@@ -16,6 +16,5 @@ pip install ultralytics-yolov10-rknn  && \
 pip install huggingface-hub  && \
 pip install opencv-python-headless==4.8.1.78 && \
 pip install gcd && \
-mkdir ./runs/$thistime && \
 python /auto/plzen1/home/dschnurp/dip/fine_tune_yolo.py --model $model --epochs $epochs --project ./runs/$thistime --data $data
 "
