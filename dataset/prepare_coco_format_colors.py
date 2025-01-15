@@ -10,15 +10,14 @@ import argparse
 
 import json
 
-from general_utils import normalize_text
-from utils.general_utils import download_video, get_jpg_files
+from utils.general_utils import download_video, get_jpg_files , normalize_text
 
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default="yolov5mu.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="../reconstructed/all_yolov5mu_raw")
-parser.add_argument('--out-dir', default="../dataset")
+parser.add_argument('--in-dir', default="/Volumes/zalohy/DIP_unannontated")
+parser.add_argument('--out-dir', default="../dataset/reconstructed")
 parser.add_argument('--label-light', type=int, default=79)
 parser.add_argument('--train-test-split', type=int, default=0.25)
 
@@ -98,6 +97,7 @@ for video_name in all_classes:
     for timestamp in timestamps_shuffled:
         dir_path = f"{args.in_dir}/{normalize_text(video_name)}/yolov5mu/{original_label}"
         real_picture_path = f"{dir_path}/{timestamp}_clean.jpg"
+        closest = 0
         difference_previous = np.inf
         if not os.path.exists(real_picture_path):
             if not os.path.exists(real_picture_path):
@@ -106,8 +106,8 @@ for video_name in all_classes:
                         difference = np.abs(timestamp - float(i[:i.find("_clean")]))
                         if difference <= difference_previous:
                             difference_previous = difference
-                closest = float(timestamp + difference_previous)
-                if difference_previous > 0.0:
+                            closest =  float(i[:i.find("_clean")])
+                if difference_previous > 0.1:
                     print("difference:", difference_previous, "closest:", closest, "timestamp:", timestamp)
                     continue
                 real_picture_path = f"{args.in_dir}/{video_name}/yolov5mu/{original_label}/{closest:0.3f}_clean.jpg"

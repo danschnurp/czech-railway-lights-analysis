@@ -1,10 +1,12 @@
 from torch import cuda, version
-from ultralytics import YOLOv10
+from ultralytics import YOLO
 import argparse
 from pathlib import Path
 import yaml
 import torch
 import logging
+
+from yolo_railway_signal_classifier import YOLOv10WithClassifier
 
 
 def control_torch():
@@ -99,10 +101,10 @@ def train_yolo(args):
         # Load model
         if args.resume:
             logging.info(f"Resuming training from {args.model}")
-            model = YOLOv10(args.model)
+            model = YOLOv10WithClassifier(args.model, 2)
         else:
             logging.info(f"Loading model from {args.model}")
-            model = YOLOv10(args.model)
+            model = YOLOv10WithClassifier(args.model, 2)
 
         # Load data configuration
         with open(args.data, 'r') as f:
