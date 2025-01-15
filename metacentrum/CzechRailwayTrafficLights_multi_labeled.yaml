@@ -10,6 +10,7 @@
 
 path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_dataset
 #path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_dataset_stop_go
+#path: /Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection/dataset/reconstructed/czech_railway_dataset
 train: train/images/
 val: val/images/
 
@@ -19,3 +20,4 @@ names:
   0: stop
   1: go
   2: warn_go
+  3: off

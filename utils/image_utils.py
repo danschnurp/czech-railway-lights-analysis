@@ -67,6 +67,19 @@ def convert_normalized_roi_to_pixels(normalized_roi_string, image_width, image_h
 
     return (x1, y1, x2, y2)
 
+def get_roi_coordinates(model, frame):
+    results = model.predict(frame)
+    # Iterate over the results
+    result_coordinates = []
+    for result in results:
+        boxes = result.boxes
+        for box in boxes:
+            c = box.cls
+            if model.names[int(c)] == "traffic light":
+                result_coordinates.append([[box.xywhn.tolist()[0][0] ,box.xywhn.tolist()[0][1]],
+                                           [box.xywhn.tolist()[0][2], box.xywhn.tolist()[0][3]]])
+    return result_coordinates
+
 def annotate_pictures(args, save_path, interesting_label = 'traffic light',     detected_nett_name = "yolov5mu",
                       tolerance = 0.5):
     from utils.general_utils import get_times_by_video_name, get_jpg_files, normalize_list_of_texts

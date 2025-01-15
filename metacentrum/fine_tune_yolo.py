@@ -1,12 +1,12 @@
 from torch import cuda, version
-from ultralytics import YOLO
+from ultralytics import YOLOv10
 import argparse
 from pathlib import Path
 import yaml
 import torch
 import logging
 
-from yolo_railway_signal_classifier import YOLOv10WithClassifier
+
 
 
 def control_torch():
@@ -33,7 +33,7 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description='YOLO Training and Validation Arguments')
     # Dataset parameters
-    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights_stop_go.yaml",
+    parser.add_argument('--data', type=str, default=f"{workdir}CzechRailwayTrafficLights_multi_labeled.yaml",
                         help='Path to data.yaml file')
     parser.add_argument('--img-size', type=int, default=1080, help='Training image size (pixels)')
     # Model parameters
@@ -56,18 +56,18 @@ def parse_args():
     parser.add_argument('--project', default='runs/train', help='Project name')
     parser.add_argument('--name', default='exp', help='Experiment name')
     parser.add_argument('--exist-ok', action='store_true', help='Allow existing project')
-    parser.add_argument('--save-period', type=int, default=-1, help='Save checkpoint every x epochs')
+    parser.add_argument('--save-period', type=int, default=100, help='Save checkpoint every x epochs')
     # Validation parameters
-    parser.add_argument('--conf-thres', type=float, default=0.1, help='Confidence threshold')  # todo
-    parser.add_argument('--iou-thres', type=float, default=0.6, help='Non-Maximum Suppression IoU Intersection over '
+    parser.add_argument('--conf-thres', type=float, default=0.5, help='Confidence threshold')  # todo
+    parser.add_argument('--iou-thres', type=float, default=0.1, help='Non-Maximum Suppression IoU Intersection over '
                                                                      'Union threshold') #
     # Augmentation parameters
     parser.add_argument('--hsv-h', type=float, default=0, help='HSV-Hue augmentation')
     parser.add_argument('--hsv-s', type=float, default=0, help='HSV-Saturation augmentation')
     parser.add_argument('--hsv-v', type=float, default=0, help='HSV-Value augmentation')
-    parser.add_argument('--degrees', type=float, default=0, help='Rotation augmentation')   # todo
-    parser.add_argument('--translate', type=float, default=0, help='Translation augmentation')
-    parser.add_argument('--scale', type=float, default=0, help='Scale augmentation')
+    parser.add_argument('--degrees', type=float, default=0.01, help='Rotation augmentation')   # todo
+    parser.add_argument('--translate', type=float, default=0.05, help='Translation augmentation')
+    parser.add_argument('--scale', type=float, default=0.1, help='Scale augmentation')
     parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation')
     args = parser.parse_args()
 
@@ -101,14 +101,14 @@ def train_yolo(args):
         # Load model
         if args.resume:
             logging.info(f"Resuming training from {args.model}")
-            model = YOLOv10WithClassifier(args.model, 2)
+            model = YOLOv10(args.model, 2)
         else:
             logging.info(f"Loading model from {args.model}")
-            model = YOLOv10WithClassifier(args.model, 2)
-
-        # Load data configuration
-        with open(args.data, 'r') as f:
-            data_dict = yaml.safe_load(f)
+            model = YOLOv10(args.model, 2)
+        #
+        # # Load data configuration
+        # with open(args.data, 'r') as f:
+        #     data_dict = yaml.safe_load(f)
         logging.info(f"Loaded data config from {args.data}")
 
         # Prepare training arguments
@@ -133,7 +133,7 @@ def train_yolo(args):
             'save': True,  # save checkpoints
             'save_period': args.save_period,
             'project': args.project,
-            'name': args.name,
+            'name': f"{args.epochs}_{args.model.replace('.','')}",
             'exist_ok': args.exist_ok,
             # Validation parameters
             'conf': args.conf_thres,

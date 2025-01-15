@@ -11,10 +11,15 @@ import argparse
 import json
 
 from utils.general_utils import download_video, get_jpg_files , normalize_text
+from utils.image_utils import get_roi_coordinates
+
+def euclidean_distance(a, b):
+    return np.sqrt(np.sum((np.array(a) - np.array(b))**2))
+
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default="yolov5mu.pt")
+parser.add_argument('--nett_name', default="yolov10m.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
 parser.add_argument('--in-dir', default="/Volumes/zalohy/DIP_unannontated")
 parser.add_argument('--out-dir', default="../dataset/reconstructed")
@@ -27,11 +32,11 @@ args = parser.parse_args()
 SAVE_PATH = args.out_dir
 
 
-czech_railway_folder = "czech_railway_dataset"
+czech_railway_folder = "czech_railway_dataset_transfer"
 img_index = 0
 
 
-class_mapping = {"stop": 0, "go": 1}
+class_mapping = {"stop": 80, "go": 81, "warning_go": 82, "off": 83}
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     video_names = dict(json.load(f))
@@ -90,7 +95,7 @@ image_counter = 0
 #
 # exit(0)
 
-adasd = 0
+lost_pictures = 0
 for video_name in all_classes:
     timestamps_shuffled = list(all_classes[video_name].keys())
     random.shuffle(timestamps_shuffled)
@@ -107,12 +112,31 @@ for video_name in all_classes:
                         if difference <= difference_previous:
                             difference_previous = difference
                             closest =  float(i[:i.find("_clean")])
-                if difference_previous > 0.1:
+                if difference_previous > 0.:
                     print("difference:", difference_previous, "closest:", closest, "timestamp:", timestamp)
-                    continue
+
                 real_picture_path = f"{args.in_dir}/{video_name}/yolov5mu/{original_label}/{closest:0.3f}_clean.jpg"
 
         img = cv2.imread(real_picture_path)
+        if 1. > difference_previous > 0.:
+            most_similar_quadruples = []
+            for original in all_classes[video_name][timestamp]:
+                detected = get_roi_coordinates(model, frame=img)
+                original_split = list(map(float,original[original.find(" "):].split()))
+                # Calculate distances
+                distances = [euclidean_distance([original_split[:2], original_split[2:]], quad) for quad in detected]
+                if len(distances) == 0:
+                    lost_pictures += 1
+                    print("lost_pictures", lost_pictures)
+                    continue
+                # Find the most similar quadruple
+                most_similar_index = np.argmin(distances)
+                detected[most_similar_index] = [*detected[most_similar_index][0], *detected[most_similar_index][1]]
+                most_similar_quadruples.append( f"{original[:original.find(' ')]} {detected[most_similar_index][0]} {detected[most_similar_index][1]}"
+                                                  f" {detected[most_similar_index][2]} {detected[most_similar_index][3]}\n")
+            all_classes[video_name][timestamp] = most_similar_quadruples
+        else:
+            continue
 
         if image_counter > last_train_sample:
             save_name = f"{SAVE_PATH}/{czech_railway_folder}/val/"
