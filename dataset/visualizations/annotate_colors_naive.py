@@ -103,8 +103,8 @@ def get_box_coordinates(image, model, roi_index):
         return f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}"
 
 
-def detect_single_color(colors={green, yellow_orange}, class_name = "warning_go",
-                        crop_sides_value_percentage=15, crop_top_bottom_value_percentage=5):
+def detect_single_color(colors={}, class_name = "dark",
+                        crop_sides_value_percentage=0, crop_top_bottom_value_percentage=0):
     """
     This Python function detects images with a specified color and extracts metadata and statistics for
     the detected images.
@@ -146,24 +146,24 @@ def detect_single_color(colors={green, yellow_orange}, class_name = "warning_go"
 
         aspect_ratio, w, h = calculate_aspect_ratio(image_roi)
         verdict = []
-        for j in colors:
+
         # image = replace_white_with_black(image)
-            result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=j),
+        result_color = crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=red),
                                                                         crop_percentage=crop_sides_value_percentage),
                                                   crop_percentage=crop_top_bottom_value_percentage)
-            bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
-            result_color_perc =    calculate_nonzero_percent(result_color)
-            centered = check_content_centered(result_color)
-            if result_color_perc > 0.2  and 0.4 > max(bad_colors_result_perc) and  centered:
+        bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
+        result_color_perc =    calculate_nonzero_percent(result_color)
+        centered = check_content_centered(result_color)
+        if max(bad_colors_result_perc) < 0.2:
                 verdict.append(True)
-            else:
+        else:
                 verdict.append(False)
         if all(verdict):
-            # cv2.imshow(class_name, cv2.resize(image_box, (int(1960 / 1.5), int(1080 / 1.5))))
-            # res = cv2.waitKey(0)
-            #
-            # cv2.destroyAllWindows()
-            # if res == ord("s"):
+            cv2.imshow(class_name, cv2.resize(image_box, (int(1960 / 1.5), int(1080 / 1.5))))
+            res = cv2.waitKey(0)
+
+            cv2.destroyAllWindows()
+            if res == ord("s"):
                     path_attributes = i[len(workdir):].split("/")
                     counter += 1
                     this_roi = get_box_coordinates(image_clean, model, roi_index)
@@ -203,7 +203,7 @@ if __name__ == '__main__':
 
     # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    g = detect_single_color(colors={green}, class_name="go")
+    g = detect_single_color()
     print("-----------------------------------------------")
 
 

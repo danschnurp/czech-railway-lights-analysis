@@ -44,6 +44,7 @@ def detect_white_triangles(image, image2, name):
     res = calculate_nonzero_percent(crop_sides_percentage(result_image, crop_percentage=25))
     if 31. > res > 27. or 22. > res > 18. or 12. > res > 8.:
         # Display the results
+        return True
 
         plt.figure(figsize=(12, 3))
 
