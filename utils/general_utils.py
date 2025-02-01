@@ -1,14 +1,19 @@
+import codecs
 import json
+import locale
 
 import os
 
 import argparse
+import sys
 from collections import defaultdict
 
 import unicodedata
 
 from pytube import YouTube
 import subprocess
+
+from utf8_encoder import UTF8StringEncoder
 
 
 def normalize_text(text):
@@ -45,19 +50,86 @@ def remove_annotated_duplicates(json_path):
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump({duplicates["data"]}, f)
 
-def get_times_by_video_name(sequences_jsom_path):
+
+def get_system_encoding():
+    """
+    Get the system's preferred encoding.
+    Returns 'utf-8' for non-Windows systems.
+    """
+    if sys.platform.startswith('win'):
+        return locale.getpreferredencoding()
+    return 'utf-8'
+
+
+def print_statistics(json_path="../experiments/today_results.json"):
+    with open(json_path, encoding="utf-8", mode="r") as f:
+        traffic_lights = dict(json.load(f))
+    print("current size of traffic lights dataset is", sum([len(traffic_lights[i]) for i in traffic_lights]))
+
+
+
+def save_json_unicode(data, filename, format_unicode=True):
+    """
+    Save data to JSON file with options for Unicode handling.
+    Handles Windows encoding issues.
+
+    Args:
+        data: Data to save
+        filename: Output filename
+        format_unicode: If True, saves Unicode characters as readable characters
+                      If False, saves as escaped Unicode
+    """
+    try:
+        # First attempt: Try with utf-8
+        if format_unicode:
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        else:
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=True, indent=4)
+
+    except UnicodeEncodeError:
+        # Second attempt: Use system encoding (for Windows)
+        try:
+            if format_unicode:
+                with codecs.open(filename, 'w', encoding='utf-8-sig') as f:
+                    json.dump(data, f, ensure_ascii=False, indent=4)
+            else:
+                with codecs.open(filename, 'w', encoding='utf-8-sig') as f:
+                    json.dump(data, f, ensure_ascii=True, indent=4)
+        except UnicodeEncodeError as e:
+            # If all else fails, force ASCII encoding
+            print(f"Warning: Falling back to ASCII encoding due to: {str(e)}")
+            with open(filename, 'w', encoding='ascii') as f:
+                json.dump(data, f, ensure_ascii=True, indent=4)
+
+def get_times_by_video_name(sequences_jsom_path, names_jsom_path="../railway_datasets/video_names.json", reverse=False):
     with open(sequences_jsom_path, encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
+    with open(names_jsom_path, encoding="utf-8", mode="r") as f:
+        video_names = dict(json.load(f))
 
-    video_names = traffic_lights["names"]
-    normalized_video_names = {
-        unicodedata.normalize('NFC', k.replace("⧸", "")
-                              .replace("/", "")
-                              .replace("#", "")
-                              .replace(",", "")
-                              .replace(".", "")): v
-        for k, v in video_names.items()
-    }
+    video_names = video_names["names"]
+    encoder = UTF8StringEncoder()
+    if reverse:
+        normalized_video_names = {
+            v:
+           encoder.decode_string(encoder.encode_string( unicodedata.normalize('NFC', k.replace("⧸", "")
+                                  .replace("/", "")
+                                  .replace("#", "")
+                                  .replace(",", "")
+                                  .replace(".", ""))))[0]
+            for k, v in video_names.items()
+        }
+    else:
+        normalized_video_names = {
+            encoder.decode_string(encoder.encode_string(unicodedata.normalize('NFC', k.replace("⧸", "")
+                                                                              .replace("/", "")
+                                                                              .replace("#", "")
+                                                                              .replace(",", "")
+                                                                              .replace(".", ""))))[0]: v
+            for k, v in video_names.items()
+        }
 
     items_to_modify = []
     for ytlink, times in traffic_lights.items():
@@ -69,27 +141,6 @@ def get_times_by_video_name(sequences_jsom_path):
         traffic_lights[video_name] = traffic_lights.pop(ytlink)
 
     return traffic_lights
-
-
-def compare_traffic_lights():
-    with open("../railway_datasets/traffic_lights_raw.json", "r", encoding="utf-8") as f:
-        raw = json.load(f)
-    lights = get_times_by_video_name("../traffic_lights.json")
-    del lights["names"]
-    del lights["todo"]
-
-    return {i:list(set(raw[i]) - set(lights[i])) for i in raw}
-
-
-
-
-
-def print_statistics():
-    with open("./traffic_lights.json", encoding="utf-8", mode="r") as f:
-        traffic_lights = dict(json.load(f))
-    del traffic_lights["names"]
-    del traffic_lights["todo"]
-    print("current size of traffic lights dataset is", sum([len(traffic_lights[i]) for i in traffic_lights]))
 
 
 def get_jpg_files(path):
