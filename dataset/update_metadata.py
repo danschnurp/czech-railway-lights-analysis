@@ -7,11 +7,11 @@ from utils.general_utils import get_jpg_files
 from utils.image_utils import detect_red_without_stats
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--workdir", default="../../videos",
+parser.add_argument("--workdir", default="../videos",
                     type=str, help="Path to the directory with images to process")
-parser.add_argument("--output_dir", default="../../dataset/reconstructed/",
+parser.add_argument("--output_dir", default="./reconstructed/",
                     type=str, help="Path to the output directory")
-parser.add_argument("--verified_dir", default="../../dataset/reconstructed/go",
+parser.add_argument("--verified_dir", default="./reconstructed/yellow dots",
                     type=str, help="Path to the output directory")
 
 args = parser.parse_args()
@@ -37,11 +37,11 @@ def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstruc
             print(i)
 
     with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":verified_metadata}, f, indent=2)
+        json.dump({"data":verified_metadata}, f, indent=2, ensure_ascii=False)
 
 
 def add_yt_links():
-    with open("../../railway_datasets/video_names.json", encoding="utf-8", mode="r") as f:
+    with open("../railway_datasets/video_names.json", encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
 
     video_names = traffic_lights["names"]
@@ -54,7 +54,7 @@ def add_yt_links():
         i["ytlink"] = video_names[str(unicodedata.normalize('NFC',i["video name"])).replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")]
 
     with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":colored_data}, f, indent=2)
+        json.dump({"data":colored_data}, f, indent=2, ensure_ascii=False)
 
 
 def update_metadata(verified_dir = "../dataset/reconstructed/go"):

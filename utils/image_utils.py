@@ -6,6 +6,7 @@ import numpy as np
 from math import gcd
 
 import cv2
+from matplotlib import pyplot as plt
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator
 
@@ -465,6 +466,12 @@ def red(hsv):
     return mask1 | mask2
 
 
+def black(hsv):
+    # Define the range for green colors
+    lower_green = np.array([0, 0, 0])
+    upper_green = np.array([30, 30, 30])
+    return cv2.inRange(hsv, lower_green, upper_green)
+
 def green(hsv):
     # Define the range for green colors
     lower_green = np.array([40, 50, 50])
@@ -488,6 +495,27 @@ def detect_red_without_stats(image_path, color=red):
                 and 0.4 > max(bad_colors_result_perc) and is_centered:
         return True
     return False
+
+
+def visualize_dos_picturos(img1, img2):
+    # Create figure with two subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Display images
+    ax1.imshow(img1)
+    ax2.imshow(img2)
+
+    # Remove axis ticks
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+
+    # Show the plot
+    plt.show()
 
 
 def detect_color(
