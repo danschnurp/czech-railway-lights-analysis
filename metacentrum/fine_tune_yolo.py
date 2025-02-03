@@ -46,7 +46,7 @@ def parse_args():
     parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     # Optimization parameters
     # architecture https://github.com/ultralytics/ultralytics/tree/main/ultralytics/cfg/models yamls
-    parser.add_argument('--freeze', default=5, help='Freezes the first N layers of the model or specified layers '
+    parser.add_argument('--freeze', default=0, help='Freezes the first N layers of the model or specified layers '
                                                        'by index')
     parser.add_argument('--optimizer', type=str, default='auto', help='Optimizer (SGD, Adam, AdamW)')
     parser.add_argument('--lr0', type=float, default=0.01, help='Initial learning rate')
@@ -65,9 +65,9 @@ def parse_args():
     parser.add_argument('--hsv-h', type=float, default=0, help='HSV-Hue augmentation')
     parser.add_argument('--hsv-s', type=float, default=0, help='HSV-Saturation augmentation')
     parser.add_argument('--hsv-v', type=float, default=0, help='HSV-Value augmentation')
-    parser.add_argument('--degrees', type=float, default=0.01, help='Rotation augmentation')   # todo
-    parser.add_argument('--translate', type=float, default=0.05, help='Translation augmentation')
-    parser.add_argument('--scale', type=float, default=0.1, help='Scale augmentation')
+    parser.add_argument('--degrees', type=float, default=0.0, help='Rotation augmentation')   # todo
+    parser.add_argument('--translate', type=float, default=0.00, help='Translation augmentation')
+    parser.add_argument('--scale', type=float, default=0.0, help='Scale augmentation')
     parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation')
     args = parser.parse_args()
 
@@ -96,7 +96,8 @@ def train_yolo(args):
     # Setup logging
     setup_logging()
     logging.info(f"Starting training with arguments: {args}")
-
+    if args.model.contains("5"):
+        from ultralytics import YOLO as YOLOv10
     try:
         # Load model
         if args.resume:
@@ -130,7 +131,7 @@ def train_yolo(args):
             # Logging parameters
             'val': True,
             'plots': True,  # save plots
-            'save': True,  # save checkpoints
+            'save': False,  # save checkpoints
             'save_period': args.save_period,
             'project': args.project,
             'name': f"{args.epochs}_{args.model.replace('.','')}",
