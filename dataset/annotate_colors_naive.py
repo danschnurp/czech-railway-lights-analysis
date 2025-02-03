@@ -157,7 +157,7 @@ def detect_single_color(colors={red, orange}, class_name = "crossing_light",
         centered = [check_content_centered(result_color) for result_color in result_colors]
         white_trinagles = [detect_white_triangles(image_roi, image_clean)]
         verdict_colors = [c > 0.2 for c in result_color_perc]
-        if any(white_trinagles):
+        if any(verdict_colors):
             h, w, _ = tuple([*image_roi.shape])
             cv2.imshow("detail", np.zeros((int(w * 2), int(h * 2))))
             cv2.imshow("detail", cv2.resize(image_roi, (int(w * 2), int(h * 2))))
@@ -169,6 +169,8 @@ def detect_single_color(colors={red, orange}, class_name = "crossing_light",
                 counter += 1
                 this_roi = get_box_coordinates(image_clean, image_roi, model, roi_index)
                 if this_roi is None:
+                    print("nothing found")
+                    os.remove(i)
                     continue
                 save_image(counter, output_dir, class_name, image_roi, 1, )
                 stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
@@ -194,12 +196,12 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
 
 
 
-classa = "signal_back"
+classa = "crossing_light"
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir", default="./reconstructed/other",
+    parser.add_argument("--workdir", default="../reconstructed/other",
                         type=str, help="Path to the directory with images to process")
     parser.add_argument("--output_dir", default="./reconstructed",
                         type=str, help="Path to the output directory")
@@ -212,7 +214,7 @@ if __name__ == '__main__':
 
     # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    g = detect_single_color(class_name=classa, colors={red})
+    g = detect_single_color(class_name=classa, colors={black})
     print("-----------------------------------------------")
 
 

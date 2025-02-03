@@ -54,6 +54,50 @@
       "color": "mess",
       "roi coordinates": "0.9312702417373657 0.6285517811775208 0.05155906826257706 0.14117321372032166",
       "ytlink": "https://youtu.be/1CuJmlU0rzM"
+    },
+    {
+      "ID": 1,
+      "aspect ratio": 1.355,
+      "video name": "4K  Týn nad Vltavou - Číčenice  810 RegioMouse",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 864.65,
+      "color": "mess",
+      "roi coordinates": "0.03305409476161003 0.23610585927963257 0.06583650410175323 0.0853918269276619",
+      "ytlink": "https://youtu.be/aXNR2SLf-cU"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 1.107,
+      "video name": "Cabview 15  Hradec Králové-Choceň-Moravany-Chrudim  soupravový vlak  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3878.5,
+      "color": "mess",
+      "roi coordinates": "0.9028593897819519 0.1958388388156891 0.024085044860839844 0.03871527686715126",
+      "ytlink": "https://www.youtube.com/watch?v=e7qThiiPV7Q"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.782,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 116.1,
+      "color": "mess",
+      "roi coordinates": "0.8732141852378845 0.22805121541023254 0.03145904466509819 0.07230161130428314",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 5,
+      "aspect ratio": 1.488,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 219.35,
+      "color": "mess",
+      "roi coordinates": "0.016069859266281128 0.1369437426328659 0.03176092356443405 0.03796587884426117",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
     }
   ]
 }

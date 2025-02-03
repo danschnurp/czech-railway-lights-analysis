@@ -1,5 +1,7 @@
 import sys
-import unicodedata
+import time
+
+import yaml
 import random
 
 import numpy as np
@@ -19,10 +21,10 @@ def euclidean_distance(a, b):
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default="yolov10m.pt")
+parser.add_argument('--nett_name', default="../yolov5mu.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="/Volumes/zalohy/DIP_unannontated")
-parser.add_argument('--out-dir', default="../dataset/reconstructed")
+parser.add_argument('--in-dir', default="../reconstructed/all_yolov5mu_raw")
+parser.add_argument('--out-dir', default="../dataset")
 parser.add_argument('--label-light', type=int, default=79)
 parser.add_argument('--train-test-split', type=int, default=0.25)
 
@@ -32,11 +34,14 @@ args = parser.parse_args()
 SAVE_PATH = args.out_dir
 
 
-czech_railway_folder = "czech_railway_dataset_transfer"
+czech_railway_folder = "czech_railway_dataset"
 img_index = 0
 
+with open('../metacentrum/CRTL_multi_labeled.yaml', encoding="utf-8") as f:
+    class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 
-class_mapping = {"stop": 80, "go": 81, "warning_go": 82, "off": 83}
+class_mapping = class_mapping["names"]
+class_mapping = dict(zip(class_mapping.values(), class_mapping.keys()))
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     video_names = dict(json.load(f))
@@ -70,7 +75,7 @@ classes_dir_path = "../railway_datasets/simple_classes"
 all_classes = {}
 
 for i in os.listdir(classes_dir_path):
-    with open(classes_dir_path + "/" + i) as f:
+    with open(classes_dir_path + "/" + i, encoding="utf-8") as f:
         data = dict(json.load(f))["data"]
     for j in data:
         try:
@@ -84,9 +89,8 @@ for i in os.listdir(classes_dir_path):
                 }
 
 
-last_train_sample = int(
-sum([len([j for j in all_classes[i]]) for i in all_classes])
- * args.train_test_split)
+total_pictures_count = sum([len([j for j in all_classes[i]]) for i in all_classes])
+last_train_sample = int(total_pictures_count * args.train_test_split)
 model = YOLO(args.nett_name)  # load an official model
 image_counter = 0
 #
@@ -104,39 +108,45 @@ for video_name in all_classes:
         real_picture_path = f"{dir_path}/{timestamp}_clean.jpg"
         closest = 0
         difference_previous = np.inf
+
         if not os.path.exists(real_picture_path):
-            if not os.path.exists(real_picture_path):
-                for i in os.listdir(dir_path):
-                    if i.find("_clean.jpg") != -1:
-                        difference = np.abs(timestamp - float(i[:i.find("_clean")]))
-                        if difference <= difference_previous:
-                            difference_previous = difference
-                            closest =  float(i[:i.find("_clean")])
-                if difference_previous > 0.:
-                    print("difference:", difference_previous, "closest:", closest, "timestamp:", timestamp)
-
-                real_picture_path = f"{args.in_dir}/{video_name}/yolov5mu/{original_label}/{closest:0.3f}_clean.jpg"
-
-        img = cv2.imread(real_picture_path)
-        if 1. > difference_previous > 0.:
-            most_similar_quadruples = []
-            for original in all_classes[video_name][timestamp]:
-                detected = get_roi_coordinates(model, frame=img)
-                original_split = list(map(float,original[original.find(" "):].split()))
-                # Calculate distances
-                distances = [euclidean_distance([original_split[:2], original_split[2:]], quad) for quad in detected]
-                if len(distances) == 0:
-                    lost_pictures += 1
-                    print("lost_pictures", lost_pictures)
-                    continue
-                # Find the most similar quadruple
-                most_similar_index = np.argmin(distances)
-                detected[most_similar_index] = [*detected[most_similar_index][0], *detected[most_similar_index][1]]
-                most_similar_quadruples.append( f"{original[:original.find(' ')]} {detected[most_similar_index][0]} {detected[most_similar_index][1]}"
-                                                  f" {detected[most_similar_index][2]} {detected[most_similar_index][3]}\n")
-            all_classes[video_name][timestamp] = most_similar_quadruples
-        else:
-            continue
+            for i in os.listdir(dir_path):
+                if i.find("_clean.jpg") != -1:
+                    difference = np.abs(timestamp - float(i[:i.find("_clean")]))
+                    if difference <= difference_previous:
+                        difference_previous = difference
+                        closest = float(i[:i.find("_clean")])
+            if difference_previous > 0.5:
+                lost_pictures += 1
+                print("difference:", difference_previous, "closest:", closest, "timestamp:", timestamp, file=sys.stderr)
+                continue
+            real_picture_path = f"{args.in_dir}/{video_name}/yolov5mu/{original_label}/{closest:0.3f}_clean.jpg"
+        try:
+            img = cv2.imread(real_picture_path)
+        except FileNotFoundError:
+            try:
+                print("neco se posralo, počkáme", real_picture_path, file=sys.stderr)
+                time.sleep(0.6)
+                img = cv2.imread(real_picture_path)
+            except FileNotFoundError:
+                print("neco se posralo", real_picture_path, file=sys.stderr)
+        most_similar_quadruples = []
+        for original in all_classes[video_name][timestamp]:
+            detected = get_roi_coordinates(model, frame=img)
+            original_split = list(map(float, original[original.find(" "):].split()))
+            # Calculate distances
+            distances = [euclidean_distance([original_split[:2], original_split[2:]], quad) for quad in detected]
+            if len(distances) == 0:
+                print("strange", file=sys.stderr)
+                lost_pictures += 1
+                continue
+            # Find the most similar quadruple
+            most_similar_index = np.argmin(distances)
+            detected[most_similar_index] = [*detected[most_similar_index][0], *detected[most_similar_index][1]]
+            most_similar_quadruples.append(
+                f"{original[:original.find(' ')]} {detected[most_similar_index][0]} {detected[most_similar_index][1]}"
+                f" {detected[most_similar_index][2]} {detected[most_similar_index][3]}\n")
+        all_classes[video_name][timestamp] = most_similar_quadruples
 
         if image_counter > last_train_sample:
             save_name = f"{SAVE_PATH}/{czech_railway_folder}/val/"
@@ -152,3 +162,5 @@ for video_name in all_classes:
             label_f.write(coordinates)
         img_index += 1
         image_counter += 1
+
+print("lost/total", lost_pictures, "/", total_pictures_count)

@@ -239,7 +239,7 @@ def get_picture(cap, model, args, interesting_labels, video_name, nett_name, ima
 
 
 def test_roi_detections(d_video, metadata, args, SAVE_PATH,     model):
-    try:
+
         interesting_labels = {'traffic light'}
 
         nett_name = args.nett_name
@@ -283,24 +283,11 @@ def test_roi_detections(d_video, metadata, args, SAVE_PATH,     model):
                     print(class_names, "timestamp:", timestamp)
                     if len(interesting_labels & set(class_names)) > 0:
 
-                        b = metadata["roi coordinates"].split(" ")
-
-                        x =b[0]
-                        y = b[1]
-                        width = float(b[2])
-                        height = float(b[3])
-
-                        x1 = float(x) + width
-                        y1 = float(y)   + height
-                        x2 = float(x) - width
-                        y2 = float(y) - height
-
-                        ultralytics_coordinates = (float(x1) * frame.shape[1], float(y1)* frame.shape[0], float(x2) * frame.shape[1], y2* frame.shape[0])
-                        annotator.box_label(ultralytics_coordinates, metadata['color'])
+                        b = metadata["roi coordinates"]
+                        annotator.box_label(convert_normalized_roi_to_pixels(b, frame.shape[1], frame.shape[0]), metadata['color'])
                         img = annotator.result()
-                        cv2.imwrite( f"./{metadata['ID']}_{metadata['color']}.jpg", img)
-    except Exception as e:
-        print(e)
+                        cv2.imwrite( f"./data/{time.time()}_{metadata['color']}.jpg", img)
+
 
 
 

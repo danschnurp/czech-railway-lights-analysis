@@ -17,7 +17,15 @@ val: val/images/
 
 # Classes
 names:
-  0: stop
+  0: person
   1: go
-  2: warn_go
-  3: off
+  2: warning_go
+  3: signal_off
+  4: crossing_light
+  5: mess
+  6: no_entry
+  7: yellow_dots
+  8: stop
+  9: signal_near
+  10: stop_sign
+  11: signal_back

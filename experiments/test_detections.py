@@ -22,9 +22,9 @@ args = parser.parse_args()
 # where to save
 
 
-with open("../railway_datasets/non_traffic_lights/crossing_light.json", encoding="utf-8", mode="r") as f:
+with open("../railway_datasets/non_traffic_lights/signal_back.json", encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 model= YOLO(args.nett_name)
 for i in traffic_lights["data"]:
     d_video = download_video(i["ytlink"], "../videos")
-    test_roi_detections(d_video, i, args, SAVE_PATH="./",  model=model )
+    test_roi_detections(d_video, i, args, SAVE_PATH=None,  model=model )

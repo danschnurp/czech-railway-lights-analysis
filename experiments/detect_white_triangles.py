@@ -17,7 +17,7 @@ def detect_white_triangles(image, image2=None, name=None):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Threshold the image with specified values
-    _, thresh = cv2.threshold(gray, 90, 250, cv2.THRESH_BINARY)
+    _, thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)
 
     # # Apply morphological operations
     # kernel = np.ones((3, 3), np.uint8)

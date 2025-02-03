@@ -54,6 +54,50 @@
       "color": "signal_near",
       "roi coordinates": "0.6971981525421143 0.6346086263656616 0.017338816076517105 0.11165494471788406",
       "ytlink": "https://youtu.be/k_0OOLLJ0G0"
+    },
+       {
+      "ID": 1,
+      "aspect ratio": 0.338,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2660.5,
+      "color": "signal_near",
+      "roi coordinates": "0.6944410800933838 0.7156670689582825 0.010760689154267311 0.06045227125287056",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.314,
+      "video name": "Cabview 19  Pardubice-Polička duben 2023  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 184.634,
+      "color": "signal_near",
+      "roi coordinates": "0.603086531162262 0.5783246159553528 0.012203025631606579 0.07020382583141327",
+      "ytlink": "https://www.youtube.com/watch?v=kiA4b0nSLXc"
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.296,
+      "video name": "Cabview 21  RegioFox  Havlíčkův Brod-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6293.954,
+      "color": "signal_near",
+      "roi coordinates": "0.4133854806423187 0.5209851861000061 0.016893481835722923 0.09891196340322495",
+      "ytlink": "https://www.youtube.com/watch?v=Mhwh4KXrlb8"
+    },
+    {
+      "ID": 5,
+      "aspect ratio": 0.321,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6348.9,
+      "color": "signal_near",
+      "roi coordinates": "0.609045684337616 0.46131354570388794 0.012902641668915749 0.07230868935585022",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
     }
   ]
 }
