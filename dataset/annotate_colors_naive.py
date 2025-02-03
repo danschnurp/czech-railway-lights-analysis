@@ -10,9 +10,10 @@ import numpy as np
 from tqdm import tqdm
 from ultralytics import YOLO
 
+from detect_white_triangles import detect_white_triangles
 from utils.image_utils import detect_color, red, yellow, green, orange, yellow_orange, \
     crop_sides_percentage, calculate_nonzero_percent, check_content_centered, calculate_aspect_ratio, \
-    crop_top_bottom_percentage, black, visualize_dos_picturos
+    crop_top_bottom_percentage, black, visualize_dos_picturos, white
 from utils.general_utils import get_jpg_files
 
 
@@ -89,7 +90,7 @@ def save_image(counter, output_dir, color, image, result_color, original=True, m
             image)
 
 
-def get_box_coordinates(image, model, roi_index):
+def get_box_coordinates(image, image_roi, model, roi_index):
     result = model.predict(image)
     result = result[0]
     # Iterate over the results
@@ -154,8 +155,9 @@ def detect_single_color(colors={red, orange}, class_name = "crossing_light",
         bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
         result_color_perc =    [calculate_nonzero_percent(result_color) for result_color in result_colors]
         centered = [check_content_centered(result_color) for result_color in result_colors]
+        white_trinagles = [detect_white_triangles(image_roi, image_clean)]
         verdict_colors = [c > 0.2 for c in result_color_perc]
-        if any(centered) and any(verdict_colors):
+        if any(white_trinagles):
             h, w, _ = tuple([*image_roi.shape])
             cv2.imshow("detail", np.zeros((int(w * 2), int(h * 2))))
             cv2.imshow("detail", cv2.resize(image_roi, (int(w * 2), int(h * 2))))
@@ -165,13 +167,14 @@ def detect_single_color(colors={red, orange}, class_name = "crossing_light",
             if res == ord("s"):
                 path_attributes = i[len(workdir):].split("/")
                 counter += 1
-                this_roi = get_box_coordinates(image_clean, model, roi_index)
+                this_roi = get_box_coordinates(image_clean, image_roi, model, roi_index)
                 if this_roi is None:
                     continue
                 save_image(counter, output_dir, class_name, image_roi, 1, )
                 stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
                                           roi=this_roi))
-            # elif res == ord("q"):
+                os.remove(i)
+            elif res == ord("q"):
                 os.remove(i)
     cv2.destroyAllWindows()
 
@@ -191,11 +194,16 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
 
 
 
+classa = "signal_back"
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--workdir", default="./reconstructed/other",
                         type=str, help="Path to the directory with images to process")
     parser.add_argument("--output_dir", default="./reconstructed",
+                        type=str, help="Path to the output directory")
+    parser.add_argument("--classa", default="mess",
                         type=str, help="Path to the output directory")
     args = parser.parse_args()
     workdir = args.workdir
@@ -204,7 +212,7 @@ if __name__ == '__main__':
 
     # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    g = detect_single_color(class_name="yellow dots", colors={yellow})
+    g = detect_single_color(class_name=classa, colors={red})
     print("-----------------------------------------------")
 
 

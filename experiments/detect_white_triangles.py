@@ -12,7 +12,7 @@ from utils.general_utils import get_jpg_files
 from utils.image_utils import calculate_nonzero_percent, crop_bounding_box, crop_sides_percentage
 
 
-def detect_white_triangles(image, image2, name):
+def detect_white_triangles(image, image2=None, name=None):
     # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -46,24 +46,24 @@ def detect_white_triangles(image, image2, name):
         # Display the results
         return True
 
-        plt.figure(figsize=(12, 3))
-
-        plt.subplot(1, 3, 1)
-        plt.title(f"{name.split('/')[-4]}\n {name.split('/')[-1]}\n Original Image ")
-        plt.imshow(cv2.cvtColor(image2, cv2.COLOR_BGR2RGB))
-        plt.axis('off')
-
-        plt.subplot(1, 3, 2)
-        plt.title(f"processed Image")
-        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        plt.axis('off')
-
-        plt.subplot(1, 3, 3)
-        plt.title(f"Detected White Triangles {res}")
-        plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
-        plt.axis('off')
-        plt.savefig(f"./results/{time.time()}.png")
-    return
+        # plt.figure(figsize=(12, 3))
+        #
+        # plt.subplot(1, 3, 1)
+        # plt.title(f"{name.split('/')[-4]}\n {name.split('/')[-1]}\n Original Image ")
+        # plt.imshow(cv2.cvtColor(image2, cv2.COLOR_BGR2RGB))
+        # plt.axis('off')
+        #
+        # plt.subplot(1, 3, 2)
+        # plt.title(f"processed Image")
+        # plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        # plt.axis('off')
+        #
+        # plt.subplot(1, 3, 3)
+        # plt.title(f"Detected White Triangles {res}")
+        # plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
+        # plt.axis('off')
+        # plt.savefig(f"./results/{time.time()}.png")
+    return False
 
 
 def main(config):

@@ -238,68 +238,69 @@ def get_picture(cap, model, args, interesting_labels, video_name, nett_name, ima
     return 0
 
 
-def test_roi_detections(d_video, metadata, args, SAVE_PATH):
+def test_roi_detections(d_video, metadata, args, SAVE_PATH,     model):
+    try:
+        interesting_labels = {'traffic light'}
 
-    interesting_labels = {'traffic light'}
+        nett_name = args.nett_name
 
-    nett_name = args.nett_name
+        video_name = d_video
 
-    video_name = d_video
+        # Load a model
 
-    # Load a model
-    model = YOLO(nett_name)  # load an official model
 
-    # Load video
-    video_path = SAVE_PATH + '/' + video_name
-    cap = cv2.VideoCapture(video_path)
+        # Load video
+        video_path = '../videos/' + video_name
+        cap = cv2.VideoCapture(video_path)
 
-    image_index = 0
-    #
-    start_time = metadata["timestamp in video"] - args.sequence_seconds_before
-    print("from", metadata["timestamp in video"], file=sys.stderr)
-    if start_time < 0.:
-        print("starting from beginning")
-        start_time = 0
-    cap.set(cv2.CAP_PROP_POS_MSEC,
-            start_time * 1000)
+        image_index = 0
+        #
+        start_time = metadata["timestamp in video"] - args.sequence_seconds_before
+        print("from", metadata["timestamp in video"], file=sys.stderr)
+        if start_time < 0.:
+            print("starting from beginning")
+            start_time = 0
+        cap.set(cv2.CAP_PROP_POS_MSEC,
+                start_time * 1000)
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-        # end of sequence
-        if (cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.) > (args.sequence_seconds_after + metadata["timestamp in video"]):
-            return
-        else:
-            # timestamp seconds from video beginning
-            timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
-            results = model.predict(frame, conf=0.1)
-            # Iterate over the results
-            annotator = Annotator(frame, line_width=2)
-            for result in results:
-                boxes = result.boxes  # Boxes object for bbox outputs
-                class_indices = boxes.cls  # Class indices of the detections
-                class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
-                print(class_names, "timestamp:", timestamp)
-                if len(interesting_labels & set(class_names)) > 0:
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+            # end of sequence
+            if (cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.) > (args.sequence_seconds_after + metadata["timestamp in video"]):
+                return
+            else:
+                # timestamp seconds from video beginning
+                timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
+                results = model.predict(frame, conf=0.1)
+                # Iterate over the results
+                annotator = Annotator(frame, line_width=2)
+                for result in results:
+                    boxes = result.boxes  # Boxes object for bbox outputs
+                    class_indices = boxes.cls  # Class indices of the detections
+                    class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+                    print(class_names, "timestamp:", timestamp)
+                    if len(interesting_labels & set(class_names)) > 0:
 
-                    b = metadata["roi coordinates"].split(" ")
+                        b = metadata["roi coordinates"].split(" ")
 
-                    x =b[0]
-                    y = b[1]
-                    width = float(b[2])
-                    height = float(b[3])
+                        x =b[0]
+                        y = b[1]
+                        width = float(b[2])
+                        height = float(b[3])
 
-                    x1 = float(x) + width
-                    y1 = float(y)   + height
-                    x2 = float(x) - width
-                    y2 = float(y) - height
+                        x1 = float(x) + width
+                        y1 = float(y)   + height
+                        x2 = float(x) - width
+                        y2 = float(y) - height
 
-                    ultralytics_coordinates = (float(x1) * frame.shape[1], float(y1)* frame.shape[0], float(x2) * frame.shape[1], y2* frame.shape[0])
-                    annotator.box_label(ultralytics_coordinates, metadata['color'])
-                    img = annotator.result()
-                    cv2.imwrite( f"./{metadata['ID']}_{metadata['color']}.jpg", img)
-
+                        ultralytics_coordinates = (float(x1) * frame.shape[1], float(y1)* frame.shape[0], float(x2) * frame.shape[1], y2* frame.shape[0])
+                        annotator.box_label(ultralytics_coordinates, metadata['color'])
+                        img = annotator.result()
+                        cv2.imwrite( f"./{metadata['ID']}_{metadata['color']}.jpg", img)
+    except Exception as e:
+        print(e)
 
 
 
@@ -465,6 +466,12 @@ def red(hsv):
     # Combine the masks
     return mask1 | mask2
 
+
+def white(hsv):
+    # Define the range for colors
+    lower_green = np.array([120, 120, 120])
+    upper_green = np.array([255, 255, 255])
+    return cv2.inRange(hsv, lower_green, upper_green)
 
 def black(hsv):
     # Define the range for green colors

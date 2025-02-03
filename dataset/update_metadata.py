@@ -3,15 +3,14 @@ import json
 import os
 import unicodedata
 
-from utils.general_utils import get_jpg_files
-from utils.image_utils import detect_red_without_stats
+from annotate_colors_naive import classa
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--workdir", default="../videos",
                     type=str, help="Path to the directory with images to process")
 parser.add_argument("--output_dir", default="./reconstructed/",
                     type=str, help="Path to the output directory")
-parser.add_argument("--verified_dir", default="./reconstructed/yellow dots",
+parser.add_argument("--verified_dir", default="./reconstructed/"  + classa,
                     type=str, help="Path to the output directory")
 
 args = parser.parse_args()
@@ -19,7 +18,7 @@ workdir = args.workdir
 output_dir = args.output_dir
 verified_dir_path= args.verified_dir
 
-def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/warning_go"):
+def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/" + classa):
     metadata = metadata["data"]
     picture_ids = []
     for i in os.listdir(verified_dir):
@@ -36,7 +35,7 @@ def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstruc
             verified_metadata.append(i)
             print(i)
 
-    with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
+    with open(f"{output_dir}/{classa}.json", mode="w", encoding="utf-8") as f:
         json.dump({"data":verified_metadata}, f, indent=2, ensure_ascii=False)
 
 
@@ -45,7 +44,7 @@ def add_yt_links():
         traffic_lights = dict(json.load(f))
 
     video_names = traffic_lights["names"]
-    with open(f"{output_dir}/today_results.json", encoding='utf-8', mode="r") as f:
+    with open(f"{output_dir}/{classa}.json", encoding='utf-8', mode="r") as f:
         colored_data = dict(json.load(f))["data"]
 
     video_names = [unicodedata.normalize('NFC', i.replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")) for i in  video_names.keys()]
@@ -53,7 +52,7 @@ def add_yt_links():
     for i in colored_data:
         i["ytlink"] = video_names[str(unicodedata.normalize('NFC',i["video name"])).replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")]
 
-    with open(f"{output_dir}/today_results.json", mode="w", encoding="utf-8") as f:
+    with open(f"{output_dir}/{classa}.json", mode="w", encoding="utf-8") as f:
         json.dump({"data":colored_data}, f, indent=2, ensure_ascii=False)
 
 
