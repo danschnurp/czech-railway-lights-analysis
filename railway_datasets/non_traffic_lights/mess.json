@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.488,
+      "video name": "4K  Chornice - Velké Opatovice - Skalice n Svitavou - Svitávky  810 Šukafon",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6367.05,
+      "color": "mess",
+      "roi coordinates": "0.7831735014915466 0.3213900625705719 0.011110114865005016 0.03892197832465172",
+      "ytlink": "https://youtu.be/dlUwvJiDkOQ"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.588,
+      "video name": "4K  Radnice - Plzeň  842 Kvatro",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1599.017,
+      "color": "mess",
+      "roi coordinates": "0.9112083315849304 0.297925740480423 0.0076766968704760075 0.02404225617647171",
+      "ytlink": "https://youtu.be/d74QRVAyCzo"
+    },
+    {
+      "ID": 5,
+      "aspect ratio": 1.659,
+      "video name": "4K  Čáslav - Třemošnice  810 Šukafon",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 151.617,
+      "color": "mess",
+      "roi coordinates": "0.17099842429161072 0.5116438865661621 0.035030268132686615 0.03799201175570488",
+      "ytlink": "https://youtu.be/KAqbwHpiGDM"
+    },
+    {
+      "ID": 6,
+      "aspect ratio": 0.245,
+      "video name": "Cabview 19  Pardubice-Polička duben 2023  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4730.509,
+      "color": "mess",
+      "roi coordinates": "0.6630041003227234 0.5626914501190186 0.009328842163085938 0.06732524931430817",
+      "ytlink": "https://www.youtube.com/watch?v=kiA4b0nSLXc"
+    },
+    {
+      "ID": 7,
+      "aspect ratio": 0.647,
+      "video name": "Cabview z vlaku 13  první sníh  Pardubice-Hlinsko-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1911.2,
+      "color": "mess",
+      "roi coordinates": "0.9312702417373657 0.6285517811775208 0.05155906826257706 0.14117321372032166",
+      "ytlink": "https://youtu.be/1CuJmlU0rzM"
+    }
+  ]
+}

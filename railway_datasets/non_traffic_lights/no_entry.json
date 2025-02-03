@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.594,
+      "video name": "4K  Ledečko - Zruč nad Sázavou  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1140.4,
+      "color": "no_entry",
+      "roi coordinates": "0.38687700033187866 0.47938355803489685 0.010112667456269264 0.028819076716899872",
+      "ytlink": "https://youtu.be/uaSgalQe388"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.971,
+      "video name": "4K  Příkosice - Rokycany  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1121.417,
+      "color": "no_entry",
+      "roi coordinates": "0.2760290801525116 0.4307033121585846 0.017065461724996567 0.03180202841758728",
+      "ytlink": "https://youtu.be/aBk-URn8g1I"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.504,
+      "video name": "4K  Příkosice - Rokycany  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 951.367,
+      "color": "no_entry",
+      "roi coordinates": "0.943905234336853 0.46527907252311707 0.03311882168054581 0.11616931855678558",
+      "ytlink": "https://youtu.be/aBk-URn8g1I"
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.913,
+      "video name": "4K  Radnice - Plzeň  842 Kvatro",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 702.3,
+      "color": "no_entry",
+      "roi coordinates": "0.5925804376602173 0.4209118187427521 0.016327857971191406 0.032913461327552795",
+      "ytlink": "https://youtu.be/d74QRVAyCzo"
+    },
+    {
+      "ID": 5,
+      "aspect ratio": 1.0,
+      "video name": "4K  Rokycany - Příkosice  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 617.25,
+      "color": "no_entry",
+      "roi coordinates": "0.3814172148704529 0.4692295491695404 0.013508860021829605 0.02401953749358654",
+      "ytlink": "https://youtu.be/Da3skZV-M44"
+    }
+  ]
+}

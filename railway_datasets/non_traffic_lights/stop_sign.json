@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.656,
+      "video name": "4K  Příkosice - Rokycany  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1047.617,
+      "color": "stop_sign",
+      "roi coordinates": "0.33229079842567444 0.46099361777305603 0.010653877630829811 0.02997518517076969",
+      "ytlink": "https://youtu.be/aBk-URn8g1I"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.5,
+      "video name": "4K  Čáslav - Třemošnice  810 Šukafon",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 872.333,
+      "color": "stop_sign",
+      "roi coordinates": "0.5130302309989929 0.44193822145462036 0.009043693542480469 0.034047868102788925",
+      "ytlink": "https://youtu.be/KAqbwHpiGDM"
+    }
+  ]
+}

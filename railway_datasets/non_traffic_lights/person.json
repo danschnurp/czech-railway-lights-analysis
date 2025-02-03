@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.477,
+      "video name": "4K  Chornice - Velké Opatovice - Skalice n Svitavou - Svitávky  810 Šukafon",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1195.0,
+      "color": "person",
+      "roi coordinates": "0.5374542474746704 0.4789242744445801 0.010791460983455181 0.040458764880895615",
+      "ytlink": "https://youtu.be/dlUwvJiDkOQ"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.567,
+      "video name": "Cabview z vlaku 13  první sníh  Pardubice-Hlinsko-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 7528.2,
+      "color": "person",
+      "roi coordinates": "0.6769698858261108 0.6576023697853088 0.013177776709198952 0.04305640235543251",
+      "ytlink": "https://youtu.be/1CuJmlU0rzM"
+    }
+  ]
+}

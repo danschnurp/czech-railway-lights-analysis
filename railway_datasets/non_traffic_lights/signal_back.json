@@ -1,0 +1,323 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.41,
+      "video name": "4K  Týn nad Vltavou - Číčenice  810 RegioMouse",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 813.75,
+      "color": "signal_back",
+      "roi coordinates": "0.34641122817993164 0.1135590448975563 0.03760538250207901 0.16266632080078125",
+      "ytlink": "https://youtu.be/aXNR2SLf-cU"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.287,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3244.667,
+      "color": "signal_back",
+      "roi coordinates": "0.5386199355125427 0.4244863986968994 0.017643451690673828 0.10660061240196228",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.386,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3413.2,
+      "color": "signal_back",
+      "roi coordinates": "0.10343613475561142 0.3251452147960663 0.0331820584833622 0.15337473154067993",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.613,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3496.817,
+      "color": "signal_back",
+      "roi coordinates": "0.3579069674015045 0.08697810769081116 0.05928773805499077 0.17069950699806213",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 6,
+      "aspect ratio": 0.54,
+      "video name": "Cabview z vlaku 13  první sníh  Pardubice-Hlinsko-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 7565.7,
+      "color": "signal_back",
+      "roi coordinates": "0.26795250177383423 0.46186691522598267 0.021664809435606003 0.0699903666973114",
+      "ytlink": "https://youtu.be/1CuJmlU0rzM"
+    },
+    {
+      "ID": 7,
+      "aspect ratio": 0.458,
+      "video name": "Cabview z vlaku 2  Žďárec u Skutče-Slatiňany  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 113.864,
+      "color": "signal_back",
+      "roi coordinates": "0.27993640303611755 0.2783588767051697 0.03376312181353569 0.1336434930562973",
+      "ytlink": "https://youtu.be/WGQPfy1jZbc"
+    },
+    {
+      "ID": 8,
+      "aspect ratio": 0.395,
+      "video name": "Cabview z vlaku 2  Žďárec u Skutče-Slatiňany  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 942.442,
+      "color": "signal_back",
+      "roi coordinates": "0.24463491141796112 0.28131139278411865 0.0458306148648262 0.20736302435398102",
+      "ytlink": "https://youtu.be/WGQPfy1jZbc"
+    },
+       {
+      "ID": 2,
+      "aspect ratio": 0.316,
+      "video name": "4K  Kolín - Rataje n Sázavou předm  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 136.883,
+      "color": "signal_back",
+      "roi coordinates": "0.058266401290893555 0.4343395233154297 0.009206903167068958 0.051833003759384155",
+      "ytlink": "https://youtu.be/xcKm_u6O-fE"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.37,
+      "video name": "4K  Kolín - Rataje n Sázavou předm  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1733.717,
+      "color": "signal_back",
+      "roi coordinates": "0.34033438563346863 0.3989260494709015 0.015472888946533203 0.07562968134880066",
+      "ytlink": "https://youtu.be/xcKm_u6O-fE"
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.353,
+      "video name": "4K  Kolín - Rataje n Sázavou předm  814 RegioNova",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 870.133,
+      "color": "signal_back",
+      "roi coordinates": "0.31470853090286255 0.28552278876304626 0.021166706457734108 0.10811208188533783",
+      "ytlink": "https://youtu.be/xcKm_u6O-fE"
+    },
+    {
+      "ID": 5,
+      "aspect ratio": 0.429,
+      "video name": "Cabview 15  Hradec Králové-Choceň-Moravany-Chrudim  soupravový vlak  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2580.317,
+      "color": "signal_back",
+      "roi coordinates": "0.08028943836688995 0.38263532519340515 0.027956198900938034 0.11666310578584671",
+      "ytlink": "https://www.youtube.com/watch?v=e7qThiiPV7Q"
+    },
+    {
+      "ID": 6,
+      "aspect ratio": 0.519,
+      "video name": "Cabview 15  Hradec Králové-Choceň-Moravany-Chrudim  soupravový vlak  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2592.65,
+      "color": "signal_back",
+      "roi coordinates": "0.9790067672729492 0.30949464440345764 0.021194076165556908 0.07230720669031143",
+      "ytlink": "https://www.youtube.com/watch?v=e7qThiiPV7Q"
+    },
+    {
+      "ID": 7,
+      "aspect ratio": 0.305,
+      "video name": "Cabview 15  Hradec Králové-Choceň-Moravany-Chrudim  soupravový vlak  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3645.767,
+      "color": "signal_back",
+      "roi coordinates": "0.47541388869285583 0.36101391911506653 0.013585090637207031 0.08045560866594315",
+      "ytlink": "https://www.youtube.com/watch?v=e7qThiiPV7Q"
+    },
+    {
+      "ID": 8,
+      "aspect ratio": 0.717,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3297.367,
+      "color": "signal_back",
+      "roi coordinates": "0.9497358202934265 0.4105052947998047 0.01751556433737278 0.04222496971487999",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 9,
+      "aspect ratio": 0.259,
+      "video name": "Cabview 16  Pardubice-Týniště n O-Hradec Králové  točna a depo  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 4729.567,
+      "color": "signal_back",
+      "roi coordinates": "0.777438223361969 0.37221935391426086 0.02656383439898491 0.18171793222427368",
+      "ytlink": "https://youtu.be/IqaCcSZT3Xg"
+    },
+    {
+      "ID": 10,
+      "aspect ratio": 0.317,
+      "video name": "Cabview 17  Chrudim-Havlíčkův Brod-Chrudim  trať 238  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2427.967,
+      "color": "signal_back",
+      "roi coordinates": "0.43159961700439453 0.4074469804763794 0.015058040618896484 0.08352796733379364",
+      "ytlink": "https://www.youtube.com/watch?v=AcRW84NVQOw"
+    },
+    {
+      "ID": 11,
+      "aspect ratio": 0.339,
+      "video name": "Cabview 17  Chrudim-Havlíčkův Brod-Chrudim  trať 238  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2438.617,
+      "color": "signal_back",
+      "roi coordinates": "0.4316770136356354 0.4083843529224396 0.01521148718893528 0.08318158984184265",
+      "ytlink": "https://www.youtube.com/watch?v=AcRW84NVQOw"
+    },
+    {
+      "ID": 12,
+      "aspect ratio": 0.453,
+      "video name": "Cabview 17  Chrudim-Havlíčkův Brod-Chrudim  trať 238  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6343.767,
+      "color": "signal_back",
+      "roi coordinates": "0.4448155462741852 0.31253761053085327 0.018323708325624466 0.07277162373065948",
+      "ytlink": "https://www.youtube.com/watch?v=AcRW84NVQOw"
+    },
+    {
+      "ID": 13,
+      "aspect ratio": 0.598,
+      "video name": "Cabview 17  Chrudim-Havlíčkův Brod-Chrudim  trať 238  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6362.917,
+      "color": "signal_back",
+      "roi coordinates": "0.06548140943050385 0.14794890582561493 0.04252501577138901 0.12789662182331085",
+      "ytlink": "https://www.youtube.com/watch?v=AcRW84NVQOw"
+    },
+    {
+      "ID": 14,
+      "aspect ratio": 0.328,
+      "video name": "Cabview 19  Pardubice-Polička duben 2023  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 196.28,
+      "color": "signal_back",
+      "roi coordinates": "0.6577261090278625 0.27519896626472473 0.03210391849279404 0.1733349710702896",
+      "ytlink": "https://www.youtube.com/watch?v=kiA4b0nSLXc"
+    },
+    {
+      "ID": 17,
+      "aspect ratio": 0.345,
+      "video name": "Cabview 21  RegioFox  Havlíčkův Brod-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2865.813,
+      "color": "signal_back",
+      "roi coordinates": "0.6147847175598145 0.3245777487754822 0.0142669677734375 0.07575039565563202",
+      "ytlink": "https://www.youtube.com/watch?v=Mhwh4KXrlb8"
+    },
+    {
+      "ID": 18,
+      "aspect ratio": 0.643,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 3509.817,
+      "color": "signal_back",
+      "roi coordinates": "0.9061533212661743 0.26214852929115295 0.04750023037195206 0.12954464554786682",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
+    },
+    {
+      "ID": 19,
+      "aspect ratio": 0.297,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 5415.417,
+      "color": "signal_back",
+      "roi coordinates": "0.3738332986831665 0.3686104714870453 0.015756988897919655 0.09312746673822403",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
+    },
+    {
+      "ID": 20,
+      "aspect ratio": 0.296,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 5415.417,
+      "color": "signal_back",
+      "roi coordinates": "0.6060140132904053 0.35596516728401184 0.016649818047881126 0.1005098968744278",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
+    },
+    {
+      "ID": 21,
+      "aspect ratio": 0.479,
+      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6486.333,
+      "color": "signal_back",
+      "roi coordinates": "0.1901998221874237 0.38991105556488037 0.011566495522856712 0.04396108165383339",
+      "ytlink": "https://youtu.be/wDyj9k8nddk"
+    },
+    {
+      "ID": 22,
+      "aspect ratio": 0.364,
+      "video name": "Cabview z vlaku 3  Rosice n L-Vojtěchov (směr Hlinsko)  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 1282.467,
+      "color": "signal_back",
+      "roi coordinates": "0.5377711057662964 0.44421884417533875 0.012698713690042496 0.061079125851392746",
+      "ytlink": "https://youtu.be/k_0OOLLJ0G0"
+    },
+    {
+      "ID": 23,
+      "aspect ratio": 0.409,
+      "video name": "Cabview z vlaku 3  Rosice n L-Vojtěchov (směr Hlinsko)  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 827.75,
+      "color": "signal_back",
+      "roi coordinates": "0.4318726658821106 0.4040161073207855 0.014286804012954235 0.06108415499329567",
+      "ytlink": "https://youtu.be/k_0OOLLJ0G0"
+    },
+    {
+      "ID": 24,
+      "aspect ratio": 0.333,
+      "video name": "Cabview z vlaku 3  Rosice n L-Vojtěchov (směr Hlinsko)  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 989.367,
+      "color": "signal_back",
+      "roi coordinates": "0.4320816099643707 0.39304792881011963 0.017917251214385033 0.09424964338541031",
+      "ytlink": "https://youtu.be/k_0OOLLJ0G0"
+    },
+    {
+      "ID": 26,
+      "aspect ratio": 0.524,
+      "video name": "Cabview z vlaku 7  Holice-Chrudim  trať D3  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 908.291,
+      "color": "signal_back",
+      "roi coordinates": "0.3909160792827606 0.24113187193870544 0.02251148223876953 0.07858933508396149",
+      "ytlink": "https://youtu.be/VdseQ2rX10Q"
+    }
+  ]
+}

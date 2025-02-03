@@ -7,7 +7,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 42.416,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.8523424863815308 0.05042172595858574 0.10053844749927521 0.10022398829460144",
       "ytlink": "https://youtu.be/8rtVqE2yclo"
     },
@@ -18,7 +18,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 54.6,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.7594535946846008 0.06004806235432625 0.09114398807287216 0.11945078521966934",
       "ytlink": "https://youtu.be/8rtVqE2yclo"
     },
@@ -29,7 +29,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 1293.417,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.35947883129119873 0.45435070991516113 0.050446223467588425 0.06420542299747467",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -40,7 +40,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 1607.867,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.7140692472457886 0.5257045030593872 0.05283826217055321 0.0758650004863739",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -51,7 +51,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 2259.05,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.6452503204345703 0.5303553938865662 0.03904533386230469 0.040366899222135544",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -62,7 +62,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 4661.267,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.7267249822616577 0.48311847448349 0.05396118015050888 0.07790007442235947",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -73,7 +73,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 5288.85,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.5898689031600952 0.44946926832199097 0.027643775567412376 0.027301788330078125",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -84,7 +84,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 5560.667,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.6036997437477112 0.45431602001190186 0.03512134402990341 0.03501281887292862",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -95,7 +95,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 5621.467,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.7239114046096802 0.4619513750076294 0.047560691833496094 0.04627719521522522",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
@@ -106,7 +106,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 1114.75,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.8693199157714844 0.07406827807426453 0.1012493148446083 0.14566878974437714",
       "ytlink": "https://youtu.be/xcKm_u6O-fE"
     },
@@ -117,7 +117,7 @@
       "detection method": "yolov5mu",
       "class": "traffic light",
       "timestamp in video": 838.75,
-      "color": "yellow dots",
+      "color": "yellow_dots",
       "roi coordinates": "0.8890038728713989 0.045483704656362534 0.10590457916259766 0.09096740931272507",
       "ytlink": "https://youtu.be/uaSgalQe388"
     }

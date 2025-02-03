@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "ID": 1,
+      "aspect ratio": 0.279,
+      "video name": "Cabview z vlaku 3  Rosice n L-Vojtěchov (směr Hlinsko)  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 421.067,
+      "color": "signal_near",
+      "roi coordinates": "0.661200225353241 0.68528813123703 0.026449013501405716 0.16594882309436798",
+      "ytlink": "https://www.youtube.com/watch?v=k_0OOLLJ0G0&t=421"
+    },
+        {
+      "ID": 1,
+      "aspect ratio": 0.313,
+      "video name": "Cabview 17  Chrudim-Havlíčkův Brod-Chrudim  trať 238  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 6314.55,
+      "color": "signal_near",
+      "roi coordinates": "0.659381091594696 0.528316080570221 0.016733169555664062 0.09316270798444748",
+      "ytlink": "https://www.youtube.com/watch?v=AcRW84NVQOw"
+    },
+    {
+      "ID": 2,
+      "aspect ratio": 0.292,
+      "video name": "Cabview 18  Pardubice-Polička  trať 238 261  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2908.467,
+      "color": "signal_near",
+      "roi coordinates": "0.6761703491210938 0.5187752842903137 0.014990615658462048 0.08951125293970108",
+      "ytlink": "https://www.youtube.com/watch?v=iUIbmWQSSAc"
+    },
+    {
+      "ID": 3,
+      "aspect ratio": 0.305,
+      "video name": "Cabview 21  RegioFox  Havlíčkův Brod-Pardubice  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 654.137,
+      "color": "signal_near",
+      "roi coordinates": "0.5771981477737427 0.4738381803035736 0.013856125064194202 0.08194300532341003",
+      "ytlink": "https://www.youtube.com/watch?v=Mhwh4KXrlb8"
+    },
+    {
+      "ID": 4,
+      "aspect ratio": 0.273,
+      "video name": "Cabview z vlaku 3  Rosice n L-Vojtěchov (směr Hlinsko)  strojvedoucicom",
+      "detection method": "yolov5mu",
+      "class": "traffic light",
+      "timestamp in video": 2054.067,
+      "color": "signal_near",
+      "roi coordinates": "0.6971981525421143 0.6346086263656616 0.017338816076517105 0.11165494471788406",
+      "ytlink": "https://youtu.be/k_0OOLLJ0G0"
+    }
+  ]
+}
