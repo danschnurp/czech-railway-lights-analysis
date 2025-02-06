@@ -33,11 +33,14 @@ args = parser.parse_args()
 # where to save
 SAVE_PATH = args.out_dir
 
+czech_railway_folder = "czech_railway_dataset_4_classes"
+classes_dir_path = "../railway_datasets/4_classes"
+dataset_yaml = '../metacentrum/CRTL_multi_4_labeled.yaml'
 
-czech_railway_folder = "czech_railway_dataset"
+
 img_index = 0
 
-with open('../metacentrum/CRTL_multi_labeled.yaml', encoding="utf-8") as f:
+with open(dataset_yaml, encoding="utf-8") as f:
     class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 
 class_mapping = class_mapping["names"]
@@ -69,8 +72,6 @@ for i in ["multi_class"]:
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/labels/{i}")
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/{i}/")
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/{i}")
-
-classes_dir_path = "../railway_datasets/simple_classes"
 
 all_classes = {}
 
