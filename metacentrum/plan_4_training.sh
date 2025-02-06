@@ -4,19 +4,16 @@
 models=(
     "yolov10x.pt"
     "yolov10m.pt"
-    "yolov10s.pt"
     "yolov10n.pt"
-    "yolov10b.pt"
     "yolov5x.pt"
     "yolov5mu.pt"
-    "yolov10s.pt"
     "yolov5nu.pt"
 )
 
-freeze_values=(0 3 5)
-epoch_values=(5 10 20 40 60)
+freeze_values=(0 3 5 10)
+epoch_values=(40 50 60)
 conf_thres=(0.3 0.5 0.8)
-data="CRTL_multi_labeled.yaml"
+data="CRTL_multi_4_labeled.yaml"
 
 
 # Counter for total jobs
@@ -28,8 +25,7 @@ for model in "${models[@]}"; do
         for epochs in "${epoch_values[@]}"; do
             for conf in "${conf_thres[@]}"; do
                 # Generate timestamp for this specific run
-                thistime=$(date '+%Y_%m_%d_%H_%M')
-
+                thistime=${epochs}_${freeze}_${model}_${conf}
                 # Construct the qsub command
                 qsub -v model=${model},freeze=${freeze},epochs=${epochs},thistime=${thistime},data=${data},confthres=${conf} ./train_on_meta.sh
 
@@ -38,7 +34,7 @@ for model in "${models[@]}"; do
                 ((total_jobs++))
 
                 # Optional: Add a small delay to prevent overwhelming the queue system
-                sleep 1
+                sleep 0.1
             done
         done
     done
