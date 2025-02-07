@@ -47,9 +47,10 @@ image_index = 0
 dropout_time = 0.01
 skip_seconds = args.skip_seconds
 #
-cap.set(cv2.CAP_PROP_POS_MSEC,
-        skip_seconds * 1000
-        )
+fps = cap.get(cv2.CAP_PROP_FPS)
+frame_number = int(fps * skip_seconds)
+cap.set(cv2.CAP_PROP_POS_FRAMES,
+                        frame_number)
 
 reader = easyocr.Reader(['en'])  # Specify language(s) as needed
 

@@ -60,9 +60,10 @@ def annotate_video():
     dropout_time = 0
     skip_seconds = args.skip_seconds
     #
-    cap.set(cv2.CAP_PROP_POS_MSEC,
-            skip_seconds * 1000
-            )
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_number = int(fps * skip_seconds)
+    cap.set(cv2.CAP_PROP_POS_FRAMES,
+            frame_number)
 
     t1 = 5
 

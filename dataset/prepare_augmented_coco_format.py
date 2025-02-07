@@ -86,8 +86,10 @@ for i in traffic_lights:
         if start_time < 0.:
             print("starting from beginning")
             start_time = 0
-        cap.set(cv2.CAP_PROP_POS_MSEC,
-                start_time * 1000)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        frame_number = int(fps * start_time)
+        cap.set(cv2.CAP_PROP_POS_FRAMES,
+                frame_number)
 
         while cap.isOpened():
             ret, frame = cap.read()

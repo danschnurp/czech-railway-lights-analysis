@@ -260,8 +260,10 @@ def test_roi_detections(d_video, metadata, args, SAVE_PATH,     model):
         if start_time < 0.:
             print("starting from beginning")
             start_time = 0
-        cap.set(cv2.CAP_PROP_POS_MSEC,
-                start_time * 1000)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        frame_number = int(fps * start_time)
+        cap.set(cv2.CAP_PROP_POS_FRAMES,
+                frame_number)
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -291,9 +293,7 @@ def test_roi_detections(d_video, metadata, args, SAVE_PATH,     model):
 
 
 
-def get_pictures(d_video, seek_seconds, args):
-
-    interesting_labels = {'traffic light'}
+def get_pictures(d_video, seek_seconds, args, interesting_labels={'traffic light'}):
 
     nett_name = args.nett_name
 
@@ -325,8 +325,10 @@ def get_pictures(d_video, seek_seconds, args):
     if start_time < 0.:
         print("starting from beginning")
         start_time = 0
-    cap.set(cv2.CAP_PROP_POS_MSEC,
-            start_time * 1000)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_number = int(fps * start_time)
+    cap.set(cv2.CAP_PROP_POS_FRAMES,
+            frame_number)
 
     while cap.isOpened():
         ret, frame = cap.read()

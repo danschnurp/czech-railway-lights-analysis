@@ -84,21 +84,27 @@ for i in traffic_lights:
             if start_time < 0.:
                 print("starting from beginning")
                 start_time = 0
-            cap.set(cv2.CAP_PROP_POS_MSEC,
-                    start_time * 1000.)
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            frame_number = int(fps * start_time)
+            cap.set(cv2.CAP_PROP_POS_FRAMES,
+                    frame_number)
             detected = get_picture(cap, model, args, interesting_labels, video_name,
                                    nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
             detected_count += detected
             if detected == 0:
-                cap.set(cv2.CAP_PROP_POS_MSEC,
-                        (start_time - args.sequence_seconds_before) * 1000.)
+                fps = cap.get(cv2.CAP_PROP_FPS)
+                frame_number = int(fps * (start_time - args.sequence_seconds_before))
+                cap.set(cv2.CAP_PROP_POS_FRAMES,
+                        frame_number)
                 detected = get_picture(cap, model, args, interesting_labels, video_name,
                                        nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
                 print("second try:", j, file=sys.stderr)
 
                 if detected == 0:
-                    cap.set(cv2.CAP_PROP_POS_MSEC,
-                            (start_time + args.sequence_seconds_after) * 1000.)
+                    fps = cap.get(cv2.CAP_PROP_FPS)
+                    frame_number = int(fps * (start_time + args.sequence_seconds_before))
+                    cap.set(cv2.CAP_PROP_POS_FRAMES,
+                            frame_number)
                     detected = get_picture(cap, model, args, interesting_labels, video_name,
                                            nett_name, image_index=0, SAVE_PATH=SAVE_PATH)
                     detected_count += detected

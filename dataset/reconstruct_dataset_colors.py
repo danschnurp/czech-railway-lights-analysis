@@ -2,6 +2,8 @@ import argparse
 
 import json
 
+import yaml
+
 from utils.general_utils import download_video, str2bool
 from utils.image_utils import get_pictures
 
@@ -32,9 +34,13 @@ img_index = 0
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
+with open("../metacentrum/CRTL_multi_labeled_transfer.yaml", encoding="utf-8") as f:
+    class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 
+class_mapping = class_mapping["names"]
+class_mapping = dict(zip(class_mapping.values(), class_mapping.keys()))
 
 
 for i in traffic_lights["data"]:
     d_video = download_video(i["ytlink"], args.in_dir)
-    get_pictures(d_video, i["timestamp in video"], args)
+    get_pictures(d_video, i["timestamp in video"], args, class_mapping)
