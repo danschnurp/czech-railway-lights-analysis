@@ -14,7 +14,8 @@ import json
 
 from utils.phash_similarity import calculate_pictures_similarity
 from utils.general_utils import download_video , normalize_text
-from utils.image_utils import get_roi_coordinates
+from utils.image_utils import get_roi_coordinates, save_annotated_picture
+
 
 def euclidean_distance(a, b):
     return np.sqrt(np.sum((np.array(a) - np.array(b))**2))
@@ -24,8 +25,11 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default="../yolov5mu.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="../reconstructed/all_yolov5mu_raw")
+parser.add_argument('--in-dir', default="/Volumes/zalohy/dip")
 parser.add_argument('--out-dir', default="../dataset")
+parser.add_argument('--mili_seconds_before', type=float, default=450)
+parser.add_argument('--mili_seconds_after', type=float, default=100)
+parser.add_argument('--delta_step', type=float, default=50)
 parser.add_argument('--label-light', type=int, default=79)
 parser.add_argument('--train-test-split', type=int, default=0.25)
 
@@ -74,6 +78,13 @@ for i in ["multi_class"]:
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/{i}/")
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/{i}")
 
+for i in ["multi_class_annotated"]:
+        if i not in os.listdir(f"{SAVE_PATH}/{czech_railway_folder}/train/images/"):
+            os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/images/{i}/")
+            os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/train/labels/{i}")
+            os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/{i}/")
+            os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/{i}")
+
 all_classes = {}
 
 for i in os.listdir(classes_dir_path):
@@ -102,49 +113,44 @@ image_counter = 0
 # exit(0)
 
 lost_pictures = 0
-random.shuffle(all_classes)
-for video_link in all_classes:
-    timestamps_shuffled = list(all_classes[video_link].keys())
-    random.shuffle(timestamps_shuffled)
-    d_video = download_video(video_link, "../videos")
-    # todo detection, roi difference, x seconds before/after
-    for timestamp in timestamps_shuffled:
-        process_frame(lost_pictures, image_counter, img_index)
+video_links = list(all_classes.keys())
+np.random.shuffle(video_links)
+all_classes = {key: all_classes[key] for key in video_links}
 
 
-print("lost/total", lost_pictures, "/", total_pictures_count)
 
-def process_frame(lost_pictures, image_counter, img_index):
-    previous_img = None
-    # todo loop
-    cap = cv2.VideoCapture(d_video)
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_number = int(fps * timestamp)
-    cap.set(cv2.CAP_PROP_POS_FRAMES,
-            frame_number)
+def process_frame(lost_pictures, image_counter, img_index, previous_img,
+                  hamming_dist_difference=6):
+
     _, frame = cap.read()
-    hamming_dist = calculate_pictures_similarity(frame, previous_img)
-    previous_img = frame
-    if hamming_dist < 3:
-        return
+    if frame is None:
+        return lost_pictures, image_counter, img_index, frame
+    if previous_img is not None:
+        hamming_dist = calculate_pictures_similarity(frame, previous_img)
+        if hamming_dist < hamming_dist_difference:
+            return lost_pictures, image_counter, img_index, frame
     most_similar_quadruples = []
+    # gets all detection coordinates within one frame
     for original in all_classes[video_link][timestamp]:
         detected = get_roi_coordinates(model, frame=frame)
+        # takes coordinates except the class iD
         original_split = list(map(float, original[original.find(" "):].split()))
-        # Calculate distances
+        # Calculate distances within annotated and real detection
         distances = [euclidean_distance([original_split[:2], original_split[2:]], quad) for quad in detected]
         if len(distances) == 0:
-            print("strange", file=sys.stderr)
-            lost_pictures += 1
+            # print("strange", file=sys.stderr)
             continue
-        # Find the most similar quadruple
-        # todo check satisfaction distance
-        print(distances)
+        print(np.min(distances))
+        if np.min(distances) > 0.01:
+            continue
+        # gets the most similar quadruple
         most_similar_index = np.argmin(distances)
         detected[most_similar_index] = [*detected[most_similar_index][0], *detected[most_similar_index][1]]
         most_similar_quadruples.append(
             f"{original[:original.find(' ')]} {detected[most_similar_index][0]} {detected[most_similar_index][1]}"
             f" {detected[most_similar_index][2]} {detected[most_similar_index][3]}\n")
+    if len(most_similar_quadruples) == 0:
+        return lost_pictures, image_counter, img_index, frame
     all_classes[video_link][timestamp] = most_similar_quadruples
 
     if image_counter > last_train_sample:
@@ -152,12 +158,46 @@ def process_frame(lost_pictures, image_counter, img_index):
     else:
         save_name = f"{SAVE_PATH}/{czech_railway_folder}/train/"
     cv2.imwrite(f"{save_name}images/multi_class/{img_index}.jpg", frame)
+
     with open(
             f"{save_name}labels/multi_class/{img_index}.txt",
             mode="w") as label_f:
         coordinates = ""
+        save_annotated_picture(all_classes[video_link][timestamp], frame, f"{save_name}images/multi_class_annotated/{img_index}.jpg")
         for ii in all_classes[video_link][timestamp]:
             coordinates += f"{ii}\n"
+            list(map(float, original[ii.find(" "):].split()))
         label_f.write(coordinates)
     img_index += 1
     image_counter += 1
+    return lost_pictures, image_counter, img_index, frame
+
+
+
+for video_link in all_classes:
+    previous_img = None
+    timestamps_shuffled = list(all_classes[video_link].keys())
+    # random.shuffle(timestamps_shuffled)
+    d_video = download_video(video_link, args.in_dir)
+    cap = cv2.VideoCapture(args.in_dir + "/" + d_video)
+    for timestamp in timestamps_shuffled:
+        for seconds_before in range(args.mili_seconds_before, 0, -args.delta_step):
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            frame_number = int(fps * (timestamp - seconds_before / 1000.))
+            cap.set(cv2.CAP_PROP_POS_FRAMES,
+                    frame_number)
+            lost_pictures, image_counter, img_index, previous_img = process_frame(lost_pictures,
+                                                                                  image_counter,
+                                                                                  img_index, previous_img)
+
+        for seconds_after in range(0, args.mili_seconds_after, args.delta_step):
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            frame_number = int(fps * (timestamp + seconds_after / 1000.))
+            cap.set(cv2.CAP_PROP_POS_FRAMES,
+                    frame_number)
+            lost_pictures, image_counter, img_index, previous_img = process_frame(lost_pictures,
+                                                                                  image_counter,
+                                                                                  img_index, previous_img)
+
+
+print("lost/total", lost_pictures, "/", total_pictures_count)

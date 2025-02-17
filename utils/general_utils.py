@@ -13,7 +13,7 @@ import unicodedata
 from pytube import YouTube
 import subprocess
 
-from utf8_encoder import UTF8StringEncoder
+from utils.utf8_encoder import UTF8StringEncoder
 
 
 def normalize_text(text):

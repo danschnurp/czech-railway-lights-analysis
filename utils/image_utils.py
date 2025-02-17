@@ -81,6 +81,15 @@ def get_roi_coordinates(model, frame):
                                            [box.xywhn.tolist()[0][2], box.xywhn.tolist()[0][3]]])
     return result_coordinates
 
+def save_annotated_picture(result_coordinates, frame, save_path):
+
+    # Iterate over the results
+    annotator = Annotator(frame, line_width=2)
+    for result in result_coordinates:
+        class_id = result[:result.find(' ')]
+        annotator.box_label(convert_normalized_roi_to_pixels(result[result.find(" "):], frame.shape[1], frame.shape[0]), class_id)
+    cv2.imwrite(save_path, frame)
+
 def annotate_pictures(args, save_path, interesting_label = 'traffic light',     detected_nett_name = "yolov5mu",
                       tolerance = 0.5):
     from utils.general_utils import get_times_by_video_name, get_jpg_files, normalize_list_of_texts
