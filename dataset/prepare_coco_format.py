@@ -25,11 +25,11 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default="../yolov5mu.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="/Volumes/zalohy/dip")
+parser.add_argument('--in-dir', default="../videos")
 parser.add_argument('--out-dir', default="../dataset")
-parser.add_argument('--mili_seconds_before', type=float, default=450)
-parser.add_argument('--mili_seconds_after', type=float, default=100)
-parser.add_argument('--delta_step', type=float, default=50)
+parser.add_argument('--mili_seconds_before', type=float, default=3000)
+parser.add_argument('--mili_seconds_after', type=float, default=500)
+parser.add_argument('--delta_step', type=float, default=500)
 parser.add_argument('--label-light', type=int, default=79)
 parser.add_argument('--train-test-split', type=int, default=0.25)
 
@@ -103,6 +103,10 @@ for i in os.listdir(classes_dir_path):
 
 
 total_pictures_count = sum([len([j for j in all_classes[i]]) for i in all_classes])
+total_pictures_count *= (args.mili_seconds_before / args.delta_step)
+
+print("estimated dataset size:", total_pictures_count)
+
 last_train_sample = int(total_pictures_count * args.train_test_split)
 model = YOLO(args.nett_name)  # load an official model
 image_counter = 0
@@ -113,14 +117,14 @@ image_counter = 0
 # exit(0)
 
 lost_pictures = 0
-video_links = list(all_classes.keys())
-np.random.shuffle(video_links)
-all_classes = {key: all_classes[key] for key in video_links}
+# video_links = list(all_classes.keys())
+# np.random.shuffle(video_links)
+# all_classes = {key: all_classes[key] for key in video_links}
 
 
 
 def process_frame(lost_pictures, image_counter, img_index, previous_img,
-                  hamming_dist_difference=6):
+                  hamming_dist_difference=5):
 
     _, frame = cap.read()
     if frame is None:
@@ -141,7 +145,7 @@ def process_frame(lost_pictures, image_counter, img_index, previous_img,
             # print("strange", file=sys.stderr)
             continue
         print(np.min(distances))
-        if np.min(distances) > 0.01:
+        if np.min(distances) > 0.1:
             continue
         # gets the most similar quadruple
         most_similar_index = np.argmin(distances)
