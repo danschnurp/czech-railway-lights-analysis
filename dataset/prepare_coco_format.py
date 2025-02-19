@@ -103,11 +103,14 @@ for i in os.listdir(classes_dir_path):
 
 
 total_pictures_count = sum([len([j for j in all_classes[i]]) for i in all_classes])
+
+last_train_sample = int(total_pictures_count)
+
 total_pictures_count *= (args.mili_seconds_before / args.delta_step)
 
 print("estimated dataset size:", total_pictures_count)
 
-last_train_sample = int(total_pictures_count * args.train_test_split)
+# last_train_sample = int(total_pictures_count * args.train_test_split)
 model = YOLO(args.nett_name)  # load an official model
 image_counter = 0
 #
@@ -117,9 +120,9 @@ image_counter = 0
 # exit(0)
 
 lost_pictures = 0
-# video_links = list(all_classes.keys())
-# np.random.shuffle(video_links)
-# all_classes = {key: all_classes[key] for key in video_links}
+video_links = list(all_classes.keys())
+np.random.shuffle(video_links)
+all_classes = {key: all_classes[key] for key in video_links}
 
 
 
