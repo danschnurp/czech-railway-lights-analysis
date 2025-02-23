@@ -39,9 +39,9 @@ args = parser.parse_args()
 SAVE_PATH = args.out_dir
 
 czech_railway_folder = "czech_railway_dataset_4_classes"
-classes_dir_path = "../railway_datasets/4_classes"
-dataset_yaml = '../metacentrum/CRTL_multi_4_labeled.yaml'
-
+classes_dir_path = "../railway_datasets/simple_classes"
+dataset_yaml = '../metacentrum/CRTL_multi_labeled.yaml'
+# from 'https://www.youtube.com/watch?v=Mhwh4KXrlb8' and 161. picture
 
 img_index = 0
 

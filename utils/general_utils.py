@@ -266,6 +266,7 @@ def download_video(link, SAVE_PATH):
     attempting to download it in full HD quality (1080p, 60fps) and falling back to 720p if the full HD
     quality download fails.
     """
+    # video_name = get_times_by_video_name(link)
     video_name = get_youtube_video_info(link)
     video_name = (video_name.strip().replace("⧸", "")
                   .replace("/", "").replace("#", "")
