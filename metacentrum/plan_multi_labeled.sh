@@ -9,7 +9,7 @@ models=(
 )
 
 freeze_values=(0 3)
-epoch_values=(80 100)
+epoch_values=(60 80 100)
 conf_thres=(0.3)
 data="CRTL_multi_labeled.yaml"
 
@@ -23,7 +23,7 @@ for model in "${models[@]}"; do
         for epochs in "${epoch_values[@]}"; do
             for conf in "${conf_thres[@]}"; do
                 # Generate timestamp for this specific run
-                thistime=${epochs}_${freeze}_${model}_${conf}
+                thistime=${epochs}_lights_${freeze}_${model}_${conf}
                 # Construct the qsub command
                 qsub -v model=${model},freeze=${freeze},epochs=${epochs},thistime=${thistime},data=${data},confthres=${conf} ./train_on_meta.sh
 
