@@ -185,7 +185,9 @@ for video_link in all_classes:
     previous_img = None
     timestamps_shuffled = list(all_classes[video_link].keys())
     # random.shuffle(timestamps_shuffled)
-    d_video = download_video(video_link, args.in_dir)
+    d_video = download_video(video_link, args.in_dir, use_internet=False)
+    if d_video is None:
+        continue
     cap = cv2.VideoCapture(args.in_dir + "/" + d_video)
     for timestamp in timestamps_shuffled:
         for seconds_before in range(args.mili_seconds_before, 0, -args.delta_step):

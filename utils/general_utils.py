@@ -103,6 +103,15 @@ def save_json_unicode(data, filename, format_unicode=True):
             with open(filename, 'w', encoding='ascii') as f:
                 json.dump(data, f, ensure_ascii=True, indent=4)
 
+
+def get_video_name(video_link, names_jsom_path="../railway_datasets/video_names.json"):
+    with open(names_jsom_path, encoding="utf-8", mode="r") as f:
+        video_names = dict(json.load(f))
+    video_names = video_names["names"]
+    return dict(zip(list(video_names.values()), list(video_names.keys())))[video_link]
+
+
+
 def get_times_by_video_name(sequences_jsom_path, names_jsom_path="../railway_datasets/video_names.json", reverse=False):
     with open(sequences_jsom_path, encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
@@ -253,7 +262,7 @@ def get_youtube_video_info(youtube_url):
     return video_info['title']
 
 
-def download_video(link, SAVE_PATH):
+def download_video(link, SAVE_PATH, use_internet=True):
     """
     The function `download_video` downloads a video from a given link in either full HD or 720p quality
     and saves it to a specified path after processing the video name.
@@ -266,8 +275,10 @@ def download_video(link, SAVE_PATH):
     attempting to download it in full HD quality (1080p, 60fps) and falling back to 720p if the full HD
     quality download fails.
     """
-    # video_name = get_times_by_video_name(link)
-    video_name = get_youtube_video_info(link)
+    if not  use_internet:
+        video_name = get_video_name(link)
+    else:
+        video_name = get_youtube_video_info(link)
     video_name = (video_name.strip().replace("⧸", "")
                   .replace("/", "").replace("#", "")
                   .replace(",", "").replace(".", "").replace("\"", ""))
@@ -275,6 +286,8 @@ def download_video(link, SAVE_PATH):
 
     if video_name in os.listdir(SAVE_PATH):
         return video_name
+    elif  not  use_internet:
+        return None
     try:
         command = [
             'yt-dlp',
