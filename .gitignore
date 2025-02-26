@@ -176,7 +176,6 @@ videos/*
 /today_results.json
 /dataset/reconstructed/
 
-events.out.*
 today_results.json
 *latexmkrc
 *main.aux
