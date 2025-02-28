@@ -2,6 +2,7 @@
 
 # Define the main TeX file
 MAIN_TEX="main.tex"
+MAIN_only="main"
 
 # Check if the main.tex file exists
 if [ ! -f "$MAIN_TEX" ]; then
@@ -11,6 +12,10 @@ fi
 
 # Compile the TeX file using pdflatex
 pdflatex "$MAIN_TEX"
+bibtex "$MAIN_only"
+pdflatex "$MAIN_TEX"
+pdflatex "$MAIN_TEX"
+
 
 # Check if the compilation was successful
 if [ $? -eq 0 ]; then
