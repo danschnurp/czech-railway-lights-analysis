@@ -134,13 +134,49 @@ The signals combine these colors in various patterns to communicate more complex
 Fixed railway signs complement the light-based system. These include physical signs and markers that display speed limits, distance warnings, and track identification. Their design emphasizes visibility in various weather conditions through reflective materials and high-contrast color schemes. Signal boards often use standardized shapes such as circles or white triangles that serve as warning signs. They are not part of the thesis. 
 
 \newpage
+
+\subsection{Fore signal (Předvěst)}
+In Article 101 of the regulation, they describe fore signal in czech called (\("\)předvěst\("\)). This signal is dependent on main signal.
+Typically, this signal adds another notification for the train driver before the driver could see the main signal.
+%todo dokončit a překontrolovat
+
+
+
 \subsection{Single-Light Signals}
-In this section we will describe single-light signals and their characteristics.
+In this section we will describe single-light signals and their characteristics described in the railway signaling regulation SŽ D1 Část První.
+It is important to mention that described signaling systems on railway tracks are not equipped with the European Train Control System.
 
-%todo
+There are several distinct single-light signals, each characterized by a specific color and blinking pattern.
+For example, the \("\)Volno\("\) signal, represented by a steady green light, allows the train to run.
 
+On dependent signals at upstream points fore signals (předvěsti), this signal indicates there is  a similar signal on the following main signal.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.1\linewidth]{myimgs/example_roi.png}
+    \caption{ Návěst Volno (steady green light)}
+    \label{fig:Návěst Volno}
+\end{figure}
+In contrast, signals such as \("\)Očekávejte rychlost 40 km/h\("\) (slowly flashing yellow light) or \("\)Očekávejte rychlost 100 km/h\("\) (rapidly flashing green light) permit train movement while preparing the driver for a speed restriction at the subsequent signal, typically positioned at least at braking distance.
+These speed-related signals are from 40 km/h to 120 km/h.
+they are realized by patterns slow or rapid flashing and colors (yellow or green).
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.1\linewidth]{myimgs/example_roi.png}
+    \caption{Návěst Očekávejte rychlost 40 km/h (slowly flashing yellow light)}
+    \label{fig:figure}
+\end{figure}
+**[Space reserved for Figure: Obrázek 103 - Návěst Očekávejte rychlost 100 km/h (rapidly flashing green light)]**
+% todo from here
+%A notable feature of these signals is their systematic progression. The regulation establishes a clear hierarchy of speed indications, beginning with "Očekávejte rychlost 40 km/h" (40–50 km/h) and extending to "Očekávejte rychlost 120 km/h" (120 km/h), the latter uniquely identified by a rapidly flashing green light paired with a yellow "12" numeral. This use of a numeral to denote tens of kilometers per hour introduces a layer of precision that enhances clarity, particularly at higher speeds where reaction times are shorter and accuracy is paramount.
+%
+%**[Space reserved for Figure: Obrázek 104 - Návěst Očekávejte rychlost 120 km/h (rapidly flashing green light with yellow "12")]**
+%
+%The spatial requirements associated with these signals also warrant attention. The regulation stipulates that the next main signal must be located at least at the braking distance for speed-restrictive indications, ensuring drivers have adequate time to adjust. This condition underscores a balance between operational efficiency and safety, a recurring theme throughout the document. Conversely, the "Volno" signal, which implies no immediate speed restriction, allows greater flexibility in signal placement, particularly on high-speed sections.
+%
+%This section emphasizes the practical implications of these technical specifications. Single-light signals are not merely abstract commands; they govern how train drivers navigate the railway network, responding to real-time conditions while anticipating future states. The regulation’s emphasis on clarity—achieved through distinct colors and flashing patterns—minimizes ambiguity, a vital consideration in the high-stakes realm of railway operations. While implementation details such as coding a signal system are beyond the scope, the technical elegance of this design stands out, where a single light efficiently conveys both permission and foresight.
 \newpage
-\subsection{Stop Signal (návěst Stůj)}
+
+\subsection{Stop Signal (návěst Stůj)}\label{subsec:stop-signal-(navest-stuj)}
 
 todo - tady popsat, info ze zdroje - ./czech-railway-trafic-lights-detection/
 
@@ -162,13 +198,6 @@ text\_resources/Výtah světelných návěstidel ostatni.pdf
 
 
 \newpage
-\subsection{Foresignals (Předvěsti)}
-todo - tady popsat, info ze zdroje - ./czech-railway-trafic-lights-detection/
-
-resources/
-
-text\_resources/Výtah světelných návěstidel predvesti.pdf 
-
 
 
 \chapter{State of The Art}
