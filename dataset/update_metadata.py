@@ -3,14 +3,14 @@ import json
 import os
 import unicodedata
 
-from annotate_colors_naive import classa
+from annotate_colors_naive import class_mapping
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--workdir", default="../videos",
                     type=str, help="Path to the directory with images to process")
 parser.add_argument("--output_dir", default="./reconstructed/",
                     type=str, help="Path to the output directory")
-parser.add_argument("--verified_dir", default="./reconstructed/"  + classa,
+parser.add_argument("--verified_dir", default="./reconstructed/",
                     type=str, help="Path to the output directory")
 
 args = parser.parse_args()
@@ -18,7 +18,9 @@ workdir = args.workdir
 output_dir = args.output_dir
 verified_dir_path= args.verified_dir
 
-def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/" + classa):
+#  todo edit this script ... class_mapping is list ... order  metadata.json by class and update metadata for each class
+
+def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/"):
     metadata = metadata["data"]
     picture_ids = []
     for i in os.listdir(verified_dir):

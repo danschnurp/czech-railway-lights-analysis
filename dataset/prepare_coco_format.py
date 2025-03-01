@@ -27,7 +27,7 @@ parser.add_argument('--nett_name', default="../yolov5mu.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
 parser.add_argument('--in-dir', default="../videos")
 parser.add_argument('--out-dir', default="../dataset")
-parser.add_argument('--mili_seconds_before', type=float, default=3000)
+parser.add_argument('--mili_seconds_before', type=float, default=3500)
 parser.add_argument('--mili_seconds_after', type=float, default=500)
 parser.add_argument('--delta_step', type=float, default=500)
 parser.add_argument('--label-light', type=int, default=79)
@@ -38,10 +38,9 @@ args = parser.parse_args()
 # where to save
 SAVE_PATH = args.out_dir
 
-czech_railway_folder = "czech_railway_dataset_4_classes"
+czech_railway_folder = "czech_railway_dataset"
 classes_dir_path = "../railway_datasets/simple_classes"
 dataset_yaml = '../metacentrum/CRTL_multi_labeled.yaml'
-# todo from 'https://www.youtube.com/watch?v=Mhwh4KXrlb8' and 161. picture
 
 img_index = 0
 
@@ -146,9 +145,6 @@ def process_frame(lost_pictures, image_counter, img_index, previous_img,
         distances = [euclidean_distance([original_split[:2], original_split[2:]], quad) for quad in detected]
         if len(distances) == 0:
             # print("strange", file=sys.stderr)
-            continue
-        print(np.min(distances))
-        if np.min(distances) > 0.1:
             continue
         # gets the most similar quadruple
         most_similar_index = np.argmin(distances)

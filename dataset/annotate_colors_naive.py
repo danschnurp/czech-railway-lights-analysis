@@ -7,6 +7,7 @@ import cv2
 import argparse
 
 import numpy as np
+import yaml
 from tqdm import tqdm
 from ultralytics import YOLO
 
@@ -105,7 +106,7 @@ def get_box_coordinates(image, image_roi, model, roi_index):
         return f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}"
 
 
-def detect_single_color(colors={red, orange}, class_name = "crossing_light",
+def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black}, class_names = ["stop"],
                         crop_sides_value_percentage=0, crop_top_bottom_value_percentage=0):
     """
     This Python function detects images with a specified color and extracts metadata and statistics for
@@ -126,7 +127,8 @@ def detect_single_color(colors={red, orange}, class_name = "crossing_light",
     for i in colors:
         bad_colors -= {i}
 
-    prepare_dirs(class_name)
+    [prepare_dirs(class_name) for class_name in class_names]
+
     stats = []
     counter = 0
     files = get_jpg_files(
@@ -152,36 +154,37 @@ def detect_single_color(colors={red, orange}, class_name = "crossing_light",
         result_colors = [crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=colo),
                                                                         crop_percentage=crop_sides_value_percentage),
                                                   crop_percentage=crop_top_bottom_value_percentage) for colo in colors]
-        bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
+        # bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
         result_color_perc =    [calculate_nonzero_percent(result_color) for result_color in result_colors]
         centered = [check_content_centered(result_color) for result_color in result_colors]
-        white_trinagles = [detect_white_triangles(image_roi, image_clean)]
-        verdict_colors = [c > 0.2 for c in result_color_perc]
-        if any(verdict_colors):
+        # white_trinagles = [detect_white_triangles(image_roi, image_clean)]
+        verdict_colors = [c > 0.15 for c in result_color_perc]
+        if any(verdict_colors) and any(centered):
             h, w, _ = tuple([*image_roi.shape])
             cv2.imshow("detail", np.zeros((int(w * 2), int(h * 2))))
             cv2.imshow("detail", cv2.resize(image_roi, (int(w * 2), int(h * 2))))
-            cv2.imshow(class_name, cv2.resize(image_box, (int(1960 / 1.9), int(1080 / 1.9))))
+            cv2.imshow(str(class_names), cv2.resize(image_box, (int(1960 / 1.9), int(1080 / 1.9))))
             res = cv2.waitKey(0)
-
-            if res == ord("s"):
-                path_attributes = i[len(workdir):].split("/")
-                counter += 1
-                this_roi = get_box_coordinates(image_clean, image_roi, model, roi_index)
-                if this_roi is None:
-                    print("nothing found")
-                    os.remove(i)
-                    continue
-                save_image(counter, output_dir, class_name, image_roi, 1, )
-                stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
+            for index, class_name in enumerate(class_names):
+                if res == ord(str(index)):
+                    path_attributes = i[len(workdir):].split("/")
+                    counter += 1
+                    this_roi = get_box_coordinates(image_clean, image_roi, model, roi_index)
+                    if this_roi is None:
+                        print("nothing found")
+                        os.remove(i)
+                        break
+                    save_image(counter, output_dir, class_name, image_roi, 1, )
+                    stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
                                           roi=this_roi))
-                os.remove(i)
-            elif res == ord("q"):
+                    os.remove(i)
+                    break
+            if res == ord("q"):
                 os.remove(i)
     cv2.destroyAllWindows()
 
 
-    print(f"{class_name} found:", counter, "from total", len(files), )
+    print(f"{class_names} found:", counter, "from total", len(files), )
     print("stats:")
     [print(i) for i in stats]
     return stats
@@ -195,8 +198,12 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
         json.dump(vis, f, indent=2, ensure_ascii=False)
 
 
+dataset_yaml = '../metacentrum/CRL.yaml'
+with open(dataset_yaml, encoding="utf-8") as f:
+    class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 
-classa = "crossing_light"
+class_mapping = class_mapping["names"]
+class_mapping = list(class_mapping.values())
 
 
 if __name__ == '__main__':
@@ -214,7 +221,7 @@ if __name__ == '__main__':
 
     # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    g = detect_single_color(class_name=classa, colors={black})
+    g = detect_single_color(class_names=class_mapping)
     print("-----------------------------------------------")
 
 
