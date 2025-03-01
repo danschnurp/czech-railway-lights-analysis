@@ -1,5 +1,7 @@
 # Thesis sources
 
+- annotation tool - https://www.makesense.ai
+
 ### youtube channels
 - parnici
 
