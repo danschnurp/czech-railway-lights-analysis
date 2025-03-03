@@ -175,6 +175,8 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                             save_image(img_id, output_dir, class_name, this_roi_img, 1, )
                             stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=img_id,
                                                       roi=this_roi))
+                            processed.append(i)
+                            processed.append(f"{i[:i.find('clean')]}box.jpg")
                             break
                     cv2.destroyAllWindows()
             processed.append(i)
