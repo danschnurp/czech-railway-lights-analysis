@@ -4,26 +4,24 @@ path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_
 train: train/images/
 val: val/images/
 
-
-# Classes
 names:
-#  single red light
+# 0 single red light
   0: stop
-# single green light
+# 1 single green light
   1: go
-# single yellow light
+# 2 single yellow light
   2: warning
-# twice yellow
+# 3 twice yellow
   3: adjust speed and warning
-# up green bottom yellow
+# 4 up green bottom yellow
   4: adjust speed and go
-# lights are turned off
+# 5 lights are turned off
   5: lights off
-#  crossing traffic light for cars
+# 6  crossing traffic light for cars
   6: crossing light
-# lights from behind
+# 7 lights from behind
   7: lights behind
 #   -------------------------
-#   todo blinking states solve with heuristics
+# blinking states solved with heuristics
 # white lights are not part of this thesis
 
