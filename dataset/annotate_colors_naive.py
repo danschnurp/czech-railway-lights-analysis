@@ -123,69 +123,58 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
     the color name "green", and the value is a dictionary of statistics for each image that meets the
     criteria.
     """
-
     bad_colors = {yellow, red, orange, yellow_orange, green}
-
     for i in colors:
         bad_colors -= {i}
-
     [prepare_dirs(class_name) for class_name in class_names]
-
     stats = []
     counter = 0
     files = get_jpg_files(
         f"{workdir}")
     for i in tqdm(files):
-        if i.split("_")[-1] == "clean.jpg" or i.split("_")[-1] == "box.jpg":
-            continue
+        if i.split("_")[-1] == "clean.jpg":
+            i = i.replace("\\", "/")
+            try:
+                image_clean = cv2.imread(i)
+                image_box = cv2.imread(f"{i[:i.find('clean')]}box.jpg")
+            except FileNotFoundError as ex:
+                print("neco se posralo ", ex)
+                continue
+            aspect_ratio, w, h = calculate_aspect_ratio(image_clean)
 
-        i = i.replace("\\", "/")
-
-        try:
-            image_roi = cv2.imread(i)
-            image_clean = cv2.imread(f"{i[:i.find('roi')]}clean.jpg")
-            image_box = cv2.imread(f"{i[:i.find('roi')]}box.jpg")
-            roi_index = int(i[(i.find('roi') + len('roi')):i.find('.jpg')])
-        except FileNotFoundError as ex:
-            print("neco se posralo ", ex)
-            continue
-
-        aspect_ratio, w, h = calculate_aspect_ratio(image_roi)
-
-        # image = replace_white_with_black(image)
-        result_colors = [crop_top_bottom_percentage(crop_sides_percentage(detect_color(image_roi, color_filter=colo),
-                                                                        crop_percentage=crop_sides_value_percentage),
-                                                  crop_percentage=crop_top_bottom_value_percentage) for colo in colors]
-        # bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
-        result_color_perc =    [calculate_nonzero_percent(result_color) for result_color in result_colors]
-        # centered = [check_content_centered(result_color) for result_color in result_colors]
-        # white_trinagles = [detect_white_triangles(image_roi, image_clean)]
-        verdict_colors = [c > 0.15 for c in result_color_perc]
-        if any(verdict_colors):
-            h, w, _ = tuple([*image_roi.shape])
             rois, this_roi_imgs = get_box_coordinates(image_clean, model)
             to_delete = []
-            cv2.imshow(str(class_names), cv2.resize(image_box, (int(1960 / 1.9), int(1080 / 1.9))))
+
             for (one_roi_index, this_roi), this_roi_img in zip(enumerate(rois), this_roi_imgs):
-                cv2.imshow(str(one_roi_index), cv2.resize(this_roi_img, (int(w * 5), int(h * 5))))
-                res = cv2.waitKey(0)
-                #  todo determine key pressed
-                for index, class_name in enumerate(class_names):
-                    if res == ord(str(index)):
-                        path_attributes = i[len(workdir):].split("/")
-                        counter += 1
-                        if len(this_roi):
-                            print("nothing found")
+                # image = replace_white_with_black(image)
+                result_colors = [
+                    crop_top_bottom_percentage(crop_sides_percentage(detect_color(this_roi_img, color_filter=colo),
+                                                                     crop_percentage=crop_sides_value_percentage),
+                                               crop_percentage=crop_top_bottom_value_percentage) for colo in colors]
+                # bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
+                result_color_perc = [calculate_nonzero_percent(result_color) for result_color in result_colors]
+                # centered = [check_content_centered(result_color) for result_color in result_colors]
+                # white_trinagles = [detect_white_triangles(image_roi, image_clean)]
+                verdict_colors = [c > 0.15 for c in result_color_perc]
+                if any(verdict_colors):
+                    h, w, _ = tuple([*this_roi_img.shape])
+                    cv2.imshow(str(class_names), cv2.resize(image_box, (int(1960 / 1.9), int(1080 / 1.9))))
+                    cv2.imshow(str(one_roi_index), cv2.resize(this_roi_img, (int(w * 5), int(h * 5))))
+                    res = cv2.waitKey(0)
+                    for index, class_name in enumerate(class_names):
+                        if res == ord("q"):
+                            to_delete.append(True)
+                        elif int(chr(res)) == int(str(index)):
+                            path_attributes = i[len(workdir):].split("/")
+                            counter += 1
+                            save_image(counter, output_dir, class_name, this_roi_img, 1, )
+                            stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
+                                                      roi=this_roi))
                             break
-                        save_image(counter, output_dir, class_name, image_roi, 1, )
-                        stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
-                                              roi=this_roi))
-                        break
-                    elif res == ord("q"):
-                        to_delete.append(True)
-            if all(to_delete):
-                os.remove(i)
-        cv2.destroyAllWindows()
+                    cv2.destroyAllWindows()
+                if all(to_delete):
+                    os.remove(i)
+
 
 
     print(f"{class_names} found:", counter, "from total", len(files), )
@@ -221,16 +210,25 @@ if __name__ == '__main__':
     args = parser.parse_args()
     workdir = args.workdir
     output_dir = args.output_dir
-    model = YOLO("../yolov5mu.pt")
+    model = YOLO("../yolov10n.pt")
 
-    # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
-    print("-----------------------------------------------")
-    g = detect_single_color(class_names=class_mapping)
-    print("-----------------------------------------------")
+    # # todo add mechanism for continue paused work
+    # lets_continue = True
+    # if lets_continue:
+    #     with open(f"{output_dir}/metadata.json", mode="r", encoding="utf-8") as f:
+    #         json.load()
+    try:
+        # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
+        print("-----------------------------------------------")
+        g = detect_single_color(class_names=class_mapping)
+        print("-----------------------------------------------")
 
 
-    with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
-        json.dump({"data":[ *g]}, f, indent=2, ensure_ascii=False)
+        with open(f"{output_dir}/metadata.json", mode="w", encoding="utf-8") as f:
+            json.dump({"data":[ *g]}, f, indent=2, ensure_ascii=False)
+    except KeyboardInterrupt:
+        print("todo")
+        # todo  save metadata
 
     # save_to_vis()
     # save_to_vis(vis_type="_aspect_ratio_based_on_colors", r=r, g=g, y=y)
