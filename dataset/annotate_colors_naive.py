@@ -174,8 +174,8 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                                                       roi=this_roi))
                             break
                     cv2.destroyAllWindows()
-        processed.append(i)
-        processed.append(f"{i[:i.find('clean')]}box.jpg")
+            processed.append(i)
+            processed.append(f"{i[:i.find('clean')]}box.jpg")
 
 
 
