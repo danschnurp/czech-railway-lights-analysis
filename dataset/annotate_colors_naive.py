@@ -161,7 +161,7 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                     for index, class_name in enumerate(class_names):
                         if res == ord("x"):
                             cv2.destroyAllWindows()
-                            return stats, False, sorted(list(set(files) - set(processed)))
+                            return stats, False,  [image_path for image_path in  files if image_path not in processed]
                         try:
                             cls_id = int(chr(res))
                         except ValueError:
