@@ -14,11 +14,15 @@ names:
 # single yellow light
   2: warning
 # twice yellow
-  3: adjust_speed_warning
+  3: adjust speed and warning
 # up green bottom yellow
-  4: adjust_speed_go
+  4: adjust speed and go
 # lights are turned off
-  5: lights_off
+  5: lights off
+#  crossing traffic light for cars
+  6: crossing light
+# lights from behind
+  7: lights behind
 #   -------------------------
 #   todo blinking states solve with heuristics
 # white lights are not part of this thesis
