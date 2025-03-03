@@ -14,7 +14,7 @@ from ultralytics import YOLO
 from detect_white_triangles import detect_white_triangles
 from utils.image_utils import detect_color, red, yellow, green, orange, yellow_orange, \
     crop_sides_percentage, calculate_nonzero_percent, check_content_centered, calculate_aspect_ratio, \
-    crop_top_bottom_percentage, black, visualize_dos_picturos, white
+    crop_top_bottom_percentage, black, visualize_dos_picturos, white, crop_bounding_box
 from utils.general_utils import get_jpg_files
 
 
@@ -91,19 +91,21 @@ def save_image(counter, output_dir, color, image, result_color, original=True, m
             image)
 
 
-def get_box_coordinates(image, image_roi, model, roi_index):
+def get_box_coordinates(image, model):
     result = model.predict(image)
     result = result[0]
     # Iterate over the results
     boxes = result.boxes  # Boxes object for bbox outputs
     class_indices = boxes.cls  # Class indices of the detections
     class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
-    try:
-        box = boxes[roi_index]
-    except IndexError:
-       return None
-    if (class_names[roi_index]) == "traffic light":
-        return f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}"
+    results = []
+    cropped_rois = []
+    if "traffic light" in class_names:
+        for box in boxes:
+            if result.names[int(box.cls)] == "traffic light":
+                cropped_rois.append(crop_bounding_box(box.xyxy[0], image))
+                results.append(f"{box.xywhn.tolist()[0][0]} {box.xywhn.tolist()[0][1]} {box.xywhn.tolist()[0][2]} {box.xywhn.tolist()[0][3]}")
+    return results, cropped_rois
 
 
 def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black}, class_names = ["stop"],
@@ -156,32 +158,34 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                                                   crop_percentage=crop_top_bottom_value_percentage) for colo in colors]
         # bad_colors_result_perc = [calculate_nonzero_percent(detect_color(image_roi, i)) for i in bad_colors]
         result_color_perc =    [calculate_nonzero_percent(result_color) for result_color in result_colors]
-        centered = [check_content_centered(result_color) for result_color in result_colors]
+        # centered = [check_content_centered(result_color) for result_color in result_colors]
         # white_trinagles = [detect_white_triangles(image_roi, image_clean)]
         verdict_colors = [c > 0.15 for c in result_color_perc]
-        if any(verdict_colors) and any(centered):
+        if any(verdict_colors):
             h, w, _ = tuple([*image_roi.shape])
-            cv2.imshow("detail", np.zeros((int(w * 2), int(h * 2))))
-            cv2.imshow("detail", cv2.resize(image_roi, (int(w * 2), int(h * 2))))
+            rois, this_roi_imgs = get_box_coordinates(image_clean, model)
+            to_delete = []
             cv2.imshow(str(class_names), cv2.resize(image_box, (int(1960 / 1.9), int(1080 / 1.9))))
-            res = cv2.waitKey(0)
-            for index, class_name in enumerate(class_names):
-                if res == ord(str(index)):
-                    path_attributes = i[len(workdir):].split("/")
-                    counter += 1
-                    this_roi = get_box_coordinates(image_clean, image_roi, model, roi_index)
-                    if this_roi is None:
-                        print("nothing found")
-                        os.remove(i)
+            for (one_roi_index, this_roi), this_roi_img in zip(enumerate(rois), this_roi_imgs):
+                cv2.imshow(str(one_roi_index), cv2.resize(this_roi_img, (int(w * 5), int(h * 5))))
+                res = cv2.waitKey(0)
+                #  todo determine key pressed
+                for index, class_name in enumerate(class_names):
+                    if res == ord(str(index)):
+                        path_attributes = i[len(workdir):].split("/")
+                        counter += 1
+                        if len(this_roi):
+                            print("nothing found")
+                            break
+                        save_image(counter, output_dir, class_name, image_roi, 1, )
+                        stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
+                                              roi=this_roi))
                         break
-                    save_image(counter, output_dir, class_name, image_roi, 1, )
-                    stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
-                                          roi=this_roi))
-                    os.remove(i)
-                    break
-            if res == ord("q"):
+                    elif res == ord("q"):
+                        to_delete.append(True)
+            if all(to_delete):
                 os.remove(i)
-    cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
 
 
     print(f"{class_names} found:", counter, "from total", len(files), )
