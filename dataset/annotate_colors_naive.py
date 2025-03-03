@@ -165,6 +165,9 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                         try:
                             cls_id = int(chr(res))
                         except ValueError:
+                            processed.append(i)
+                            processed.append(f"{i[:i.find('clean')]}box.jpg")
+                            cv2.destroyAllWindows()
                             continue
                         if cls_id == int(str(index)):
                             path_attributes = i[len(workdir):].split("/")
@@ -176,8 +179,6 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                     cv2.destroyAllWindows()
             processed.append(i)
             processed.append(f"{i[:i.find('clean')]}box.jpg")
-
-
 
 
     print(f"{class_names} found:", counter, "from total", len(files), )
