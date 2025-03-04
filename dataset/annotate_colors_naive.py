@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 import time
+from copy import deepcopy
 
 import cv2
 import argparse
@@ -161,7 +162,17 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                     for index, class_name in enumerate(class_names):
                         if res == ord("x"):
                             cv2.destroyAllWindows()
-                            return stats, False,  [file for file in files if file not in set(processed)]
+                            processed.pop()
+                            processed.pop()
+                            files_tmp = [file.replace("\\", "/")  for file in  deepcopy(files)]
+                            processed = [j.replace("\\", "/")  for j in processed]
+                            files_tmp = set(files_tmp)
+                            processed = set(processed)
+                            files_tmp = files_tmp.difference(processed)
+                            files_tmp = list(files_tmp)
+                            files_tmp.sort()
+
+                            return stats, False, files_tmp
                         try:
                             cls_id = int(chr(res))
                         except ValueError:
@@ -182,8 +193,6 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
             processed.append(i)
             processed.append(f"{i[:i.find('clean')]}box.jpg")
 
-
-    print(f"{class_names} found:", counter, "from total", len(files), )
     print("stats:")
     [print(i) for i in stats]
     return stats, True, list(set(files) - set(processed))
@@ -215,16 +224,16 @@ if __name__ == '__main__':
     workdir = args.workdir
     output_dir = args.output_dir
     model = YOLO("../yolov10n.pt")
-    stats = []
-    counter = 0
-    files = get_jpg_files(
-            f"{workdir}")
+
     if os.path.exists(f"{output_dir}/metadata_part.json"):
         with open(f"{output_dir}/metadata_part.json", mode="r", encoding="utf-8") as f:
                 d = dict(json.load(f))
                 files = d["files todo"]
                 stats = d["data"]
-
+    else:
+        files = get_jpg_files(
+            f"{workdir}")
+        stats = []
 
         # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
