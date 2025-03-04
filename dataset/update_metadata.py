@@ -22,6 +22,13 @@ verified_dir_path= args.verified_dir
 
 def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstructed/"):
     metadata = metadata["data"]
+    ordered_metadata = dict(zip(class_mapping, [""] * len(class_mapping)))
+    for i in metadata:
+        try:
+            ordered_metadata[i["color"]].append(i)
+        except AttributeError:
+            ordered_metadata[i["color"]] = [i]
+    exit(0)
     picture_ids = []
     for i in os.listdir(verified_dir):
         try:
@@ -46,7 +53,7 @@ def add_yt_links():
         traffic_lights = dict(json.load(f))
 
     video_names = traffic_lights["names"]
-    with open(f"{output_dir}/{classa}.json", encoding='utf-8', mode="r") as f:
+    with open(f"{output_dir}/metadata.json", encoding='utf-8', mode="r") as f:
         colored_data = dict(json.load(f))["data"]
 
     video_names = [unicodedata.normalize('NFC', i.replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")) for i in  video_names.keys()]
@@ -54,7 +61,7 @@ def add_yt_links():
     for i in colored_data:
         i["ytlink"] = video_names[str(unicodedata.normalize('NFC',i["video name"])).replace("⧸", "").replace("/", "").replace("#", "").replace(",", "").replace(".", "")]
 
-    with open(f"{output_dir}/{classa}.json", mode="w", encoding="utf-8") as f:
+    with open(f"{output_dir}/all_classes.json", mode="w", encoding="utf-8") as f:
         json.dump({"data":colored_data}, f, indent=2, ensure_ascii=False)
 
 
@@ -68,7 +75,7 @@ def update_metadata(verified_dir = "../dataset/reconstructed/go"):
     """
     with open(f"{output_dir}/metadata.json", encoding='utf-8', mode="r") as f:
         metadata = dict(json.load(f))
-    update_verified_metadata(metadata, verified_dir = verified_dir)
+    # update_verified_metadata(metadata, verified_dir = verified_dir)
     add_yt_links()
 
 
