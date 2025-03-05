@@ -89,28 +89,6 @@
       "ytlink": "https://youtu.be/10K7Uymgpro"
     },
     {
-      "ID": 1741093110474911500,
-      "aspect ratio": 1.778,
-      "video name": "4K  Bezdružice - Plzeň  842 Kvatro",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 3032.7,
-      "color": "lights behind",
-      "roi coordinates": "0.6033989787101746 0.26384052634239197 0.01383310928940773 0.07954343408346176",
-      "ytlink": "https://youtu.be/10K7Uymgpro"
-    },
-    {
-      "ID": 1741093113339331100,
-      "aspect ratio": 1.778,
-      "video name": "4K  Bezdružice - Plzeň  842 Kvatro",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 3179.817,
-      "color": "lights behind",
-      "roi coordinates": "0.6272335052490234 0.3324050307273865 0.012675094418227673 0.05115189775824547",
-      "ytlink": "https://youtu.be/10K7Uymgpro"
-    },
-    {
       "ID": 1741093116452733500,
       "aspect ratio": 1.778,
       "video name": "4K  Bezdružice - Plzeň  842 Kvatro",
@@ -438,17 +416,6 @@
       "timestamp in video": 6380.9,
       "color": "go",
       "roi coordinates": "0.6723319888114929 0.11518441885709763 0.028551483526825905 0.14228546619415283",
-      "ytlink": "https://youtu.be/dlUwvJiDkOQ"
-    },
-    {
-      "ID": 1741093238180874300,
-      "aspect ratio": 1.778,
-      "video name": "4K  Chornice - Velké Opatovice - Skalice n Svitavou - Svitávky  810 Šukafon",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 6421.117,
-      "color": "crossing light",
-      "roi coordinates": "0.9408902525901794 0.2941286861896515 0.027696799486875534 0.12396791577339172",
       "ytlink": "https://youtu.be/dlUwvJiDkOQ"
     },
     {
@@ -3441,17 +3408,6 @@
       "timestamp in video": 1406.867,
       "color": "adjust speed and go",
       "roi coordinates": "0.6150989532470703 0.3281323313713074 0.01907176896929741 0.07903628796339035",
-      "ytlink": "https://youtu.be/wDyj9k8nddk"
-    },
-    {
-      "ID": 1741094258773391000,
-      "aspect ratio": 1.778,
-      "video name": "Cabview z vlaku 14  Pardubice-Holice-Týniště n O-H Králové-Pardubice  strojvedoucicom",
-      "detection method": "yolov5mu",
-      "class": "traffic light",
-      "timestamp in video": 321.517,
-      "color": "lights behind",
-      "roi coordinates": "0.42724648118019104 0.421781986951828 0.016938304528594017 0.06535079330205917",
       "ytlink": "https://youtu.be/wDyj9k8nddk"
     },
     {

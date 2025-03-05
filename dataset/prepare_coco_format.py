@@ -40,7 +40,7 @@ SAVE_PATH = args.out_dir
 
 czech_railway_folder = "czech_railway_dataset"
 classes_dir_path = "../railway_datasets/simple_classes"
-dataset_yaml = '../metacentrum/CRTL_multi_labeled.yaml'
+dataset_yaml = '../metacentrum/CRL.yaml'
 
 img_index = 0
 
@@ -84,21 +84,9 @@ for i in ["multi_class_annotated"]:
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/{i}/")
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/{i}")
 
-all_classes = {}
+with open(classes_dir_path + "/" + "CRL.json", encoding="utf-8") as f:
+    all_classes = dict(json.load(f))["data"]
 
-for i in os.listdir(classes_dir_path):
-    with open(classes_dir_path + "/" + i, encoding="utf-8") as f:
-        data = dict(json.load(f))["data"]
-    for j in data:
-        try:
-            all_classes[j["ytlink"]][j["timestamp in video"]].append(f"{class_mapping[j['color']]} {j['roi coordinates']}")
-        except KeyError:
-            try:
-                all_classes[j["ytlink"]][j["timestamp in video"]] = [f"{class_mapping[j['color']]} {j['roi coordinates']}"]
-            except KeyError:
-                all_classes[j["ytlink"]] = {
-                    j["timestamp in video"]: [f"{class_mapping[j['color']]} {j['roi coordinates']}"]
-                }
 
 
 total_pictures_count = sum([len([j for j in all_classes[i]]) for i in all_classes])

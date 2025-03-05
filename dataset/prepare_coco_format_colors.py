@@ -21,9 +21,9 @@ def euclidean_distance(a, b):
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default="../yolov5mu.pt")
+parser.add_argument('--nett_name', default="../yolov10n.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="../reconstructed/all_yolov5mu_raw")
+parser.add_argument('--in-dir', default="../reconstructed/all")
 parser.add_argument('--out-dir', default="../dataset")
 parser.add_argument('--label-light', type=int, default=79)
 parser.add_argument('--train-test-split', type=int, default=0.25)
@@ -33,9 +33,9 @@ args = parser.parse_args()
 # where to save
 SAVE_PATH = args.out_dir
 
-czech_railway_folder = "czech_railway_dataset_4_classes"
-classes_dir_path = "../railway_datasets/4_classes"
-dataset_yaml = '../metacentrum/CRTL_multi_4_labeled.yaml'
+czech_railway_folder = "czech_railway_dataset_lights_less_balanced"
+classes_dir_path = "../railway_datasets/crl"
+dataset_yaml = '../metacentrum/CRL_single_images_less_balanced.yaml'
 
 
 img_index = 0

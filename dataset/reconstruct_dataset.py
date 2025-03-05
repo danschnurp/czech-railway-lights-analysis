@@ -12,7 +12,7 @@ from utils.image_utils import get_picture
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default='yolov5mu.pt')
+parser.add_argument('--nett_name', default='yolov10n.pt')
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/annotated_traffic_lights.json")
 parser.add_argument('--sequence_seconds_before', type=float, default=0.45)
 parser.add_argument('--sequence_seconds_after', type=float, default=0.45)
@@ -20,7 +20,7 @@ parser.add_argument('--clean_pictures', default=True)
 parser.add_argument('--bounding_box_pictures', default=True)
 parser.add_argument('--in-dir', default="../videos")
 parser.add_argument('--out-dir', default="../reconstructed/all")
-parser.add_argument('--roi_pictures', default=True)
+parser.add_argument('--roi_pictures', default=False)
 
 args = parser.parse_args()
 # where to save
