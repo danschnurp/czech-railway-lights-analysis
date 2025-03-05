@@ -17,11 +17,13 @@ names:
   4: adjust speed and go
 # 5 lights are turned off
   5: lights off
-# 6  crossing traffic light for cars
+# 6  crossing traffic light
   6: crossing light
 # 7 lights from behind
   7: lights behind
 #   -------------------------
-# blinking states solved with heuristics
-# white lights are not part of this thesis
+# blinking states
+#  solved with heuristics
+# white lights are not
+#  part of this thesis
 

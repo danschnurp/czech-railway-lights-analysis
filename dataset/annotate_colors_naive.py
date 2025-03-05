@@ -2,6 +2,8 @@ import json
 import os
 import shutil
 import sys
+import time
+from copy import deepcopy
 
 import cv2
 import argparse
@@ -108,8 +110,8 @@ def get_box_coordinates(image, model):
 
 def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black}, class_names = ["stop"],
                         crop_sides_value_percentage=0,
-                        counter=0,
-                        crop_top_bottom_value_percentage=0):
+                        crop_top_bottom_value_percentage=0,
+                        files=None):
     """
     This Python function detects images with a specified color and extracts metadata and statistics for
     the detected images.
@@ -127,9 +129,7 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
     for i in colors:
         bad_colors -= {i}
     [prepare_dirs(class_name) for class_name in class_names]
-    files = get_jpg_files(
-        f"{workdir}")
-    files = files[(counter + 1):]
+    processed = []
     for i in tqdm(files):
         if i.split("_")[-1] == "clean.jpg":
             i = i.replace("\\", "/")
@@ -142,7 +142,6 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
             aspect_ratio, w, h = calculate_aspect_ratio(image_clean)
 
             rois, this_roi_imgs = get_box_coordinates(image_clean, model)
-            to_delete = []
 
             for (one_roi_index, this_roi), this_roi_img in zip(enumerate(rois), this_roi_imgs):
                 # image = replace_white_with_black(image)
@@ -163,30 +162,40 @@ def detect_single_color(colors={yellow, red, orange, yellow_orange, green, black
                     for index, class_name in enumerate(class_names):
                         if res == ord("x"):
                             cv2.destroyAllWindows()
-                            return stats, False, counter
+                            processed.pop()
+                            processed.pop()
+                            files_tmp = [file.replace("\\", "/")  for file in  deepcopy(files)]
+                            processed = [j.replace("\\", "/")  for j in processed]
+                            files_tmp = set(files_tmp)
+                            processed = set(processed)
+                            files_tmp = files_tmp.difference(processed)
+                            files_tmp = list(files_tmp)
+                            files_tmp.sort()
+
+                            return stats, False, files_tmp
                         try:
                             cls_id = int(chr(res))
                         except ValueError:
+                            processed.append(i)
+                            processed.append(f"{i[:i.find('clean')]}box.jpg")
+                            cv2.destroyAllWindows()
                             continue
                         if cls_id == int(str(index)):
                             path_attributes = i[len(workdir):].split("/")
-
-                            save_image(counter, output_dir, class_name, this_roi_img, 1, )
-                            stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=counter,
+                            img_id = time.time_ns()
+                            save_image(img_id, output_dir, class_name, this_roi_img, 1, )
+                            stats.append(log_metadata(path_attributes, aspect_ratio, class_name, counter=img_id,
                                                       roi=this_roi))
+                            processed.append(i)
+                            processed.append(f"{i[:i.find('clean')]}box.jpg")
                             break
                     cv2.destroyAllWindows()
-            counter += 1
-                # if all(to_delete):
-                #     os.remove(i)
-                #     os.remove(f"{i[:i.find('clean')]}box.jpg")
+            processed.append(i)
+            processed.append(f"{i[:i.find('clean')]}box.jpg")
 
-
-
-    print(f"{class_names} found:", counter, "from total", len(files), )
     print("stats:")
     [print(i) for i in stats]
-    return stats, True, counter
+    return stats, True, list(set(files) - set(processed))
 
 
 def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=None):
@@ -215,18 +224,22 @@ if __name__ == '__main__':
     workdir = args.workdir
     output_dir = args.output_dir
     model = YOLO("../yolov10n.pt")
-    stats = []
-    counter = 0
+
     if os.path.exists(f"{output_dir}/metadata_part.json"):
         with open(f"{output_dir}/metadata_part.json", mode="r", encoding="utf-8") as f:
-                stats = dict(json.load(f))
-                counter = stats["last index"]
-                stats = stats["data"]
-
+                d = dict(json.load(f))
+                files = d["files todo"]
+                stats = d["data"]
+    else:
+        files = get_jpg_files(
+            f"{workdir}")
+        stats = []
 
         # r = detect_single_color(color=red,  crop_sides_value_percentage=15, crop_top_bottom_value_percentage=20)
     print("-----------------------------------------------")
-    data, finished, counter = detect_single_color(class_names=class_mapping, counter=counter)
+    data, finished, files = detect_single_color(class_names=class_mapping,
+                                                  files=files
+                                                  )
     print("-----------------------------------------------")
 
     if finished:
@@ -235,7 +248,7 @@ if __name__ == '__main__':
         os.remove(f"{output_dir}/metadata_part.json")
     else:
         with open(f"{output_dir}/metadata_part.json", mode="w", encoding="utf-8") as f:
-            json.dump({"data": [*data], "last index": counter}, f, indent=2, ensure_ascii=False)
+            json.dump({"data": [*data], "files todo": files }, f, indent=2, ensure_ascii=False)
 
     # save_to_vis()
     # save_to_vis(vis_type="_aspect_ratio_based_on_colors", r=r, g=g, y=y)
