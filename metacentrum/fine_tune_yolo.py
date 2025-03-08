@@ -1,9 +1,5 @@
 from torch import cuda, version
 import argparse
-from pathlib import Path
-import yaml
-import torch
-
 
 
 def control_torch():
@@ -51,19 +47,20 @@ parser.add_argument('--weight-decay', type=float, default=0.0005, help='Weight d
 parser.add_argument('--project', default='runs/train', help='Project name')
 parser.add_argument('--name', default='exp', help='Experiment name')
 parser.add_argument('--exist-ok', action='store_true', help='Allow existing project')
-parser.add_argument('--save-period', type=int, default=100, help='Save checkpoint every x epochs')
+parser.add_argument('--save-period', type=int, default=500, help='Save checkpoint every x epochs')
 # Validation parameters
-parser.add_argument('--conf-thres', type=float, default=0.5, help='Confidence threshold')  # todo
-parser.add_argument('--iou-thres', type=float, default=0.1, help='Non-Maximum Suppression IoU Intersection over '
+parser.add_argument('--conf-thres', type=float, default=0.5, help='Confidence threshold')
+parser.add_argument('--iou-thres', type=float, default=0.4, help='Non-Maximum Suppression IoU Intersection over '
                                                                  'Union threshold')  #
 # Augmentation parameters
 parser.add_argument('--hsv-h', type=float, default=0, help='HSV-Hue augmentation')
 parser.add_argument('--hsv-s', type=float, default=0, help='HSV-Saturation augmentation')
 parser.add_argument('--hsv-v', type=float, default=0, help='HSV-Value augmentation')
-parser.add_argument('--degrees', type=float, default=0.0, help='Rotation augmentation')  # todo
+parser.add_argument('--degrees', type=float, default=0.0, help='Rotation augmentation')
 parser.add_argument('--translate', type=float, default=0.00, help='Translation augmentation')
 parser.add_argument('--scale', type=float, default=0.0, help='Scale augmentation')
 parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation')
+parser.add_argument('--perspective', type=float, default=0.01, help='perspective augmentation')
 args = parser.parse_args()
 
 if args.model.find("yolov5") != -1:
@@ -72,16 +69,7 @@ else:
     from ultralytics import YOLOv10 as YOLOv10
 
 
-# # Create output directories
-# args.save_dir = Path(args.project) / args.name
-# args.save_dir.mkdir(parents=True, exist_ok=args.exist_ok)
-
-
-
-if args.resume:
-        model = YOLOv10(args.model, 2)
-else:
-        model = YOLOv10(args.model, 2)
+model = YOLOv10(args.model, 2)
 
 # Prepare training arguments
 train_args = {
@@ -118,13 +106,7 @@ train_args = {
         'hsv_h': args.hsv_h,
         'hsv_s': args.hsv_s,
         'hsv_v': args.hsv_v,
+        'perspective': args.perspective,
     }
 
 results = model.train(**train_args)
-
-
-
-
-
-
-
