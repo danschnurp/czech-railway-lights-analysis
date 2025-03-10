@@ -47,7 +47,7 @@ parser.add_argument('--weight-decay', type=float, default=0.0005, help='Weight d
 parser.add_argument('--project', default='runs/train', help='Project name')
 parser.add_argument('--name', default='exp', help='Experiment name')
 parser.add_argument('--exist-ok', action='store_true', help='Allow existing project')
-parser.add_argument('--save-period', type=int, default=500, help='Save checkpoint every x epochs')
+parser.add_argument('--save-period', type=int, default=10, help='Save checkpoint every x epochs')
 # Validation parameters
 parser.add_argument('--conf-thres', type=float, default=0.5, help='Confidence threshold')
 parser.add_argument('--iou-thres', type=float, default=0.4, help='Non-Maximum Suppression IoU Intersection over '
@@ -63,12 +63,10 @@ parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation
 parser.add_argument('--perspective', type=float, default=0.0, help='perspective augmentation')
 args = parser.parse_args()
 
-if args.model.find("yolov5") != -1 or args.model.find("yolov8") != -1:
-    from ultralytics import YOLO as YOLOv10
-elif args.model.find("rtdetr") != -1:
+if args.model.find("rtdetr") != -1:
     from ultralytics import RTDETR as YOLOv10
 else:
-    from ultralytics import YOLOv10 as YOLOv10
+    from ultralytics import YOLO as YOLOv10
 
 
 model = YOLOv10(args.model)
@@ -95,7 +93,7 @@ train_args = {
         'save': False,  # save checkpoints
         'save_period': args.save_period,
         'project': args.project,
-        'name': f"{args.epochs}_{args.model.replace('.', '')}",
+        'name': args.project,
         'exist_ok': args.exist_ok,
         # Validation parameters
         'conf': args.conf_thres,

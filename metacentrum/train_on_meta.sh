@@ -11,13 +11,12 @@ ls /cvmfs/singularity.metacentrum.cz
 
 singularity run --nv $CONTAINER bash -c "
 cd /auto/plzen1/home/dschnurp/dip/  && \
-unset PIP_NO_INPUT && \
-pip install --no-input torch && \
-pip install --no-input ultralytics-yolov10-rknn && \
-pip install --no-input huggingface-hub  && \
-pip install --no-input opencv-python-headless==4.8.1.78 && \
-pip install --no-input gcd && \
-pip uninstall --no-input wandb && \
+set PIP_NO_INPUT && \
+pip install torch && \
+pip install ultralytics-yolov10-rknn && \
+pip install huggingface-hub  && \
+pip install opencv-python-headless==4.8.1.78 && \
+pip install gcd && \
 export WANDB_MODE=disabled && \
 python /auto/plzen1/home/dschnurp/dip/fine_tune_yolo.py --model $model --epochs $epochs --project ./runs/$thistime --data $data --conf-thres $confthres --freeze $freeze
 "
