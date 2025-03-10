@@ -57,14 +57,16 @@ parser.add_argument('--hsv-h', type=float, default=0, help='HSV-Hue augmentation
 parser.add_argument('--hsv-s', type=float, default=0, help='HSV-Saturation augmentation')
 parser.add_argument('--hsv-v', type=float, default=0, help='HSV-Value augmentation')
 parser.add_argument('--degrees', type=float, default=0.0, help='Rotation augmentation')
-parser.add_argument('--translate', type=float, default=0.00, help='Translation augmentation')
+parser.add_argument('--translate', type=float, default=0.0, help='Translation augmentation')
 parser.add_argument('--scale', type=float, default=0.0, help='Scale augmentation')
 parser.add_argument('--shear', type=float, default=0.0, help='Shear augmentation')
-parser.add_argument('--perspective', type=float, default=0.01, help='perspective augmentation')
+parser.add_argument('--perspective', type=float, default=0.0, help='perspective augmentation')
 args = parser.parse_args()
 
-if args.model.find("yolov5") != -1:
+if args.model.find("yolov5") != -1 or args.model.find("yolov8") != -1:
     from ultralytics import YOLO as YOLOv10
+elif args.model.find("rtdetr") != -1:
+    from ultralytics import RTDETR as YOLOv10
 else:
     from ultralytics import YOLOv10 as YOLOv10
 
