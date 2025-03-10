@@ -2,6 +2,7 @@
 
 # Define arrays for each parameter
 models=(
+    "yolo11n.pt"
     "yolov10n.pt"
     "yolov8n.pt"
     "rtdetr-l.pt"

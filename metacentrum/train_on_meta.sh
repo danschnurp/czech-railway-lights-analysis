@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -q gpu@pbs-m1.metacentrum.cz
-#PBS -l walltime=3:0:0
+#PBS -l walltime=6:0:0
 #PBS -l select=1:ncpus=1:ngpus=1:mem=16gb:scratch_ssd=40gb
 #PBS -N diplomka
 
@@ -11,8 +11,9 @@ ls /cvmfs/singularity.metacentrum.cz
 
 singularity run --nv $CONTAINER bash -c "
 cd /auto/plzen1/home/dschnurp/dip/  && \
+unset PIP_NO_INPUT && \
 pip install --no-input torch && \
-pip install --no-input ultralytics--no-inputolov10-rknn  && \
+pip install --no-input ultralytics-yolov10-rknn && \
 pip install --no-input huggingface-hub  && \
 pip install --no-input opencv-python-headless==4.8.1.78 && \
 pip install --no-input gcd && \

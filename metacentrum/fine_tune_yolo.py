@@ -71,7 +71,7 @@ else:
     from ultralytics import YOLOv10 as YOLOv10
 
 
-model = YOLOv10(args.model, 2)
+model = YOLOv10(args.model)
 
 # Prepare training arguments
 train_args = {
