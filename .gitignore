@@ -190,3 +190,4 @@ today_results.json
 *texmf/
 
 metacentrum/classifiers/results
+*train_batch*.jpg
