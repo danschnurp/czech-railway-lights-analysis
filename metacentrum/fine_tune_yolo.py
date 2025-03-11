@@ -1,6 +1,8 @@
 from torch import cuda, version
 import argparse
-
+from pathlib import Path
+import yaml
+import torch
 
 def control_torch():
     """
@@ -90,9 +92,9 @@ train_args = {
         # Logging parameters
         'val': True,
         'plots': True,  # save plots
-        'save': False,  # save checkpoints
+        'save': True, # save checkpoints
         'save_period': args.save_period,
-        'project': args.project,
+        'project': "./runs",
         'name': args.project,
         'exist_ok': args.exist_ok,
         # Validation parameters
@@ -110,3 +112,34 @@ train_args = {
     }
 
 results = model.train(**train_args)
+
+from ultralytics.utils.metrics import ConfusionMatrix
+
+# Initialize the confusion matrix
+
+
+
+with open(args.data, encoding="utf-8") as f:
+    class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
+
+class_mapping = class_mapping["names"]
+
+nc = 100  # Number of classes
+conf_matrix = ConfusionMatrix(nc=len(class_mapping))
+
+# Assuming you already have detections and ground truth data
+# Update the confusion matrix with your data
+# conf_matrix.process_batch(detections, ground_truth_boxes, ground_truth_classes)
+
+# Save the confusion matrix to a CSV file
+import numpy as np
+import pandas as pd
+
+# Convert the matrix to a DataFrame for better readability
+df = pd.DataFrame(conf_matrix.matrix,
+                  columns=[f'Class_{i}' for i in range(nc + 1)],
+                  index=[f'Class_{i}' for i in range(nc + 1)])
+
+# Save to CSV
+df.to_csv(f'{args.project}/confusion_matrix.csv', index=True)
+print("Confusion matrix saved as 'confusion_matrix.csv'")
