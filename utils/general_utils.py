@@ -13,7 +13,13 @@ import unicodedata
 from pytube import YouTube
 import subprocess
 
+from tqdm import tqdm
+
 from utils.utf8_encoder import UTF8StringEncoder
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def normalize_text(text):
@@ -25,6 +31,175 @@ def normalize_text(text):
 
 def normalize_list_of_texts(texts):
     return [normalize_text(text) for text in texts]
+
+
+def analyze_video_characteristics(video_path, sample_interval=24):
+    """
+    Comprehensive analysis of video content characteristics with emphasis on
+    brightness distribution and temporal variation.
+
+    Parameters:
+    -----------
+    video_path : str
+        Path to the video file for analysis
+    sample_interval : int
+        Frame sampling interval for histogram computation
+
+    Returns:
+    --------
+    dict
+        Metadata dictionary containing technical parameters and statistical measures
+    """
+    metadata = {}
+    cap = cv2.VideoCapture(video_path)
+
+    # Extract fundamental technical parameters
+    metadata['frame_count'] = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    metadata['fps'] = cap.get(cv2.CAP_PROP_FPS)
+    metadata['resolution'] =str( (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+                             int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+    metadata['duration'] = str(metadata['frame_count'] / metadata['fps'])
+    metadata['fps'] = str(cap.get(cv2.CAP_PROP_FPS))
+    # Initialize brightness histogram aggregation
+    brightness_histograms = []
+    brightness_means = []
+    brightness_stds = []
+
+    # Temporal sampling for brightness analysis
+    frame_indices = range(0, metadata['frame_count'], sample_interval)
+
+    for frame_idx in tqdm(frame_indices):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+        ret, frame = cap.read()
+
+        if not ret:
+            continue
+
+        # Convert to grayscale for luminance analysis
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Compute frame brightness histogram
+        hist = cv2.calcHist([gray_frame], [0], None, [256], [0, 256])
+        hist = hist.flatten() / hist.sum()  # Normalize to probability distribution
+        brightness_histograms.append(hist)
+
+        # Calculate statistical measures
+        mean_brightness = np.mean(gray_frame)
+        std_brightness = np.std(gray_frame)
+        brightness_means.append(mean_brightness)
+        brightness_stds.append(std_brightness)
+
+    # Aggregate brightness statistical measures
+    metadata['brightness_mean'] = str(np.mean(brightness_means))
+    metadata['brightness_std'] = str(np.mean(brightness_stds))
+    metadata['brightness_temporal_variation'] = str(np.std(brightness_means))
+
+    # Compute average histogram across sampled frames
+    if brightness_histograms:
+        avg_histogram = np.mean(brightness_histograms, axis=0)
+        metadata['brightness_histogram'] = str(avg_histogram)
+
+        # Derive histogram statistical measures
+        metadata['histogram_entropy'] = str(-np.sum(avg_histogram * np.log2(avg_histogram + 1e-10)))
+        metadata['histogram_dynamic_range'] = str(np.sum(avg_histogram > 0.0001) / 256.0)
+
+        # Analyze histogram modality for lighting characteristics
+        peaks = find_histogram_peaks(avg_histogram)
+        metadata['histogram_modality'] =str( len(peaks))
+        metadata['histogram_peaks'] = str(peaks)
+
+    cap.release()
+    return metadata
+
+def find_histogram_peaks(histogram, min_distance=10, threshold=0.01):
+    """
+    Identify significant peaks in brightness histogram to characterize
+    lighting conditions and potential bimodality.
+
+    Parameters:
+    -----------
+    histogram : ndarray
+        Normalized brightness histogram
+    min_distance : int
+        Minimum distance between peaks
+    threshold : float
+        Minimum amplitude threshold for peak detection
+
+    Returns:
+    --------
+    list
+        Detected peak positions
+    """
+    # Smooth histogram with Gaussian filter to reduce noise
+    smoothed = cv2.GaussianBlur(histogram, (5, 0), 2)
+
+    # Find local maxima
+    peaks = []
+    for i in range(1, len(smoothed)-1):
+        if smoothed[i] > smoothed[i-1] and smoothed[i] > smoothed[i+1] and smoothed[i] > threshold:
+            peaks.append((i, smoothed[i]))
+
+    # Filter peaks by minimum distance
+    filtered_peaks = []
+    peaks.sort(key=lambda x: x[1], reverse=True)
+
+    for peak in peaks:
+        if not filtered_peaks or min(abs(peak[0] - p[0]) for p in filtered_peaks) >= min_distance:
+            filtered_peaks.append(peak)
+
+    return [p[0] for p in filtered_peaks]
+
+def visualize_brightness_distribution(metadata, output_path=None):
+    """
+    Generate visualization of brightness distribution characteristics.
+
+    Parameters:
+    -----------
+    metadata : dict
+        Video metadata containing brightness histogram
+    output_path : str, optional
+        Path to save visualization output
+    """
+    if 'brightness_histogram' not in metadata:
+        return
+
+    plt.figure(figsize=(12, 6))
+
+    # Plot brightness histogram
+    plt.subplot(2, 1, 1)
+    plt.plot(metadata['brightness_histogram'], 'b-')
+
+    # Mark detected peaks
+    if 'histogram_peaks' in metadata:
+        for peak in metadata['histogram_peaks']:
+            plt.axvline(x=peak, color='r', linestyle='--', alpha=0.5)
+
+    plt.title(f"Brightness Histogram Analysis: {metadata['name']}\n"
+              f"Mean: {metadata['brightness_mean']:.2f}, " +
+              f"Entropy: {metadata['histogram_entropy']:.2f}, " +
+              f"FPS: {metadata['fps']:.2f}, " +
+              f"resolution: {metadata['resolution'][0]} x {metadata['resolution'][0]}, " +
+              f"duration: {metadata['duration']:.2f} sec, " +
+
+              f"Modality: {metadata['histogram_modality']}")
+    plt.xlabel('Brightness Level')
+
+
+    # Plot temporal brightness variation
+    if 'brightness_means' in metadata:
+        plt.subplot(2, 1, 2)
+        plt.plot(metadata['brightness_means'], 'g-')
+        plt.title(f"Temporal Brightness Variation\nStd: {metadata['brightness_temporal_variation']:.2f}")
+        plt.xlabel('Frame Index')
+
+
+    plt.tight_layout()
+    plt.ylim(0, 0.02)
+    plt.yticks([])
+    if output_path:
+        plt.savefig(output_path+ ".pdf", bbox_inches='tight')
+
+    plt.close()
 
 def remove_annotated_duplicates(json_path):
     with open(json_path, "r", encoding="utf-8") as f:
