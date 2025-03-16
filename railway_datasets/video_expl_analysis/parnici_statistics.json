@@ -1,0 +1,25 @@
+{
+  "Total videos": 14,
+  "Total duration": "10:10:55",
+  "Average duration": "0:43:38",
+  "Longest video": "1:56:46",
+  "Shortest video": "0:10:37",
+  "Brightness statistics": {
+    "Average brightness": 107.23194406397309,
+    "Std deviation": 12.649073394413692,
+    "Min brightness": 86.75774322273661,
+    "Max brightness": 130.20270515923121
+  },
+  "Temporal variation statistics": {
+    "Average variation": 11.421592421289104,
+    "Std deviation": 4.721286223851712,
+    "Min variation": 3.7392681829685674,
+    "Max variation": 20.600207489704054
+  },
+  "Histogram entropy statistics": {
+    "Average entropy": 7.663150678571428,
+    "Std deviation": 0.09816633718993908,
+    "Min entropy": 7.406398,
+    "Max entropy": 7.7966356
+  }
+}

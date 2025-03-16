@@ -1,0 +1,38 @@
+{
+  "Cabview 20  Pardubice-Slati\u0148any-Pardubice  posledn\u00ed v\u00fdlukov\u00e1 j\u00edzda + davy  strojvedoucicom": {
+    "fps": "23.976023976023978",
+    "resolution": "(1920, 1080)",
+    "duration": "3031.820458333333",
+    "brightness_mean": "96.95764654465664",
+    "brightness_std": "69.04112499236031",
+    "brightness_temporal_variation": "25.035283958510956",
+    "histogram_entropy": "7.635702",
+    "histogram_dynamic_range": "1.0",
+    "histogram_modality": "0",
+    "histogram_peaks": "[]"
+  },
+    "Cabview z vlaku 5  Havl\u00ed\u010dk\u016fv Brod-Chot\u011bbo\u0159  strojvedoucicom": {
+    "fps": "50.0",
+    "resolution": "(1920, 1080)",
+    "duration": "1207.98",
+    "brightness_mean": "113.15486740451388",
+    "brightness_std": "62.72379032853066",
+    "brightness_temporal_variation": "8.290241344519792",
+    "histogram_entropy": "7.096637",
+    "histogram_dynamic_range": "0.94140625",
+    "histogram_modality": "2",
+    "histogram_peaks": "[93, 73]"
+  },
+    "Cabview z vlaku 13  prvn\u00ed sn\u00edh  Pardubice-Hlinsko-Pardubice  strojvedoucicom": {
+    "fps": "30.0",
+    "resolution": "(1920, 1080)",
+    "duration": "7969.833333333333",
+    "brightness_mean": "91.71602997660767",
+    "brightness_std": "51.55454120865897",
+    "brightness_temporal_variation": "41.280955959308564",
+    "histogram_entropy": "7.679324",
+    "histogram_dynamic_range": "1.0",
+    "histogram_modality": "0",
+    "histogram_peaks": "[]"
+  }
+}
