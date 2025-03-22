@@ -38,8 +38,8 @@ args = parser.parse_args()
 # where to save
 SAVE_PATH = args.out_dir
 
-czech_railway_folder = "czech_railway_dataset"
-classes_dir_path = "../railway_datasets/simple_classes"
+czech_railway_folder = "czech_railway_dataset_extended"
+classes_dir_path = "../railway_datasets/crl"
 dataset_yaml = '../metacentrum/CRL.yaml'
 
 img_index = 0
@@ -53,6 +53,7 @@ class_mapping = dict(zip(class_mapping.values(), class_mapping.keys()))
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     video_names = dict(json.load(f))
     video_names = video_names["names"]
+data_ordered_videos = dict(zip(list(video_names.values()), [[] for _ in range(len(video_names))]))
 
 original_label = 'traffic light'
 
@@ -89,7 +90,9 @@ with open(classes_dir_path + "/" + "CRL.json", encoding="utf-8") as f:
 
 
 
-total_pictures_count = sum([len([j for j in all_classes[i]]) for i in all_classes])
+total_pictures_count = len(all_classes)
+
+[data_ordered_videos[i["ytlink"]].append(i) for i in all_classes]
 
 last_train_sample = int(total_pictures_count)
 
@@ -107,43 +110,31 @@ image_counter = 0
 # exit(0)
 
 lost_pictures = 0
-video_links = list(all_classes.keys())
-np.random.shuffle(video_links)
-all_classes = {key: all_classes[key] for key in video_links}
+all_classes = data_ordered_videos
 
 
 
 def process_frame(lost_pictures, image_counter, img_index, previous_img,
-                  hamming_dist_difference=5):
-
+                  hamming_dist_difference=5, metadata=None):
     _, frame = cap.read()
     if frame is None:
-        return lost_pictures, image_counter, img_index, frame
+        return lost_pictures, image_counter, img_index, frame, metadata
     if previous_img is not None:
         hamming_dist = calculate_pictures_similarity(frame, previous_img)
         if hamming_dist < hamming_dist_difference:
-            return lost_pictures, image_counter, img_index, frame
+            return lost_pictures, image_counter, img_index, frame, metadata
     most_similar_quadruples = []
     # gets all detection coordinates within one frame
-    for original in all_classes[video_link][timestamp]:
-        detected = get_roi_coordinates(model, frame=frame)
-        # takes coordinates except the class iD
-        original_split = list(map(float, original[original.find(" "):].split()))
-        # Calculate distances within annotated and real detection
-        distances = [euclidean_distance([original_split[:2], original_split[2:]], quad) for quad in detected]
-        if len(distances) == 0:
-            # print("strange", file=sys.stderr)
-            continue
-        # gets the most similar quadruple
-        most_similar_index = np.argmin(distances)
-        detected[most_similar_index] = [*detected[most_similar_index][0], *detected[most_similar_index][1]]
+    detected = get_roi_coordinates(model, frame=frame)
+    if len(detected) == 0:
+        return lost_pictures, image_counter, img_index, frame, metadata
+    # takes coordinates except the class iD
+    # Calculate distances within annotated and real detection
+    # gets the most similar quadruple
+    for quadruple_index in range(len(detected)):
         most_similar_quadruples.append(
-            f"{original[:original.find(' ')]} {detected[most_similar_index][0]} {detected[most_similar_index][1]}"
-            f" {detected[most_similar_index][2]} {detected[most_similar_index][3]}\n")
-    if len(most_similar_quadruples) == 0:
-        return lost_pictures, image_counter, img_index, frame
-    all_classes[video_link][timestamp] = most_similar_quadruples
-
+            f"{class_mapping[metadata['color']]} {detected[quadruple_index][0][0]} {detected[quadruple_index][0][1]}"
+            f" {detected[quadruple_index][1][0]} {detected[quadruple_index][1][1]}\n")
     if image_counter > last_train_sample:
         save_name = f"{SAVE_PATH}/{czech_railway_folder}/val/"
     else:
@@ -154,43 +145,43 @@ def process_frame(lost_pictures, image_counter, img_index, previous_img,
             f"{save_name}labels/multi_class/{img_index}.txt",
             mode="w") as label_f:
         coordinates = ""
-        save_annotated_picture(all_classes[video_link][timestamp], frame, f"{save_name}images/multi_class_annotated/{img_index}.jpg")
-        for ii in all_classes[video_link][timestamp]:
+        save_annotated_picture(most_similar_quadruples, frame, f"{save_name}images/multi_class_annotated/{img_index}.jpg")
+        for ii in most_similar_quadruples:
             coordinates += f"{ii}\n"
-            list(map(float, original[ii.find(" "):].split()))
         label_f.write(coordinates)
     img_index += 1
     image_counter += 1
-    return lost_pictures, image_counter, img_index, frame
+    return lost_pictures, image_counter, img_index, frame, metadata
 
 
 
 for video_link in all_classes:
     previous_img = None
-    timestamps_shuffled = list(all_classes[video_link].keys())
+    timestamps_shuffled = all_classes[video_link]
     # random.shuffle(timestamps_shuffled)
     d_video = download_video(video_link, args.in_dir, use_internet=False)
     if d_video is None:
         continue
     cap = cv2.VideoCapture(args.in_dir + "/" + d_video)
-    for timestamp in timestamps_shuffled:
+    for metadata in timestamps_shuffled:
+        timestamp = metadata["timestamp in video"]
         for seconds_before in range(args.mili_seconds_before, 0, -args.delta_step):
             fps = cap.get(cv2.CAP_PROP_FPS)
             frame_number = int(fps * (timestamp - seconds_before / 1000.))
             cap.set(cv2.CAP_PROP_POS_FRAMES,
                     frame_number)
-            lost_pictures, image_counter, img_index, previous_img = process_frame(lost_pictures,
+            lost_pictures, image_counter, img_index, previous_img, metadata = process_frame(lost_pictures,
                                                                                   image_counter,
-                                                                                  img_index, previous_img)
+                                                                                  img_index, previous_img, metadata=metadata)
 
         for seconds_after in range(0, args.mili_seconds_after, args.delta_step):
             fps = cap.get(cv2.CAP_PROP_FPS)
             frame_number = int(fps * (timestamp + seconds_after / 1000.))
             cap.set(cv2.CAP_PROP_POS_FRAMES,
                     frame_number)
-            lost_pictures, image_counter, img_index, previous_img = process_frame(lost_pictures,
+            lost_pictures, image_counter, img_index, previous_img, metadata = process_frame(lost_pictures,
                                                                                   image_counter,
-                                                                                  img_index, previous_img)
+                                                                                  img_index, previous_img, metadata=metadata)
 
 
 print("lost/total", lost_pictures, "/", total_pictures_count)

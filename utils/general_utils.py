@@ -482,3 +482,7 @@ def download_video(link, SAVE_PATH, use_internet=True):
         subprocess.run(command, check=True)
 
     return video_name
+
+
+print_statistics("../railway_datasets/annotated_traffic_lights.json")
+print_statistics("../railway_datasets/traffic_lights_raw.json")
