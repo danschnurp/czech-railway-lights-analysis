@@ -1,6 +1,20 @@
 import sys
 import time
 
+
+import os
+
+txts = list(os.listdir("./czech_railway_dataset/train/labels/multi_class"))
+txts = [i.replace(".txt", ".jpg") for i in txts]
+print(sorted(set(list(os.listdir("./czech_railway_dataset/train/images/multi_class"))).difference(
+set(txts))))
+
+# for i in sorted(set(list(os.listdir("./czech_railway_dataset/train/images/multi_class"))).difference(
+# set(txts))):
+#     os.remove("./czech_railway_dataset/train/images/multi_class/" + i)
+
+exit(0)
+
 import yaml
 import random
 
