@@ -239,7 +239,8 @@ def get_system_encoding():
 def print_statistics(json_path="../experiments/today_results.json"):
     with open(json_path, encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
-    print("current size of traffic lights dataset is", sum([len(traffic_lights[i]) for i in traffic_lights]))
+    print("current size of traffic lights dataset is: \t", sum([len(traffic_lights[i]) for i in traffic_lights]), "pictures")
+    return sum([len(traffic_lights[i]) for i in traffic_lights])
 
 
 
@@ -483,6 +484,3 @@ def download_video(link, SAVE_PATH, use_internet=True):
 
     return video_name
 
-
-print_statistics("../railway_datasets/annotated_traffic_lights.json")
-print_statistics("../railway_datasets/traffic_lights_raw.json")
