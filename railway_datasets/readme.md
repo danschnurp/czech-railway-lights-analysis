@@ -17,3 +17,24 @@ second** (fps). The dataset is stored in the JSON file format.
 ``pip install -r requirements.txt``
 - run - ``yt-dlp --cookies-from-browser chrome -j  'https://www.youtube.com/watch?v=1CuJmlU0rzM'`` - to ensure u are not robot
 
+## Metadata
+
+### Preliminary experiment statistics
+Moments are timestamps in video. In one timestamp can be multiple railway signals.
+
+
+- traffic_lights_raw predicted by yolo
+    - current size of traffic lights dataset is: 	 **6485 moments**
+
+- true predicted by yolo and checked by human
+  -  current size of traffic lights dataset is: 	 **848 moments**
+
+    - **acc: 	 0.13** =  848 / 6485
+
+- **yolov5m with movement detection:** 6485 moments
+- **yolov10m:** 10404 moments
+- **yolov5m:** 10895 moments 
+
+### CRL - extended with CVAT hand made annotation
+- train 1502 objects
+- valid 552 objects
