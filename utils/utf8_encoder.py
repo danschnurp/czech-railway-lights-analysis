@@ -1,5 +1,5 @@
 import base64
-from typing import Union, Tuple, Optional
+from typing import Union, Tuple
 
 
 class UTF8StringEncoder:
@@ -95,49 +95,3 @@ class UTF8StringEncoder:
             else:  # replace
                 return encoded_input.decode('utf-8', 'replace'), False
 
-
-def main():
-    # Example usage
-    encoder = UTF8StringEncoder()
-
-    # Test string with various Unicode characters
-    test_string = "Hello, 世界! 🌍 Café"
-    print(f"Original string: {test_string}\n")
-
-    # Encode in different formats
-    encoded_bytes = encoder.encode_string(test_string, 'bytes')
-    encoded_hex = encoder.encode_string(test_string, 'hex')
-    encoded_base64 = encoder.encode_string(test_string, 'base64')
-
-    print(f"UTF-8 bytes: {encoded_bytes}")
-    print(f"Hex encoded: {encoded_hex}")
-    print(f"Base64 encoded: {encoded_base64}\n")
-
-    # Decode back from different formats
-    decoded_from_bytes, success1 = encoder.decode_string(encoded_bytes, 'bytes')
-    decoded_from_hex, success2 = encoder.decode_string(encoded_hex, 'hex')
-    decoded_from_base64, success3 = encoder.decode_string(encoded_base64, 'base64')
-
-    print("Decoded results:")
-    print(f"From bytes: {decoded_from_bytes} (success: {success1})")
-    print(f"From hex: {decoded_from_hex} (success: {success2})")
-    print(f"From base64: {decoded_from_base64} (success: {success3})")
-
-    # Example with error handling
-    problematic_string = "Hello, \ud800World"  # Invalid Unicode
-    try:
-        # This will fail with strict error handling
-        encoded = encoder.encode_string(problematic_string, 'bytes', 'strict')
-    except UnicodeEncodeError:
-        print("\nStrict encoding failed for invalid Unicode")
-
-    # Try with different error handling
-    encoded_ignore = encoder.encode_string(problematic_string, 'bytes', 'ignore')
-    encoded_replace = encoder.encode_string(problematic_string, 'bytes', 'replace')
-
-    print(f"\nIgnored result: {encoded_ignore}")
-    print(f"Replaced result: {encoded_replace}")
-
-#
-# if __name__ == "__main__":
-#     main()
