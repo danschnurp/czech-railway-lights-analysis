@@ -1,0 +1,28 @@
+{
+  "dataset_classes": {
+    "class_4": 138,
+    "class_3": 104,
+    "class_2": 60,
+    "class_5": 268,
+    "class_0": 361,
+    "class_1": 283
+  },
+  "dataset_val_size": 0.5,
+  "model_name": "google/efficientnet-b0",
+  "results": {
+    "eval_loss": 1.4304579496383667,
+    "eval_accuracy": 0.46293245469522243,
+    "eval_precision": 0.6266599342006047,
+    "eval_recall": 0.46293245469522243,
+    "eval_f1": 0.49608398638728707,
+    "eval_runtime": 47.1692,
+    "eval_samples_per_second": 12.869,
+    "eval_steps_per_second": 12.869,
+    "epoch": 15.0
+  },
+  "training_args": {
+    "learning_rate": 5e-05,
+    "num_train_epochs": 15,
+    "weight_decay": 0.01
+  }
+}

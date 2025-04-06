@@ -3,7 +3,9 @@
 # Define arrays for each parameter
 models=(
 #    "yolo11n.pt"
+    "yolov10m.pt"
     "yolov10n.pt"
+    "yolov5mu.pt"
     "yolov8n.pt"
     "rtdetr-l.pt"
     "rtdetr-x.pt"
@@ -11,9 +13,9 @@ models=(
 )
 
 freeze_values=(0 3)
-epoch_values=(60 80 100)
-conf_thres=(0.3)
-data="CRL_single_images.yaml"
+epoch_values=(15 30 60 80 100)
+conf_thres=(0.3 0.5 0.7)
+data="CRL_extended_1_class.yaml"
 
 
 # Counter for total jobs

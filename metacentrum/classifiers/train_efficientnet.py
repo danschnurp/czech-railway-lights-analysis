@@ -99,7 +99,7 @@ def load_model(num_classes, model_name):
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=1,
+        num_train_epochs=30,
         per_device_train_batch_size=1,
         per_device_eval_batch_size=1,
         warmup_steps=500,
@@ -109,6 +109,8 @@ def get_training_args(output_dir="./results"):
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
+        metric_for_best_model="eval_loss",
+        save_total_limit=2,
     )
 
 
@@ -134,7 +136,7 @@ def train_model(train_loader, val_loader, model, training_args):
 # Step 7: Main Function to Execute the Training
 def main():
     # Define the path to your dataset (root directory where your class folders reside)
-    data_dir = '../../dataset/reconstructed'  # Ensure this points to the correct directory
+    data_dir = '../../reconstructed/czech_railway_lights_dataset_extended_roi'  # Ensure this points to the correct directory
 
     # Ensure that the data directory exists
     if not os.path.exists(data_dir):
@@ -169,7 +171,7 @@ def main():
 
     # Train the model
     results = train_model(train_loader, val_loader, model, training_args)
-    with open("./today_results.json", "w", encoding="utf-8") as f:
+    with open("results.json", "w", encoding="utf-8") as f:
         json.dump({
         "dataset_classes": dataset_dist,
             "dataset_val_size": val_size,
