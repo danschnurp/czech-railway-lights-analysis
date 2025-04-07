@@ -1,6 +1,8 @@
 # Czech Railway Lights
 
-path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset_4_classes
+# czech_railway_lights_dataset
+
+path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset
 train: train/images/
 val: val/images/
 
