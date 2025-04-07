@@ -10,7 +10,92 @@ from sklearn.model_selection import train_test_split
 from torchvision.datasets import ImageFolder
 from PIL import Image
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib.ticker as ticker
+
+
+def confusion_matrix_to_pdf(confusion_matrix, class_names=None, output_path='confusion_matrix.pdf',
+                            title='Confusion Matrix', cmap='Blues', normalize=False, figsize=(10, 8)):
+    """
+    Create a PDF of a confusion matrix from a NumPy array.
+
+    Parameters:
+    -----------
+    confusion_matrix : numpy.ndarray
+        The confusion matrix as a 2D NumPy array
+    class_names : list, optional
+        List of class names for axis labels
+    output_path : str, optional
+        File path for the output PDF
+    title : str, optional
+        Title for the confusion matrix plot
+    cmap : str, optional
+        Colormap to use for the heatmap
+    normalize : bool, optional
+        Whether to normalize the confusion matrix by row
+    figsize : tuple, optional
+        Figure size as (width, height) in inches
+
+    Returns:
+    --------
+    str
+        Path to the saved PDF file
+    """
+    # Make a copy of the confusion matrix to avoid modifying the original
+    cm = confusion_matrix.copy()
+
+    # Normalize if requested
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        fmt = '.2f'
+    else:
+        fmt = 'd'
+
+    # Create class names if not provided
+    if class_names is None:
+        class_names = [f'Class {i}' for i in range(cm.shape[0])]
+
+    # Create figure and axes
+    fig, ax = plt.subplots(figsize=figsize)
+
+    # Create heatmap
+    sns.heatmap(cm, annot=True, fmt=fmt, cmap=cmap, square=True,
+                xticklabels=class_names, yticklabels=class_names, cbar=True, ax=ax)
+
+    # Rotate the tick labels and set alignment
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+    # Set labels and title
+    ax.set_xlabel('Predicted Label')
+    ax.set_ylabel('True Label')
+    ax.set_title(title)
+
+    # Add counts or percentages as text annotations
+    if not normalize:
+        # Add total samples per class on y-axis
+        for i, total in enumerate(np.sum(cm, axis=1)):
+            ax.text(-0.5, i, f'Total: {total}', ha='right', va='center')
+
+        # Add a label for accuracy
+        accuracy = np.trace(cm) / np.sum(cm)
+        ax.text(cm.shape[1] / 2, -0.5, f'Accuracy: {accuracy:.2f}',
+                ha='center', va='center', fontsize=12)
+
+    # Tight layout to ensure everything fits
+    plt.tight_layout()
+
+    # Save as PDF
+    with PdfPages(output_path) as pdf:
+        pdf.savefig(fig)
+
+    plt.close()
+
+    return output_path
 
 
 def compute_metrics(pred):
@@ -24,12 +109,14 @@ def compute_metrics(pred):
     precision = precision_score(labels, preds, average='weighted')
     recall = recall_score(labels, preds, average='weighted')
     f1 = f1_score(labels, preds, average='weighted')
+    conf_matrix = confusion_matrix(labels, preds)
 
     return {
         'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
-        'f1': f1
+        'f1': f1,
+        "conf_matrix": conf_matrix.tolist()
     }
 
 # Custom Dataset Wrapper for Hugging Face Trainer
@@ -99,18 +186,18 @@ def load_model(num_classes, model_name):
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=30,
+        num_train_epochs=16,
         per_device_train_batch_size=1,
         per_device_eval_batch_size=1,
         warmup_steps=500,
         weight_decay=0.01,
         logging_dir="./logs",
-        logging_steps=10,
+        logging_steps=100,
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
-        save_total_limit=2,
+        save_total_limit=3,
     )
 
 
@@ -155,7 +242,7 @@ def main():
     print(f"Number of classes in dataset: {len(dataset.classes)}")  # Should print 3 classes
 
     # Split into training and validation datasets
-    val_size = 0.5
+    val_size = 0.3
     train_dataset, val_dataset = split_data(dataset,val_size=val_size)
 
     # Create DataLoader for training and validation sets
@@ -180,6 +267,20 @@ def main():
         "training_args": {"learning_rate": training_args.learning_rate,
                             "num_train_epochs": training_args.num_train_epochs,
                             "weight_decay": training_args.weight_decay}},f, indent=2, ensure_ascii=True)
+
+    confusion_matrix_to_pdf(
+        confusion_matrix=np.array(results["eval_conf_matrix"]),
+        class_names=dataset.classes,
+        title='',
+        output_path='confusion_matrix_normalized.pdf',
+        normalize=True
+    )
+    confusion_matrix_to_pdf(
+        confusion_matrix=np.array(results["eval_conf_matrix"]),
+        class_names=dataset.classes,
+        title='',
+        normalize=False
+    )
 
 
 
