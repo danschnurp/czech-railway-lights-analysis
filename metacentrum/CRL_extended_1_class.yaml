@@ -1,7 +1,12 @@
 # Czech Railway Lights detection
-
-# czech_railway_lights_dataset_extended_1_class
-
+# -------------------------------
+# results: metacentrum/done_experiments/yolo/CRL_extended_1_class
+# data:
+#     - czech_railway_lights_dataset_extended_1_class
+#     - czech_railway_dataset_1_class
+## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
+# metadata: railway_datasets/crl/CRL.json
+# -------------------------------
 path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset_extended_1_class
 train: train/images/
 val: val/images/

@@ -17,7 +17,7 @@ def remove_directories_without_results_png(base_path):
             shutil.rmtree(root)
 
 # Define the base path
-base_path = '../metacentrum/done_experiments/yolo/czech_railway_lights_dataset_extended_1_class'
+base_path = '../metacentrum/done_experiments/yolo/CRL_extended_1_class'
 
 # Call the function to remove directories
 remove_directories_without_results_png(base_path)

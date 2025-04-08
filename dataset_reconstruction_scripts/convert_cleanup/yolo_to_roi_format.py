@@ -103,7 +103,7 @@ def extract_rois_from_yolo(input_dir, output_dir):
 def main():
     parser = argparse.ArgumentParser(description='Extract ROIs from YOLO format dataset')
     parser.add_argument('--input',
-                        default="../../reconstructed/czech_railway_lights_dataset_extended/train/images/multi_class",
+                        default="../../reconstructed/CRL_extended/train/images/multi_class",
                         help='Input directory with YOLO format dataset (containing images and labels folders)')
     parser.add_argument('--output',
                         default="../../reconstructed/czech_railway_lights_dataset_extended_roi/",

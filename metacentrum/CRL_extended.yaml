@@ -1,8 +1,11 @@
 # Czech Railway Lights
-
-# czech_railway_lights_dataset_extended
-
-path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset_4_classes_extended
+# -------------------------------
+# results: metacentrum/done_experiments/yolo/CRL_extended
+# data: czech_railway_lights_dataset_extended
+## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
+# metadata: railway_datasets/crl/CRL.json
+# -------------------------------
+path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset_extended
 train: train/images/
 val: val/images/
 
@@ -25,7 +28,7 @@ names:
   7: lights behind
 #   -------------------------
 # blinking states
-#  solved with heuristics
+#  will be solved with heuristics (not part of this thesis)
 # white lights are not
 #  part of this thesis
 

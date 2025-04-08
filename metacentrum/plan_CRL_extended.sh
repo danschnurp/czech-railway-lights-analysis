@@ -13,7 +13,7 @@ models=(
 
 freeze_values=(0 3)
 epoch_values=(60 80 100)
-conf_thres=(0.3)
+conf_thres=(0.3 0.5)
 data="CRL_extended.yaml"
 
 

@@ -6,14 +6,16 @@ epochs: 60
 time: null
 patience: 100
 batch: 1
-imgsz: 1080
+imgsz:
+- 1920
+- 1080
 save: true
-save_period: 100
+save_period: 10
 val_period: 1
 cache: false
 device: cuda
 workers: 8
-project: ./runs/60_lights_0_yolov10n.pt_0.3
+project: ./runs
 name: 60_lights_0_yolov10n.pt_0.3
 exist_ok: false
 pretrained: true
@@ -39,7 +41,7 @@ split: val
 save_json: false
 save_hybrid: false
 conf: 0.3
-iou: 0.1
+iou: 0.4
 max_det: 300
 half: false
 dnn: false
@@ -104,4 +106,4 @@ erasing: 0.4
 crop_fraction: 1.0
 cfg: null
 tracker: botsort.yaml
-save_dir: runs/60_lights_0_yolov10n.pt_0.3
+save_dir: runs/runs/60_lights_0_yolov10n.pt_0.3

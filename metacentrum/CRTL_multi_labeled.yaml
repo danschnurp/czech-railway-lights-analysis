@@ -1,13 +1,16 @@
-# Ultralytics YOLOv5 🚀, AGPL-3.0 license
-# COCO128 dataset https://www.kaggle.com/ultralytics/coco128 (first 128 images from COCO train2017) by Ultralytics
-# Example usage: python train.py --data CzechRailwayTrafficLights.yaml
-# parent
-# ├── yolov5
-# └── datasets
-#     └── coco128  ← downloads here (7 MB)
+# Czech Railway Lights Detection & classification 4 Classes
 
-# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
-
+# -------------------------------
+# results:
+#   - metacentrum/done_experiments/yolo/CRTL_multi_labeled
+# data: czech_railway_dataset_4_classes
+## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
+# metadata: railway_datasets/simple_classes
+#                                        go.json
+#                                        signal_off.json
+#                                        stop.json
+#                                        warning_go.json
+# -------------------------------
 path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset_4_classes
 train: train/images/
 val: val/images/
