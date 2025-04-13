@@ -144,7 +144,7 @@ def main(data_path):
     stats = calculate_statistics(data)
     extremes = find_extremes(data)
     with open(data_path.replace(".json", "_statistics.json"), mode="w") as f:
-        json.dump(stats, f, indent=2)
+        json.dump(stats, f, indent=2, ensure_ascii=False)
     # Print results
     print("\n===== TRAIN VIDEO STATISTICS =====")
     print(f"Total number of videos: {stats['Total videos']}")
@@ -190,8 +190,9 @@ def main(data_path):
 
 
 if __name__ == "__main__":
-    main('../railway_datasets/video_expl_analysis/parnici.json')
+    # main('../railway_datasets/video_expl_analysis/parnici.json')
     # with open("../railway_datasets/video_expl_analysis/parnici_metadata.json", mode="w") as f:
     #     json.dump(all_metadata, f, indent=2)
-    main('../railway_datasets/video_expl_analysis/cabview.json')
-    main('../railway_datasets/video_expl_analysis/cabview_outliers.json')
+    # main('../railway_datasets/video_expl_analysis/cabview.json')
+    # main('../railway_datasets/video_expl_analysis/cabview_outliers.json')
+    main("../../reconstructed/stats/summary.json")

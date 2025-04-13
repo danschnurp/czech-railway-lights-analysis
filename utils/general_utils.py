@@ -280,7 +280,7 @@ def save_json_unicode(data, filename, format_unicode=True):
                 json.dump(data, f, ensure_ascii=True, indent=4)
 
 
-def get_video_name(video_link, names_jsom_path="../railway_datasets/video_names.json"):
+def get_video_name(video_link, names_jsom_path):
     with open(names_jsom_path, encoding="utf-8", mode="r") as f:
         video_names = dict(json.load(f))
     video_names = video_names["names"]
@@ -438,7 +438,7 @@ def get_youtube_video_info(youtube_url):
     return video_info['title']
 
 
-def download_video(link, SAVE_PATH, use_internet=True):
+def download_video(link, SAVE_PATH, use_internet=True, names_jsom_path="../railway_datasets/video_names.json"):
     """
     The function `download_video` downloads a video from a given link in either full HD or 720p quality
     and saves it to a specified path after processing the video name.
@@ -452,7 +452,7 @@ def download_video(link, SAVE_PATH, use_internet=True):
     quality download fails.
     """
     if not  use_internet:
-        video_name = get_video_name(link)
+        video_name = get_video_name(link, names_jsom_path=names_jsom_path)
     else:
         video_name = get_youtube_video_info(link)
     video_name = (video_name.strip().replace("⧸", "")
@@ -468,16 +468,16 @@ def download_video(link, SAVE_PATH, use_internet=True):
         command = [
             'yt-dlp',
             link,
-            '-f', 'bestvideo[height=1080][fps=60][ext=mp4]/best[height=1080][fps=60][ext=mp4]',
+            '-f', 'bestvideo[height=1080][fps=50][ext=mp4]/best[height=1080][fps=50][ext=mp4]',
             '-o', f'{SAVE_PATH}/' + video_name,
         ]
         subprocess.run(command, check=True)
-    except:
-        print("full HD quality failed... trying 720p")
+    except Exception as e:
+        print(f"{e}\n full HD quality withs 60fps failed... trying 50fps", file=sys.stderr)
         command = [
             'yt-dlp',
             link,
-            '-f', 'bestvideo[height<=720][ext=mp4]/best[height<=720][ext=mp4]',
+            '-f', 'bestvideo[height=1080][fps=50][ext=mp4]/best[height=1080][fps=50][ext=mp4]',
             '-o', f'{SAVE_PATH}/' + video_name,
         ]
         subprocess.run(command, check=True)

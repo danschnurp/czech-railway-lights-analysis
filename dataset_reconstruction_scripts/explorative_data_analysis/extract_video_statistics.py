@@ -6,18 +6,18 @@ from utils.general_utils import download_video, str2bool, analyze_video_characte
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--sequences_jsom_path', default="../railway_datasets/annotated_traffic_lights.json")
-parser.add_argument('--in-dir', default="/Volumes/zalohy/dip")
-parser.add_argument('--out-dir', default="../reconstructed/stats")
+parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names_test.json")
+parser.add_argument('--in-dir', default="../../videos")
+parser.add_argument('--out-dir', default="../../reconstructed/stats")
 
 args = parser.parse_args()
 # where to save
 SAVE_PATH = args.out_dir
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
-    traffic_lights = dict(json.load(f))
+    traffic_lights = dict(json.load(f))["names"]
 all_metadata = {}
-for i in traffic_lights:
+for i in traffic_lights.values():
     d_video = download_video(i, args.in_dir)
     video_name = d_video
     metadata = analyze_video_characteristics(args.in_dir+ "/" + d_video, sample_interval=3056)

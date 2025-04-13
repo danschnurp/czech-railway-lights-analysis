@@ -2,18 +2,15 @@
 
 # Define arrays for each parameter
 models=(
-    "yolov10m.pt"
     "yolov10n.pt"
-    "yolov5mu.pt"
     "yolov5nu.pt"
     "yolov8n.pt"
     "rtdetr-l.pt"
-    "rtdetr-x.pt"
 )
 
-freeze_values=(0 3)
-epoch_values=(60 80 100)
-conf_thres=(0.3 0.5)
+freeze_values=(0)
+epoch_values=(60)
+conf_thres=(0.5)
 data="CRL_extended.yaml"
 
 

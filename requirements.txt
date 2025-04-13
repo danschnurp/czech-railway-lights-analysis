@@ -9,3 +9,11 @@ pillow
 yt-dlp
 torchvision
 matplotlib
+opencv-python
+tqdm
+scipy
+seaborn
+sympy
+transformers
+scikit-learn
+pandas

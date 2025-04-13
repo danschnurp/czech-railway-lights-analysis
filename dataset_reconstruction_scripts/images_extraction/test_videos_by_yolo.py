@@ -1,0 +1,128 @@
+import json
+
+from sympy import sequence
+from ultralytics import YOLO
+import cv2
+from ultralytics.utils.plotting import Annotator
+import yaml
+import os
+import argparse
+
+from image_utils import crop_sides_percentage
+from utils.general_utils import download_video
+import time
+
+from utils.image_utils import MovementDetector, convert_normalized_roi_to_pixels, crop_top_bottom_percentage
+
+parser = argparse.ArgumentParser(description='')
+
+parser.add_argument('--nett_name', default='best.pt')
+parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names_test.json")
+parser.add_argument('--in-dir', default="../../videos")
+parser.add_argument('--out-dir', default="../../reconstructed/test_yolo")
+parser.add_argument('--skip_seconds', type=int, default=0)
+
+args = parser.parse_args()
+
+SAVE_PATH = args.out_dir
+LOAD_PATH = args.in_dir
+
+with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
+    traffic_lights = dict(json.load(f))["names"]
+
+with open("../../metacentrum/CRL_extended.yaml") as f:
+    interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
+
+# Load a model
+model = YOLO("../../" + args.nett_name)  # load an official model
+
+def annotate_video():
+
+    nett_name = args.nett_name
+
+    video_name = d_video
+    # creating folder with video name
+    try:
+        if video_name[:-4] not in os.listdir(f"{SAVE_PATH}/"):
+            os.mkdir(f"{SAVE_PATH}/{video_name[:-4]}")
+
+    except FileExistsError as e:
+        print(e, "maybe different encoding")
+
+    # Load video
+    video_path = LOAD_PATH + '/' + video_name
+    cap = cv2.VideoCapture(video_path)
+
+    image_index = 0
+    dropout_time = 0
+    skip_seconds = args.skip_seconds
+    #
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_number = int(fps * skip_seconds)
+    cap.set(cv2.CAP_PROP_POS_FRAMES,
+            frame_number)
+
+    t1 = 5
+
+    ret, frame = cap.read()
+
+    mov_detector = MovementDetector(frame=frame)
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        if time.time() - t1 - dropout_time > 0.05:
+            movement = mov_detector.detect_movement(frame)
+            if not movement:
+                dropout_time = 5
+                continue
+            dropout_time = 0.5
+            # timestamp seconds from video beginning
+            timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
+            # frame = crop_sides_percentage(frame.copy(), crop_percentage=10)
+            # frame = crop_top_bottom_percentage(frame.copy(), crop_percentage=10)
+            results = model.predict(frame,conf=0.75, iou=0.2)
+            # Iterate over the results
+            for result in results:
+                boxes = result.boxes  # Boxes object for bbox outputs
+                class_indices = boxes.cls  # Class indices of the detections
+                class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+                print(class_names)
+                if len(interesting_labels & set(class_names)) > 0:
+                    # saves the result
+                    save_name = f"{SAVE_PATH}/{video_name[:-4]}/{timestamp}"
+                    dropout_time = 0.5
+                    for r in results:
+                        annotator = Annotator(frame, line_width=2)
+                        boxes = r.boxes
+                        for index, box in enumerate(boxes):
+                            b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
+                            c = box.cls
+                            # Extract ROI
+                            frame_height, frame_width = frame.shape[:2]
+
+                            x_min, y_min, width, height = convert_normalized_roi_to_pixels(
+                                " ".join([str(box.xywhn.tolist()[0][0]), str(box.xywhn.tolist()[0][1]), str(box.xywhn.tolist()[0][2]), str(box.xywhn.tolist()[0][3])])
+                                , frame_width, frame_height)
+
+                            crop = frame[y_min:height, x_min:width]
+                            annotator.box_label(b, model.names[int(c)])
+                            cv2.imwrite(
+                                save_name + "_" + model.names[int(c)] + "_roi"+ str(index) + ".jpg",
+                                crop)
+                    image_index += 1
+                    cv2.imwrite(
+                        save_name + "_box.jpg",
+                        frame)
+            t1 = time.time()
+    cap.release()
+
+
+done = {}
+for i in traffic_lights.values():
+    d_video = download_video(i, LOAD_PATH, names_jsom_path=args.sequences_jsom_path)
+    annotate_video()
+    done[d_video] = i
+
+print(done)
