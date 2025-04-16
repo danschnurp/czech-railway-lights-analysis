@@ -7,11 +7,11 @@ from ultralytics import YOLO
 from general_utils import get_jpg_files
 
 # Load YOLOv5 model
-model = YOLO('../../reconstructed/120_lights_0_yolov8n.pt_0.5/weights/best.pt')
+model = YOLO('../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
 
 # Open video file
 video_path = "../../videos/"
-times_path = "../../reconstructed/test_yolo"
+times_path = "../../reconstructed/test"
 
 to_process = {}
 for j in os.listdir(times_path):
@@ -44,8 +44,8 @@ for j in os.listdir(times_path):
                 [out.write(fr)
                  for fr in [model(frame, conf=0.75, iou=0.2, verbose=False)[0].plot()
                   for frame in tqdm(frames)]]
-        cap.release()
-        out.release()
+            cap.release()
+            out.release()
     except:
         cap.release()
         out.release()

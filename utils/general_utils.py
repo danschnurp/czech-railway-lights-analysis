@@ -468,7 +468,7 @@ def download_video(link, SAVE_PATH, use_internet=True, names_jsom_path="../railw
         command = [
             'yt-dlp',
             link,
-            '-f', 'bestvideo[height=1080][fps=50][ext=mp4]/best[height=1080][fps=50][ext=mp4]',
+            '-f', 'bestvideo[height=1080][fps=60][ext=mp4]/best[height=1080][fps=60][ext=mp4]',
             '-o', f'{SAVE_PATH}/' + video_name,
         ]
         subprocess.run(command, check=True)

@@ -1,0 +1,73 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa" />
+  
+  <!-- System Boundary -->
+  <rect x="250" y="50" width="400" height="380" rx="10" ry="10" fill="#e9ecef" stroke-width="2" />
+  <text x="450" y="80" font-family="Helvetica" font-size="18" text-anchor="middle" font-weight="bold">Object Detection System</text>
+  
+  <!-- Use Cases -->
+  <ellipse cx="450" cy="150" rx="120" ry="40" fill="#F9BA1D"  stroke-width="2" />
+  <text x="450" y="155" font-family="Helvetica" font-size="14" text-anchor="middle">Upload Image/Video</text>
+
+  <ellipse cx="450" cy="250" rx="120" ry="40" fill="#F9BA1D"  stroke-width="2" />
+  <text x="450" y="255" font-family="Helvetica" font-size="14" text-anchor="middle">Detect Objects</text>
+
+  <ellipse cx="450" cy="350" rx="120" ry="40" fill="#F9BA1D"  stroke-width="2" />
+  <text x="450" y="355" font-family="Helvetica" font-size="14" text-anchor="middle">View Detection Results</text>
+
+  <!-- Actors -->
+  <!-- User -->
+  <circle cx="120" cy="200" r="20" fill="#757575"  stroke-width="2" />
+  <line x1="120" y1="220" x2="120" y2="280" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="240" x2="80" y2="260" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="240" x2="160" y2="260" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="280" x2="100" y2="320" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="280" x2="140" y2="320" stroke="#757575" stroke-width="5" />
+  <text x="120" y="350" font-family="Helvetica" font-size="16" text-anchor="middle">User</text>
+
+  <!-- Admin -->
+  <circle cx="120" cy="450" r="20" fill="#757575"  stroke-width="2" />
+  <line x1="120" y1="470" x2="120" y2="530" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="490" x2="80" y2="510" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="490" x2="160" y2="510" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="530" x2="100" y2="570" stroke="#757575" stroke-width="5" />
+  <line x1="120" y1="530" x2="140" y2="570" stroke="#757575" stroke-width="5" />
+  <text x="120" y="590" font-family="Helvetica" font-size="16" text-anchor="middle">Administrator</text>
+
+  <!-- Camera/Stream -->
+  <rect x="680" y="180" width="60" height="40" fill="#757575" stroke="#757575" stroke-width="2" />
+  <rect x="690" y="170" width="40" height="10" fill="#818080" stroke="#757575" stroke-width="2" />
+  <circle cx="710" cy="175" r="5" fill="white" />
+  <text x="710" y="240" font-family="Helvetica" font-size="16" text-anchor="middle">Camera/Stream</text>
+
+  <!-- Connections -->
+  <!-- User connections -->
+  <line x1="150" y1="200" x2="330" y2="150" stroke="#6c757d" stroke-width="1.5" />
+  <line x1="150" y1="220" x2="330" y2="250" stroke="#6c757d" stroke-width="1.5" />
+  <line x1="150" y1="240" x2="330" y2="350" stroke="#6c757d" stroke-width="1.5" />
+
+
+  <!-- Admin connections -->
+  <line x1="150" y1="450" x2="330" y2="150" stroke="#6c757d" stroke-width="1.5" />
+  <line x1="150" y1="460" x2="330" y2="250" stroke="#6c757d" stroke-width="1.5" />
+  <line x1="150" y1="470" x2="330" y2="350" stroke="#6c757d" stroke-width="1.5" />
+
+
+  <!-- Camera connections -->
+  <line x1="680" y1="200" x2="570" y2="150" stroke="#6c757d" stroke-width="1.5" />
+  <line x1="680" y1="210" x2="570" y2="250" stroke="#6c757d" stroke-width="1.5" />
+
+  <!-- Include relationship -->
+  <line x1="450" y1="190" x2="450" y2="210" stroke="#6c757d" stroke-width="1.5" stroke-dasharray="5,5" />
+  <polygon points="450,210 445,200 455,200" fill="#6c757d" />
+  <text x="480" y="200" font-family="Helvetica" font-size="12">«system includes»</text>
+
+  <line x1="450" y1="290" x2="450" y2="310" stroke="#6c757d" stroke-width="1.5" stroke-dasharray="5,5" />
+  <polygon points="450,310 445,300 455,300" fill="#6c757d" />
+  <text x="480" y="300" font-family="Helvetica" font-size="12">«system includes»</text>
+
+
+  <ellipse cx="565" cy="460" rx="45" ry="15" fill="#F9BA1D"  stroke-width="1" />
+  <text x="565" y="465" font-family="Helvetica" font-size="12" text-anchor="middle">Use Case</text>
+</svg>

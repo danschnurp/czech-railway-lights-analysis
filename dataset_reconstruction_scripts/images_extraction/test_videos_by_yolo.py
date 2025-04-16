@@ -1,6 +1,7 @@
 import json
 
 from sympy import sequence
+from torch.backends.mkl import verbose
 from ultralytics import YOLO
 import cv2
 from ultralytics.utils.plotting import Annotator
@@ -16,8 +17,8 @@ from utils.image_utils import MovementDetector, convert_normalized_roi_to_pixels
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default='best.pt')
-parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names_test.json")
+parser.add_argument('--nett_path', default='../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
+parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names.json")
 parser.add_argument('--in-dir', default="../../videos")
 parser.add_argument('--out-dir', default="../../reconstructed/test_yolo")
 parser.add_argument('--skip_seconds', type=int, default=0)
@@ -28,17 +29,15 @@ SAVE_PATH = args.out_dir
 LOAD_PATH = args.in_dir
 
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
-    traffic_lights = dict(json.load(f))["names"]
+    traffic_lights = dict(json.load(f))
 
 with open("../../metacentrum/CRL_extended.yaml") as f:
     interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
 
 # Load a model
-model = YOLO("../../" + args.nett_name)  # load an official model
+model = YOLO(args.nett_path)  # load an official model
 
 def annotate_video():
-
-    nett_name = args.nett_name
 
     video_name = d_video
     # creating folder with video name
@@ -75,20 +74,19 @@ def annotate_video():
         if time.time() - t1 - dropout_time > 0.05:
             movement = mov_detector.detect_movement(frame)
             if not movement:
-                dropout_time = 5
+                dropout_time = 2
                 continue
-            dropout_time = 0.5
+            dropout_time = 0.3
             # timestamp seconds from video beginning
             timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
             # frame = crop_sides_percentage(frame.copy(), crop_percentage=10)
             # frame = crop_top_bottom_percentage(frame.copy(), crop_percentage=10)
-            results = model.predict(frame,conf=0.75, iou=0.2)
+            results = model.predict(frame,conf=0.75, iou=0.45)
             # Iterate over the results
             for result in results:
                 boxes = result.boxes  # Boxes object for bbox outputs
                 class_indices = boxes.cls  # Class indices of the detections
                 class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
-                print(class_names)
                 if len(interesting_labels & set(class_names)) > 0:
                     # saves the result
                     save_name = f"{SAVE_PATH}/{video_name[:-4]}/{timestamp}"
