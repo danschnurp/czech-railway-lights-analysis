@@ -1,0 +1,102 @@
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Stage Boxes -->
+  <g id="stages">
+    <!-- Data Collection and Processing -->
+    <rect x="50" y="50" width="200" height="100" rx="10" ry="10" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+    <text x="150" y="85" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 1</text>
+    <text x="150" y="110" font-family="Arial" font-size="12" text-anchor="middle">Raw Dataset with</text>
+    <text x="150" y="130" font-family="Arial" font-size="12" text-anchor="middle">Traffic Light Moments</text>
+    
+    <rect x="50" y="180" width="200" height="100" rx="10" ry="10" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+    <text x="150" y="215" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 2</text>
+    <text x="150" y="240" font-family="Arial" font-size="12" text-anchor="middle">Checked Dataset with</text>
+    <text x="150" y="260" font-family="Arial" font-size="12" text-anchor="middle">Traffic Light Moments</text>
+    
+    <!-- Traditional CV -->
+    <rect x="350" y="50" width="200" height="100" rx="10" ry="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+    <text x="450" y="85" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 3</text>
+    <text x="450" y="110" font-family="Arial" font-size="12" text-anchor="middle">Traffic Light Bounding Boxes</text>
+    <text x="450" y="130" font-family="Arial" font-size="12" text-anchor="middle">by Traditional CV</text>
+    
+    <rect x="350" y="180" width="200" height="100" rx="10" ry="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+    <text x="450" y="215" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 4</text>
+    <text x="450" y="240" font-family="Arial" font-size="12" text-anchor="middle">Checked Traffic Light</text>
+    <text x="450" y="260" font-family="Arial" font-size="12" text-anchor="middle">Bounding Boxes</text>
+    
+    <rect x="350" y="310" width="200" height="100" rx="10" ry="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+    <text x="450" y="345" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 5</text>
+    <text x="450" y="370" font-family="Arial" font-size="12" text-anchor="middle">Extended Traffic Light</text>
+    <text x="450" y="390" font-family="Arial" font-size="12" text-anchor="middle">Bounding Boxes by CVAT</text>
+    
+    <!-- Model Development - Larger Boxes -->
+    <rect x="650" y="50" width="220" height="110" rx="10" ry="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="760" y="85" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 6</text>
+    <text x="760" y="110" font-family="Arial" font-size="12" text-anchor="middle">Fine Tuning, Grid Search</text>
+    <text x="760" y="130" font-family="Arial" font-size="12" text-anchor="middle">(YOLO RT-DETR)</text>
+    <text x="760" y="150" font-family="Arial" font-size="12" text-anchor="middle">Detection with Classification</text>
+    
+    <rect x="650" y="190" width="220" height="110" rx="10" ry="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="760" y="225" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 7</text>
+    <text x="760" y="250" font-family="Arial" font-size="12" text-anchor="middle">Fine Tuning, Grid Search</text>
+    <text x="760" y="270" font-family="Arial" font-size="12" text-anchor="middle">(YOLO RT-DETR)</text>
+    <text x="760" y="290" font-family="Arial" font-size="12" text-anchor="middle">Detection + Evaluation</text>
+    
+    <rect x="650" y="330" width="220" height="110" rx="10" ry="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="760" y="365" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 8</text>
+    <text x="760" y="390" font-family="Arial" font-size="12" text-anchor="middle">Creating Bounding Boxes</text>
+    <text x="760" y="410" font-family="Arial" font-size="12" text-anchor="middle">Dataset</text>
+    
+    <rect x="650" y="470" width="220" height="110" rx="10" ry="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="760" y="505" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Stage 9</text>
+    <text x="760" y="530" font-family="Arial" font-size="12" text-anchor="middle">Fine Tuning, Grid Search</text>
+    <text x="760" y="550" font-family="Arial" font-size="12" text-anchor="middle">(EfficientNet) Classification</text>
+    <text x="760" y="570" font-family="Arial" font-size="12" text-anchor="middle">of Bounding Boxes + Eval</text>
+  </g>
+  
+  <!-- Arrows -->
+  <g id="arrows" stroke="#555" stroke-width="2" fill="none">
+    <!-- Stage 1 to 2 -->
+    <path d="M150,150 L150,180" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 2 to 3 -->
+    <path d="M250,230 C300,230 300,160 350,130" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 3 to 4 -->
+    <path d="M450,150 L450,180" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 4 to 5 -->
+    <path d="M450,280 L450,310" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 5 to 6 -->
+    <path d="M550,360 C600,360 600,200 650,150" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 6 to 7 -->
+    <path d="M760,160 L760,190" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 7 to 8 -->
+    <path d="M760,300 L760,330" marker-end="url(#arrowhead)"/>
+    
+    <!-- Stage 8 to 9 -->
+    <path d="M760,440 L760,470" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Phase Labels -->
+  <g id="phases">
+    <rect x="50" y="10" width="200" height="30" rx="5" ry="5" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
+    <text x="150" y="30" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Data Collection</text>
+    
+    <rect x="350" y="10" width="200" height="30" rx="5" ry="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
+    <text x="450" y="30" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Annotation Processing</text>
+    
+    <rect x="650" y="10" width="220" height="30" rx="5" ry="5" fill="#ffe0b2" stroke="#e65100" stroke-width="1"/>
+    <text x="760" y="30" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Data Science</text>
+  </g>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+</svg>

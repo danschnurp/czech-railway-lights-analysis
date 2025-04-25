@@ -1,0 +1,71 @@
+<svg viewBox="0 0 800 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="800" height="630" fill="#f8f9fa" rx="10" ry="10"/>
+
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold">Traffic Light Detection</text>
+  <text x="400" y="65" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold"> With Traditional CV and Yolo</text>
+
+
+
+  <!-- Boxes for each step -->
+  <!-- Step 1 -->
+  <rect x="100" y="80" width="600" height="60" rx="5" ry="5" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+  <text x="400" y="115" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">1. Movement Detection</text>
+  <text x="400" y="135" font-family="Arial" font-size="12" text-anchor="middle">Identify regions with motion in video frames</text>
+
+  <!-- Arrow -->
+  <path d="M400,140 L400,160" stroke="#666" stroke-width="2" fill="none"/>
+  <polygon points="400,165 395,155 405,155" fill="#666"/>
+
+  <!-- Step 2 -->
+  <rect x="100" y="165" width="600" height="60" rx="5" ry="5" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+  <text x="400" y="200" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">2. YOLO - Traffic Light Detection</text>
+  <text x="400" y="220" font-family="Arial" font-size="12" text-anchor="middle">Object detection to identify traffic lights in the frame</text>
+
+  <!-- Arrow -->
+  <path d="M400,225 L400,245" stroke="#666" stroke-width="2" fill="none"/>
+  <polygon points="400,250 395,240 405,240" fill="#666"/>
+
+  <!-- Step 3 -->
+  <rect x="100" y="250" width="600" height="60" rx="5" ry="5" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+  <text x="400" y="285" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">3. Extract ROI from YOLO</text>
+  <text x="400" y="305" font-family="Arial" font-size="12" text-anchor="middle">Extract Region of Interest based on bounding boxes</text>
+
+  <!-- Arrow -->
+  <path d="M400,310 L400,330" stroke="#666" stroke-width="2" fill="none"/>
+  <polygon points="400,335 395,325 405,325" fill="#666"/>
+
+  <!-- Step 4-6 -->
+  <rect x="100" y="335" width="600" height="80" rx="5" ry="5" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+  <text x="400" y="360" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">4-6. Image Pre-processing</text>
+  <text x="400" y="380" font-family="Arial" font-size="12" text-anchor="middle">- Check aspect ratio (~0.48)</text>
+  <text x="400" y="395" font-family="Arial" font-size="12" text-anchor="middle">- Crop sides (10%)</text>
+  <text x="400" y="410" font-family="Arial" font-size="12" text-anchor="middle">- Crop top/bottom (10%)</text>
+
+  <!-- Arrow -->
+  <path d="M400,415 L400,435" stroke="#666" stroke-width="2" fill="none"/>
+  <polygon points="400,440 395,430 405,430" fill="#666"/>
+
+  <!-- Step 7-8 -->
+  <rect x="100" y="440" width="600" height="70" rx="5" ry="5" fill="#ffebee" stroke="#f44336" stroke-width="2"/>
+  <text x="400" y="465" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">7-8. Color Detection</text>
+  <text x="400" y="485" font-family="Arial" font-size="12" text-anchor="middle">- Detect unwanted colors (Bitwise-AND mask)</text>
+  <text x="400" y="500" font-family="Arial" font-size="12" text-anchor="middle">- Detect desired colors (red, yellow, green, orange, etc.)</text>
+
+  <!-- Arrow -->
+  <path d="M400,510 L400,530" stroke="#666" stroke-width="2" fill="none"/>
+  <polygon points="400,535 395,525 405,525" fill="#666"/>
+
+  <!-- Step 9-10 -->
+  <rect x="100" y="535" width="600" height="80" rx="5" ry="5" fill="#e0f7fa" stroke="#00bcd4" stroke-width="2"/>
+  <text x="400" y="565" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">9-10. Final Analysis</text>
+  <text x="400" y="585" font-family="Arial" font-size="12" text-anchor="middle">- Check if content is centered</text>
+  <text x="400" y="605" font-family="Arial" font-size="12" text-anchor="middle">- Calculate non-zero percent of desired colors</text>
+
+  <!-- Legend for process flow -->
+  <rect x="650" y="10" width="15" height="15" fill="none" stroke="#666" stroke-width="2"/>
+  <text x="670" y="23" font-family="Arial" font-size="12" text-anchor="start">Process Flow</text>
+  <path d="M655,40 L675,40" stroke="#666" stroke-width="2" fill="none"/>
+  <polygon points="680,40 670,35 670,45" fill="#666"/>
+</svg>

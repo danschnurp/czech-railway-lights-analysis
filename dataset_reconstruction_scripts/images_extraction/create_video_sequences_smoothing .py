@@ -37,14 +37,14 @@ def get_jpg_files(path):
 model = YOLO('../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
 
 # Open video file
-video_path = "../../videos/"
+video_path = "/Volumes/zalohy/test_videos"
 times_path = "../../reconstructed/test"
 
 to_process = {}
 for j in reversed(os.listdir(times_path)):
     to_process[j] = sorted([float(i[i.rfind("/")+1:].replace("_box.jpg", "")) for i in get_jpg_files(times_path + "/" + j) if "_box.jpg" in i])
     try:
-        cap = cv2.VideoCapture(video_path + j + "_smoothing.mp4")
+        cap = cv2.VideoCapture(video_path + j + ".mp4")
         # Get video properties
         fps = cap.get(cv2.CAP_PROP_FPS)
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -52,7 +52,7 @@ for j in reversed(os.listdir(times_path)):
 
         # Define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'X264')
-        out = cv2.VideoWriter(j + '.mp4', fourcc, fps, (frame_width, frame_height))
+        out = cv2.VideoWriter(j + '_smoothing.mp4', fourcc, fps, (frame_width, frame_height))
 
         # Dictionary to store confidence history for each object
         confidence_history = {}
@@ -153,10 +153,10 @@ for j in reversed(os.listdir(times_path)):
                         conf = filtered_conf[i]
 
                         # Draw bounding box with class name and confidence
-                        cv2.rectangle(frame_with_boxes, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                        cv2.rectangle(frame_with_boxes, (x1, y1), (x2, y2), (255, 0, 0), 2)
                         label = f"{results.names[cls]}: {conf:.2f}"
                         cv2.putText(frame_with_boxes, label, (x1, y1 - 10),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
                     # Write the frame with smoothed boxes
                     out.write(frame_with_boxes)

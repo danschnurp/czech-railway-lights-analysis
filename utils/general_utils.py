@@ -288,13 +288,16 @@ def get_video_name(video_link, names_jsom_path):
 
 
 
-def get_times_by_video_name(sequences_jsom_path, names_jsom_path="../railway_datasets/video_names.json", reverse=False):
+def get_times_by_video_name(sequences_jsom_path, names_jsom_path="../railway_datasets/video_names.json", reverse=False,
+                            test_dataset=False):
     with open(sequences_jsom_path, encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
     with open(names_jsom_path, encoding="utf-8", mode="r") as f:
         video_names = dict(json.load(f))
 
     video_names = video_names["names"]
+    if test_dataset:
+        video_names= dict(zip(list(video_names.values()), list(video_names.keys())))
     encoder = UTF8StringEncoder()
     if reverse:
         normalized_video_names = {

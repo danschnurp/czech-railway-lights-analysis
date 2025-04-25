@@ -155,18 +155,6 @@
     "histogram_modality": "1",
     "histogram_peaks": "[44]"
   },
-  "Cheb - Karlovy Vary  POHLED NA TRAŤ Z ČELA SOUPRAVY  4K KVALITA": {
-    "fps": "50.0",
-    "resolution": "(1920, 1080)",
-    "duration": "2664.58",
-    "brightness_mean": "109.83472994923191",
-    "brightness_std": "61.97639184450756",
-    "brightness_temporal_variation": "14.460038350601852",
-    "histogram_entropy": "7.734778",
-    "histogram_dynamic_range": "0.99609375",
-    "histogram_modality": "0",
-    "histogram_peaks": "[]"
-  },
   "Liberec - Stará Paka  POHLED NA TRAŤ Z ČELA SOUPRAVY  HD KVALITA": {
     "fps": "50.0",
     "resolution": "(1920, 1080)",

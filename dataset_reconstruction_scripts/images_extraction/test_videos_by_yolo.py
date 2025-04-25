@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_path', default='../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
 parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="../../videos")
+parser.add_argument('--in-dir', default="/Volumes/zalohy/test_videos")
 parser.add_argument('--out-dir', default="../../reconstructed/test_yolo")
 parser.add_argument('--skip_seconds', type=int, default=0)
 

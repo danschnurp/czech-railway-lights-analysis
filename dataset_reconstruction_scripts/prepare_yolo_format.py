@@ -1,20 +1,3 @@
-import sys
-import time
-
-
-import os
-
-txts = list(os.listdir("./czech_railway_dataset/train/labels/multi_class"))
-txts = [i.replace(".txt", ".jpg") for i in txts]
-print(sorted(set(list(os.listdir("./czech_railway_dataset/train/images/multi_class"))).difference(
-set(txts))))
-
-# for i in sorted(set(list(os.listdir("./czech_railway_dataset/train/images/multi_class"))).difference(
-# set(txts))):
-#     os.remove("./czech_railway_dataset/train/images/multi_class/" + i)
-
-exit(0)
-
 import yaml
 import random
 
@@ -38,10 +21,10 @@ def euclidean_distance(a, b):
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_name', default="../yolov5mu.pt")
-parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names.json")
+parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names_test.json")
 parser.add_argument('--in-dir', default="../videos")
 parser.add_argument('--out-dir', default="../dataset")
-parser.add_argument('--mili_seconds_before', type=float, default=3500)
+parser.add_argument('--mili_seconds_before', type=float, default=4500)
 parser.add_argument('--mili_seconds_after', type=float, default=500)
 parser.add_argument('--delta_step', type=float, default=500)
 parser.add_argument('--label-light', type=int, default=79)
@@ -52,7 +35,7 @@ args = parser.parse_args()
 # where to save
 SAVE_PATH = args.out_dir
 
-czech_railway_folder = "czech_railway_dataset_extended"
+czech_railway_folder = "czech_railway_dataset_test"
 classes_dir_path = "../railway_datasets/crl"
 dataset_yaml = '../metacentrum/CRL.yaml'
 
