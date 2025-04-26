@@ -3,14 +3,21 @@ import json
 import os
 import unicodedata
 
-from annotate_colors_naive import class_mapping
+import yaml
+
+dataset_yaml = '../../metacentrum/CRL_extended.yaml'
+with open(dataset_yaml, encoding="utf-8") as f:
+    class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
+
+class_mapping = class_mapping["names"]
+class_mapping = list(class_mapping.values())
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--workdir", default="../videos",
                     type=str, help="Path to the directory with images to process")
-parser.add_argument("--output_dir", default="./reconstructed/",
+parser.add_argument("--output_dir", default="./",
                     type=str, help="Path to the output directory")
-parser.add_argument("--verified_dir", default="./reconstructed/",
+parser.add_argument("--verified_dir", default="./",
                     type=str, help="Path to the output directory")
 
 args = parser.parse_args()
@@ -49,7 +56,7 @@ def update_verified_metadata(metadata: dict, verified_dir="../dataset/reconstruc
 
 
 def add_yt_links():
-    with open("../railway_datasets/video_names.json", encoding="utf-8", mode="r") as f:
+    with open("../../railway_datasets/video_names_test.json", encoding="utf-8", mode="r") as f:
         traffic_lights = dict(json.load(f))
 
     video_names = traffic_lights["names"]

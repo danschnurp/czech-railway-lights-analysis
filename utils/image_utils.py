@@ -75,9 +75,7 @@ def get_roi_coordinates(model, frame):
     for result in results:
         boxes = result.boxes
         for box in boxes:
-            c = box.cls
-            if model.names[int(c)] == "traffic light":
-                result_coordinates.append([[box.xywhn.tolist()[0][0] ,box.xywhn.tolist()[0][1]],
+            result_coordinates.append([[box.xywhn.tolist()[0][0] ,box.xywhn.tolist()[0][1]],
                                            [box.xywhn.tolist()[0][2], box.xywhn.tolist()[0][3]]])
     return result_coordinates
 
