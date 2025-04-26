@@ -20,10 +20,10 @@ def euclidean_distance(a, b):
 
 parser = argparse.ArgumentParser(description='')
 
-parser.add_argument('--nett_name', default="../yolov5mu.pt")
+parser.add_argument('--nett_name', default="./100_lights_2_yolov10n_0.55.pt")
 parser.add_argument('--sequences_jsom_path', default="../railway_datasets/video_names_test.json")
-parser.add_argument('--in-dir', default="../videos")
-parser.add_argument('--out-dir', default="../dataset")
+parser.add_argument('--in-dir', default="/Volumes/zalohy/test_videos")
+parser.add_argument('--out-dir', default="./")
 parser.add_argument('--mili_seconds_before', type=float, default=4500)
 parser.add_argument('--mili_seconds_after', type=float, default=500)
 parser.add_argument('--delta_step', type=float, default=500)
@@ -36,8 +36,8 @@ args = parser.parse_args()
 SAVE_PATH = args.out_dir
 
 czech_railway_folder = "czech_railway_dataset_test"
-classes_dir_path = "../railway_datasets/crl"
-dataset_yaml = '../metacentrum/CRL.yaml'
+classes_dir_path = "../railway_datasets/test_metadata.json"
+dataset_yaml = '../metacentrum/CRL_extended.yaml'
 
 img_index = 0
 
@@ -52,7 +52,6 @@ with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     video_names = video_names["names"]
 data_ordered_videos = dict(zip(list(video_names.values()), [[] for _ in range(len(video_names))]))
 
-original_label = 'traffic light'
 
 
 label_light = args.label_light
@@ -82,7 +81,7 @@ for i in ["multi_class_annotated"]:
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/images/{i}/")
             os.mkdir(f"{SAVE_PATH}/{czech_railway_folder}/val/labels/{i}")
 
-with open(classes_dir_path + "/" + "CRL.json", encoding="utf-8") as f:
+with open(classes_dir_path, encoding="utf-8") as f:
     all_classes = dict(json.load(f))["data"]
 
 
@@ -120,7 +119,6 @@ def process_frame(lost_pictures, image_counter, img_index, previous_img,
         hamming_dist = calculate_pictures_similarity(frame, previous_img)
         if hamming_dist < hamming_dist_difference:
             return lost_pictures, image_counter, img_index, frame, metadata
-    most_similar_quadruples = []
     # gets all detection coordinates within one frame
     detected = get_roi_coordinates(model, frame=frame)
     if len(detected) == 0:
@@ -128,10 +126,13 @@ def process_frame(lost_pictures, image_counter, img_index, previous_img,
     # takes coordinates except the class iD
     # Calculate distances within annotated and real detection
     # gets the most similar quadruple
-    for quadruple_index in range(len(detected)):
-        most_similar_quadruples.append(
-            f"{class_mapping[metadata['color']]} {detected[quadruple_index][0][0]} {detected[quadruple_index][0][1]}"
-            f" {detected[quadruple_index][1][0]} {detected[quadruple_index][1][1]}\n")
+    most_similar_quadruple_metrics = [euclidean_distance(np.fromstring(metadata["roi coordinates"], sep=" ").reshape(2,2), detection) for detection in detected]
+    most_similar_quadruple_index = most_similar_quadruple_metrics.index(np.min(most_similar_quadruple_metrics))
+    most_similar_quadruple = (f"{class_mapping[metadata['color']]}"
+                                        f" {detected[most_similar_quadruple_index][0][0]} "
+                                         f"{detected[most_similar_quadruple_index][0][1]}"
+                                         f" {detected[most_similar_quadruple_index][1][0]}"
+                                         f" {detected[most_similar_quadruple_index][1][1]}\n")
     if image_counter > last_train_sample:
         save_name = f"{SAVE_PATH}/{czech_railway_folder}/val/"
     else:
@@ -140,13 +141,8 @@ def process_frame(lost_pictures, image_counter, img_index, previous_img,
 
     with open(
             f"{save_name}labels/multi_class/{img_index}.txt",
-            mode="w") as label_f:
-        coordinates = ""
-        save_annotated_picture(most_similar_quadruples, frame, f"{save_name}images/multi_class_annotated/{img_index}.jpg")
-        for ii in most_similar_quadruples:
-            coordinates += f"{ii}\n"
-        label_f.write(coordinates)
-    img_index += 1
+            mode="w+") as label_f:
+        label_f.write(f"{most_similar_quadruple}\n")
     image_counter += 1
     return lost_pictures, image_counter, img_index, frame, metadata
 
@@ -156,11 +152,12 @@ for video_link in all_classes:
     previous_img = None
     timestamps_shuffled = all_classes[video_link]
     # random.shuffle(timestamps_shuffled)
-    d_video = download_video(video_link, args.in_dir, use_internet=False)
+    d_video = download_video(video_link, args.in_dir, use_internet=False, names_jsom_path=args.sequences_jsom_path)
     if d_video is None:
         continue
     cap = cv2.VideoCapture(args.in_dir + "/" + d_video)
     for metadata in timestamps_shuffled:
+
         timestamp = metadata["timestamp in video"]
         for seconds_before in range(args.mili_seconds_before, 0, -args.delta_step):
             fps = cap.get(cv2.CAP_PROP_FPS)
@@ -169,7 +166,7 @@ for video_link in all_classes:
                     frame_number)
             lost_pictures, image_counter, img_index, previous_img, metadata = process_frame(lost_pictures,
                                                                                   image_counter,
-                                                                                  img_index, previous_img, metadata=metadata)
+                                                                                  frame_number, previous_img, metadata=metadata)
 
         for seconds_after in range(0, args.mili_seconds_after, args.delta_step):
             fps = cap.get(cv2.CAP_PROP_FPS)
@@ -178,7 +175,7 @@ for video_link in all_classes:
                     frame_number)
             lost_pictures, image_counter, img_index, previous_img, metadata = process_frame(lost_pictures,
                                                                                   image_counter,
-                                                                                  img_index, previous_img, metadata=metadata)
+                                                                                  frame_number, previous_img, metadata=metadata)
 
 
 print("lost/total", lost_pictures, "/", total_pictures_count)
