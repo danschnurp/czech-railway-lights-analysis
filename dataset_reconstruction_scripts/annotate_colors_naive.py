@@ -207,7 +207,7 @@ def save_to_vis(vis_type= "_aspect_ratio_based_on_videos", r=None, g=None, y=Non
         json.dump(vis, f, indent=2, ensure_ascii=False)
 
 
-dataset_yaml = '../metacentrum/CRL_extended.yaml'
+dataset_yaml = '../metacentrum_experiments/CRL_extended.yaml'
 with open(dataset_yaml, encoding="utf-8") as f:
     class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 

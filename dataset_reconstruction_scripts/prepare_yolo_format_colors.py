@@ -35,7 +35,7 @@ SAVE_PATH = args.out_dir
 
 czech_railway_folder = "czech_railway_dataset_lights_less_balanced"
 classes_dir_path = "../railway_datasets/crl"
-dataset_yaml = '../metacentrum/CRL_single_images_less_balanced.yaml'
+dataset_yaml = '../metacentrum_experiments/CRL_single_images_less_balanced.yaml'
 
 
 img_index = 0

@@ -1,6 +1,6 @@
 # Czech Railway Lights detection
 # -------------------------------
-# results: metacentrum/done_experiments/yolo/CRL_extended_1_class
+# results: experiment_results/done_experiments/yolo/CRL_extended_1_class
 # data:
 #     - czech_railway_lights_dataset_extended_1_class
 #     - czech_railway_dataset_1_class

@@ -189,5 +189,5 @@ today_results.json
 *main.toc
 *texmf/
 
-metacentrum/classifiers/results
+metacentrum_experiments/classifiers/results
 *train_batch*.jpg

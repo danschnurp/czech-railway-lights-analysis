@@ -2,8 +2,8 @@
 
 # -------------------------------
 # results:
-#   - metacentrum/done_experiments/yolo/detection/4_classes/single_frames
-#   - metacentrum/done_experiments/yolo/detection/4_classes/sequences
+#   - experiment_results/done_experiments/yolo/detection/4_classes/single_frames
+#   - experiment_results/done_experiments/yolo/detection/4_classes/sequences
 # data: czech_railway_dataset_4_classes
 ## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
 # metadata: railway_datasets/4_classes

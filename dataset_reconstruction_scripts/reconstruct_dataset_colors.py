@@ -34,7 +34,7 @@ img_index = 0
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-with open("../metacentrum/CRTL_multi_labeled_transfer.yaml", encoding="utf-8") as f:
+with open("../metacentrum_experiments/CRTL_multi_labeled_transfer.yaml", encoding="utf-8") as f:
     class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 
 class_mapping = class_mapping["names"]

@@ -5,7 +5,7 @@ import unicodedata
 
 import yaml
 
-dataset_yaml = '../../metacentrum/CRL_extended.yaml'
+dataset_yaml = '../../metacentrum_experiments/CRL_extended.yaml'
 with open(dataset_yaml, encoding="utf-8") as f:
     class_mapping = yaml.load(f, Loader=yaml.SafeLoader)
 

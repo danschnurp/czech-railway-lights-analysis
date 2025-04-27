@@ -31,7 +31,7 @@ LOAD_PATH = args.in_dir
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-with open("../../metacentrum/CRL_extended.yaml") as f:
+with open("../../metacentrum_experiments/CRL_extended.yaml") as f:
     interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
 
 # Load a model

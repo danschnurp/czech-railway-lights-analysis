@@ -38,7 +38,7 @@ img_index = 0
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-dataset_yaml = '../metacentrum/CRL_extended.yaml'
+dataset_yaml = '../metacentrum_experiments/CRL_extended.yaml'
 
 with open(dataset_yaml, encoding="utf-8") as f:
     class_mapping = yaml.load(f, Loader=yaml.SafeLoader)

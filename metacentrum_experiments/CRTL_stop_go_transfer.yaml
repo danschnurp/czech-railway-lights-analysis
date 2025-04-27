@@ -2,7 +2,7 @@
 
 # -------------------------------
 # results:
-#   - metacentrum/done_experiments/yolo/stop_go_transfer_learning
+#   - experiment_resultsdone_experiments/yolo/stop_go_transfer_learning
 # data: czech_railway_dataset_stop_go
 ## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
 # metadata: railway_datasets/simple_classes

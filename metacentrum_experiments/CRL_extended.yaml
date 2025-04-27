@@ -1,7 +1,7 @@
 # Czech Railway Lights
 # -------------------------------
-# results: metacentrum/done_experiments/yolo/CRL_extended
-# results: metacentrum/done_experiments/yolo/CRL_extended_augmented
+# results: experiment_results/done_experiments/yolo/CRL_extended
+# results: experiment_results/done_experiments/yolo/CRL_extended_augmented
 # data: czech_railway_lights_dataset_extended
 ## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
 # metadata: railway_datasets/crl/CRL.json

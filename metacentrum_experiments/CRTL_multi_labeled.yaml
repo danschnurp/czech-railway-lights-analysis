@@ -2,7 +2,7 @@
 
 # -------------------------------
 # results:
-#   - metacentrum/done_experiments/yolo/CRTL_multi_labeled
+#   - experiment_results/done_experiments/yolo/CRTL_multi_labeled
 # data: czech_railway_dataset_4_classes
 ## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
 # metadata: railway_datasets/simple_classes

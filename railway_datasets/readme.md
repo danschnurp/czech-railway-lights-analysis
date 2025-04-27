@@ -1,7 +1,7 @@
 # Czech Railway Traffic light detections from YouTube channels Parníci CZ and strojvedoucicom
 This dataset provides traffic light detections extracted 
 from YouTube videos using the **YOLOv5mu** and **YOLOv10m** object detection
-model. The videos are in **1080p and  720p resolution at 60 and 30 frames per
+model. The videos are in **1080p at 60 frames per
 second** (fps). The dataset is stored in the JSON file format.
 
 - datasets on Google Drive - https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF?usp=share_link

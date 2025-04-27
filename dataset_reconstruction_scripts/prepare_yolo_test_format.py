@@ -37,7 +37,7 @@ SAVE_PATH = args.out_dir
 
 czech_railway_folder = "czech_railway_dataset_test"
 classes_dir_path = "../railway_datasets/test_metadata.json"
-dataset_yaml = '../metacentrum/CRL_extended.yaml'
+dataset_yaml = '../metacentrum_experiments/CRL_extended.yaml'
 
 img_index = 0
 
