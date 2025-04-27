@@ -155,7 +155,7 @@ def save_model_to_pt(model, filepath='model.pt'):
         filepath: Path where to save the model
     """
     # Save the entire model
-    torch.save(model.state_dict(), filepath)
+    torch.save(model, filepath)
     print(f"Model saved to {filepath}")
 
 

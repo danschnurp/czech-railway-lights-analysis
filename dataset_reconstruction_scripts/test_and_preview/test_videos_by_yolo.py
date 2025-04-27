@@ -9,6 +9,7 @@ import yaml
 import os
 import argparse
 
+from combined_model import combined_model
 from image_utils import crop_sides_percentage
 from utils.general_utils import download_video
 import time
@@ -18,9 +19,9 @@ from utils.image_utils import MovementDetector, convert_normalized_roi_to_pixels
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_path', default='../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
-parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names.json")
+parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names_test.json")
 parser.add_argument('--in-dir', default="/Volumes/zalohy/test_videos")
-parser.add_argument('--out-dir', default="../../reconstructed/test_yolo")
+parser.add_argument('--out-dir', default="./test_yolo")
 parser.add_argument('--skip_seconds', type=int, default=0)
 
 args = parser.parse_args()
@@ -81,7 +82,7 @@ def annotate_video():
             timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
             # frame = crop_sides_percentage(frame.copy(), crop_percentage=10)
             # frame = crop_top_bottom_percentage(frame.copy(), crop_percentage=10)
-            results = model.predict(frame,conf=0.75, iou=0.45)
+            results = model(frame,conf=0.75, iou=0.45)
             # Iterate over the results
             for result in results:
                 boxes = result.boxes  # Boxes object for bbox outputs
@@ -91,24 +92,25 @@ def annotate_video():
                     # saves the result
                     save_name = f"{SAVE_PATH}/{video_name[:-4]}/{timestamp}"
                     dropout_time = 0.5
-                    for r in results:
-                        annotator = Annotator(frame, line_width=2)
-                        boxes = r.boxes
-                        for index, box in enumerate(boxes):
-                            b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
-                            c = box.cls
-                            # Extract ROI
-                            frame_height, frame_width = frame.shape[:2]
+                    annotator = Annotator(frame, line_width=2)
+                    boxes = result.boxes
+                    for index, box in enumerate(boxes):
+                        b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
+                        c = box.cls
+                        # Extract ROI
+                        frame_height, frame_width = frame.shape[:2]
 
-                            x_min, y_min, width, height = convert_normalized_roi_to_pixels(
-                                " ".join([str(box.xywhn.tolist()[0][0]), str(box.xywhn.tolist()[0][1]), str(box.xywhn.tolist()[0][2]), str(box.xywhn.tolist()[0][3])])
-                                , frame_width, frame_height)
+                        x_min, y_min, width, height = convert_normalized_roi_to_pixels(
+                            " ".join([str(box.xywhn.tolist()[0][0]), str(box.xywhn.tolist()[0][1]),
+                                      str(box.xywhn.tolist()[0][2]), str(box.xywhn.tolist()[0][3])])
+                            , frame_width, frame_height)
 
-                            crop = frame[y_min:height, x_min:width]
-                            annotator.box_label(b, model.names[int(c)])
-                            cv2.imwrite(
-                                save_name + "_" + model.names[int(c)] + "_roi"+ str(index) + ".jpg",
-                                crop)
+                        crop = frame[y_min:height, x_min:width]
+                        annotator.box_label(b, model.names[int(c)])
+                        cv2.imwrite(
+                            save_name + "_" + model.names[int(c)] + "_roi" + str(index) + ".jpg",
+                            crop)
+
                     image_index += 1
                     cv2.imwrite(
                         save_name + "_box.jpg",
@@ -118,7 +120,7 @@ def annotate_video():
 
 
 done = {}
-for i in traffic_lights.values():
+for i in traffic_lights["names"].values():
     d_video = download_video(i, LOAD_PATH, names_jsom_path=args.sequences_jsom_path)
     annotate_video()
     done[d_video] = i
