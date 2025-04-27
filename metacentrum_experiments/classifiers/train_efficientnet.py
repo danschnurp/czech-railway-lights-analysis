@@ -186,11 +186,12 @@ def load_model(num_classes, model_name):
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=16,
+        num_train_epochs=30,
         per_device_train_batch_size=1,
         per_device_eval_batch_size=1,
         warmup_steps=500,
         weight_decay=0.01,
+        learning_rate=0.0001,
         logging_dir="./logs",
         logging_steps=100,
         eval_strategy="epoch",
@@ -242,7 +243,7 @@ def main():
     print(f"Number of classes in dataset: {len(dataset.classes)}")  # Should print 3 classes
 
     # Split into training and validation datasets
-    val_size = 0.3
+    val_size = 0.15
     train_dataset, val_dataset = split_data(dataset,val_size=val_size)
 
     # Create DataLoader for training and validation sets
