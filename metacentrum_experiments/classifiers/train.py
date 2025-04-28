@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import torch
+import yaml
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from torch.utils.data import Dataset, DataLoader
@@ -13,7 +14,7 @@ from torchvision.datasets import ImageFolder
 from transformers import AutoConfig
 from transformers import Trainer, TrainingArguments
 
-from classifiers.crl_model import CzechRailwayLightNet
+from classifiers.crl_classifier_net import CzechRailwayLightNet
 
 
 def confusion_matrix_to_pdf(confusion_matrix, class_names=None, output_path='confusion_matrix.pdf',
@@ -69,7 +70,10 @@ class CustomImageDataset(Dataset):
     def __init__(self, data_dir, transform=None):
         self.dataset = ImageFolder(root=data_dir)
         self.transform = transform
-        self.classes = self.dataset.classes
+        with open("../../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
+            interesting_labels = list(yaml.load(f, yaml.SafeLoader)["names"].values())
+        self.dataset.classes = interesting_labels
+        self.classes = interesting_labels
 
     def __len__(self):
         return len(self.dataset)
@@ -85,7 +89,7 @@ class CustomImageDataset(Dataset):
 
 def load_data(data_dir):
     transform = transforms.Compose([
-        transforms.Resize((16, 34)),  # Resize to the small image size
+        transforms.Resize((34, 34)),  # Resize to the small image size
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -154,7 +158,9 @@ def save_model_to_pt(model, filepath='model.pt'):
         model: The trained model to save
         filepath: Path where to save the model
     """
-    # Save the entire model
+    # Assume `model` is your instance of CzechRailwayLightNet
+
+    # Save the model
     torch.save(model, filepath)
     print(f"Model saved to {filepath}")
 

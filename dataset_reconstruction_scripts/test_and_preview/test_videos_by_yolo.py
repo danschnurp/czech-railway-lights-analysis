@@ -1,26 +1,23 @@
-import json
-
-from sympy import sequence
-from torch.backends.mkl import verbose
-from ultralytics import YOLO
-import cv2
-from ultralytics.utils.plotting import Annotator
-import yaml
-import os
 import argparse
-
-from combined_model import combined_model
-from image_utils import crop_sides_percentage
-from utils.general_utils import download_video
+import json
+import os
 import time
 
-from utils.image_utils import MovementDetector, convert_normalized_roi_to_pixels, crop_top_bottom_percentage
+import cv2
+import torch
+import yaml
+from ultralytics.utils.plotting import Annotator
+
+from utils.general_utils import download_video
+from utils.image_utils import MovementDetector, convert_normalized_roi_to_pixels
+
+
 
 parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_path', default='../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
-parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names_test.json")
-parser.add_argument('--in-dir', default="/Volumes/zalohy/test_videos")
+parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names.json")
+parser.add_argument('--in-dir', default="/Volumes/zalohy/dip") # test_videos
 parser.add_argument('--out-dir', default="./test_yolo")
 parser.add_argument('--skip_seconds', type=int, default=0)
 
@@ -32,11 +29,11 @@ LOAD_PATH = args.in_dir
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-with open("../../metacentrum_experiments/CRL_extended.yaml") as f:
+with open("../../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
     interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
 
 # Load a model
-model = YOLO(args.nett_path)  # load an official model
+model = torch.load("two_stage_czech_railway_lights_model.pt")
 
 def annotate_video():
 
@@ -82,7 +79,7 @@ def annotate_video():
             timestamp = f"{float(cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.):.3f}"
             # frame = crop_sides_percentage(frame.copy(), crop_percentage=10)
             # frame = crop_top_bottom_percentage(frame.copy(), crop_percentage=10)
-            results = model(frame,conf=0.75, iou=0.45)
+            results = model(frame,conf=0.55, iou=0.45)
             # Iterate over the results
             for result in results:
                 boxes = result.boxes  # Boxes object for bbox outputs

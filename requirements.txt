@@ -3,7 +3,8 @@ ultralytics
 numpy==1.26.4
 pytube
 PyYAML
-torch
+torch==2.1.2
+torchvision==0.16
 requests
 pillow
 yt-dlp

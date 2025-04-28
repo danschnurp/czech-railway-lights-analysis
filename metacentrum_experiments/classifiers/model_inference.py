@@ -2,7 +2,7 @@ import torch
 from torchvision import transforms
 from transformers import AutoConfig
 
-from classifiers.crl_model import CzechRailwayLightNet
+from classifiers.crl_classifier_net import CzechRailwayLightNet
 
 
 # Simple example of how to use the loaded model for inference

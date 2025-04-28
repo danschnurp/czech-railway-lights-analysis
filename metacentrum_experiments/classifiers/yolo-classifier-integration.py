@@ -3,11 +3,17 @@ import torch
 import cv2
 import numpy as np
 import json
+
+import yaml
 from PIL import Image, ImageDraw, ImageFont
 from transformers import AutoConfig
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from ultralytics import YOLO
+
+from classifiers.crl_classifier_net import CzechRailwayLightNet
+
 
 # Load YOLO model
 def load_yolo_model(yolo_model="yolov5s"):
@@ -21,7 +27,7 @@ def load_yolo_model(yolo_model="yolov5s"):
         Loaded YOLO model
     """
     # Using torch hub to load YOLOv5
-    model = torch.hub.load('ultralytics/yolov5', yolo_model)
+    model = YOLO("../../metacentrum_experiments/30_lights_0_yolov5nu.pt_0.5/weights/best.pt")
     return model
 
 # Load your custom classifier model
@@ -98,7 +104,7 @@ def detect_and_classify(image_path, yolo_model, classifier_model, class_mapping,
     results = yolo_model(image_rgb)
     
     # Get detections
-    detections = results.pandas().xyxy[0]
+    detections = results[0].boxes[0].xyxy[0]
     
     # Create visualization image
     pil_image = Image.fromarray(image_rgb)
@@ -106,55 +112,46 @@ def detect_and_classify(image_path, yolo_model, classifier_model, class_mapping,
     
     # Store results
     classified_detections = []
-    
-    # Process each detection
-    for _, detection in detections.iterrows():
-        # Check if detection is the target class (if specified)
-        if target_class and detection['name'] != target_class:
-            continue
-            
-        # Extract bounding box
-        x1, y1, x2, y2 = int(detection['xmin']), int(detection['ymin']), int(detection['xmax']), int(detection['ymax'])
-        
-        # Extract the region for classification
-        roi = image_rgb[y1:y2, x1:x2]
-        
-        if roi.size == 0:
-            continue
-            
-        # Convert to PIL for preprocessing
-        roi_pil = Image.fromarray(roi)
-        
-        # Preprocess for classifier
-        roi_tensor = preprocess_for_classifier(roi_pil)
-        
-        # Run classifier
-        with torch.no_grad():
-            outputs = classifier_model(pixel_values=roi_tensor)
-            logits = outputs['logits']
-            predicted_class_idx = torch.argmax(logits, dim=1).item()
-            confidence_score = torch.softmax(logits, dim=1)[0, predicted_class_idx].item()
-        
-        # Get predicted class name
-        predicted_class = class_mapping.get(str(predicted_class_idx), f"Unknown ({predicted_class_idx})")
-        
-        # Store the result
-        result = {
-            'bbox': [x1, y1, x2, y2],
-            'yolo_confidence': float(detection['confidence']),
-            'class': predicted_class,
-            'class_confidence': float(confidence_score)
-        }
-        classified_detections.append(result)
-        
-        # Draw on image
-        color = (255, 0, 0)  # Red
-        draw.rectangle([x1, y1, x2, y2], outline=color, width=2)
-        
-        # Label with class
-        label = f"{predicted_class} ({confidence_score:.2f})"
-        draw.text((x1, y1-15), label, fill=color)
-    
+
+
+    # Extract bounding box
+    x1, y1, x2, y2 = tuple(results[0].boxes[0].xyxy[0].tolist())
+
+    # Extract the region for classification
+    roi = image_rgb[int(y1):int(y2), int(x1):int(x2)]
+
+    # Convert to PIL for preprocessing
+    roi_pil = Image.fromarray(roi)
+
+    # Preprocess for classifier
+    roi_tensor = preprocess_for_classifier(roi_pil)
+
+    # Run classifier
+    with torch.no_grad():
+        outputs = classifier_model(pixel_values=roi_tensor)
+        logits = outputs['logits']
+        predicted_class_idx = torch.argmax(logits, dim=1).item()
+        confidence_score = torch.softmax(logits, dim=1)[0, predicted_class_idx].item()
+
+    # Get predicted class name
+    predicted_class = class_mapping[predicted_class_idx]
+
+    # Store the result
+    result = {
+        'bbox': [x1, y1, x2, y2],
+        'class': predicted_class,
+        'class_confidence': float(confidence_score)
+    }
+    classified_detections.append(result)
+
+    # Draw on image
+    color = (255, 0, 0)  # Red
+    draw.rectangle([x1, y1, x2, y2], outline=color, width=2)
+
+    # Label with class
+    label = f"{predicted_class} ({confidence_score:.2f})"
+    draw.text((x1, y1 - 15), label, fill=color)
+
     # Save or show the result
     if output_path:
         pil_image.save(output_path)
@@ -311,20 +308,19 @@ if __name__ == "__main__":
     # Paths
     model_path = 'czech_railway_lights_model.pt'
     class_mapping_path = 'class_mapping.json'
-    test_image_path = 'test_image.jpg'  # Replace with your test image
-    
-    # Load class mapping
-    with open(class_mapping_path, 'r') as f:
-        class_mapping = json.load(f)
+    test_image_path = '/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection/reconstructed/czech_railway_lights_dataset_extended_1_class/train/images/multi_class/1135.jpg'  # Replace with your test image
+
+    with open(
+            "/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection/metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
+        class_mapping = yaml.load(f, yaml.SafeLoader)["names"]
     
     num_classes = len(class_mapping)
     
     # Load models
-    yolo_model = load_yolo_model("yolov5s")  # Can use s, m, l, or x versions
+    yolo_model = load_yolo_model()  # Can use s, m, l, or x versions
     classifier_model = load_classifier_model(model_path, num_classes)
     
-    # Set YOLO parameters
-    yolo_model.conf = 0.25  # Confidence threshold
+
     
     # Choose one of the following operations:
     

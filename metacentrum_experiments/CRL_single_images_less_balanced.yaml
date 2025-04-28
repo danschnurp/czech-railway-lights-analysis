@@ -5,7 +5,7 @@
 ## private Google Drive link: https://drive.google.com/drive/folders/1NIlhyW1fIZfiFyOGCTeXyf0pdiRoDbbF
 # metadata: railway_datasets/crl/CRL.json
 # -------------------------------
-path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_dataset_lights_less_balanced
+path: /Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection/reconstructed/czech_railway_lights_dataset_4_classes
 train: train/images/
 val: val/images/
 
@@ -29,3 +29,15 @@ names:
 # white lights are not
 #  part of this thesis
 
+## 0 single red light
+#  0: adjust_speed_and_warning
+## 1 single green light
+#  1: adjust_speed_and_go
+## 2 single yellow light
+#  2: go
+## 3 twice yellow
+#  3: lights_off
+## 4 up green bottom yellow
+#  4: stop
+## 5 lights are turned off
+#  5: warning
