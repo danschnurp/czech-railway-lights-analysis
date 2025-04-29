@@ -5,11 +5,10 @@ models=(
     "yolov10n.pt"
     "yolov5nu.pt"
     "yolov8n.pt"
-    "rtdetr-l.pt"
 )
 
 freeze_values=(0)
-epoch_values=(60)
+epoch_values=(30 60)
 conf_thres=(0.5)
 data="CRL_extended.yaml"
 

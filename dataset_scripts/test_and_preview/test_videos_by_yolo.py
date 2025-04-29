@@ -8,6 +8,7 @@ import torch
 import yaml
 from ultralytics.utils.plotting import Annotator
 
+from classifiers.combined_model import CzechRailwayLightModel
 from utils.general_utils import download_video
 from utils.image_utils import MovementDetector, convert_normalized_roi_to_pixels
 
@@ -17,8 +18,8 @@ parser = argparse.ArgumentParser(description='')
 
 parser.add_argument('--nett_path', default='../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
 parser.add_argument('--sequences_jsom_path', default="../../railway_datasets/video_names.json")
-parser.add_argument('--in-dir', default="/Volumes/zalohy/dip") # test_videos
-parser.add_argument('--out-dir', default="./test_yolo")
+parser.add_argument('--in-dir', default="../../videos") # test_videos
+parser.add_argument('--out-dir', default="../../test_results")
 parser.add_argument('--skip_seconds', type=int, default=0)
 
 args = parser.parse_args()
@@ -33,7 +34,11 @@ with open("../../metacentrum_experiments/CRL_single_images_less_balanced.yaml") 
     interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
 
 # Load a model
-model = torch.load("two_stage_czech_railway_lights_model.pt")
+model = CzechRailwayLightModel(
+    detection_nett_path="../../classifiers/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
+    classification_nett_path="../../classifiers/czech_railway_lights_model.pt"
+                               )
+
 
 def annotate_video():
 
@@ -104,9 +109,7 @@ def annotate_video():
 
                         crop = frame[y_min:height, x_min:width]
                         annotator.box_label(b, model.names[int(c)])
-                        cv2.imwrite(
-                            save_name + "_" + model.names[int(c)] + "_roi" + str(index) + ".jpg",
-                            crop)
+
 
                     image_index += 1
                     cv2.imwrite(

@@ -9,6 +9,7 @@
 path: /auto/plzen1/home/dschnurp/dip/dataset/reconstructed/czech_railway_lights_dataset_extended
 train: train/images/
 val: val/images/
+test: test/
 
 names:
 # 0 single red light
