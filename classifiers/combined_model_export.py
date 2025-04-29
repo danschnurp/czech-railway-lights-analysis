@@ -9,14 +9,15 @@ from ultralytics.engine.results import Results, Boxes
 class CzechRailwayLightModel(torch.nn.Module):
     def __init__(self, yolo_path="./czech_railway_light_detection_backbone/detection_backbone/weights/best.torchscript",
                  classifier_path="./czech_railway_lights_model.pt",
-                 labels_path="../../metacentrum_experiments/CRL_single_images_less_balanced.yaml"):
+                 labels_path="../metacentrum_experiments/CRL_single_images_less_balanced.yaml"):
         super(CzechRailwayLightModel, self).__init__()
 
         # Load YOLO model
         self.yolo_model = torch.jit.load(yolo_path)
 
+        device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
         # Load classifier head
-        self.classifier = torch.load(classifier_path)
+        self.classifier = torch.load(classifier_path, device).to(device)
         self.classifier.eval()  # Set to evaluation mode
 
         # Load labels
@@ -73,13 +74,13 @@ class CzechRailwayLightModel(torch.nn.Module):
         # Move to device
         images = images.to(device)
 
-        # Add batch dimension if needed
-        if len(images.shape) == 3:
-            images = images.unsqueeze(0)
+        # # Add batch dimension if needed
+        # if len(images.shape) == 3:
+        #     images = images.unsqueeze(0).reshape(1, 3, 1080, 1920)
 
         # Run YOLO detection
         with torch.no_grad():
-            detections = self.yolo_model(images, conf=conf, iou=iou, verbose=verbose)
+            detections = self.yolo_model(images)
 
         results = []
 
@@ -171,7 +172,7 @@ class CzechRailwayLightModel(torch.nn.Module):
 model = CzechRailwayLightModel()
 
 # For inference
-image = cv2.imread("test_image.jpg")
+image = cv2.imread("29.733_clean.jpg")
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert to RGB
 results = model(image)
 
