@@ -30,13 +30,10 @@ LOAD_PATH = args.in_dir
 with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
     traffic_lights = dict(json.load(f))
 
-with open("../../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
-    interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
-
 # Load a model
 model = CzechRailwayLightModel(
-    detection_nett_path="../../classifiers/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
-    classification_nett_path="../../classifiers/czech_railway_lights_model.pt"
+    detection_nett_path="../../classification_experiments/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
+    classification_nett_path="../../classification_experiments/czech_railway_lights_nett.pt"
                                )
 
 

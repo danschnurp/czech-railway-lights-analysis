@@ -11,10 +11,9 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
-from transformers import AutoConfig
 from transformers import Trainer, TrainingArguments
 
-from classifiers.crl_classifier_net import CzechRailwayLightNet
+from crl_classifier_net import CzechRailwayLightNet
 
 
 def confusion_matrix_to_pdf(confusion_matrix, class_names=None, output_path='confusion_matrix.pdf',
@@ -68,12 +67,35 @@ def compute_metrics(pred):
 # Custom Dataset Wrapper for Hugging Face Trainer
 class CustomImageDataset(Dataset):
     def __init__(self, data_dir, transform=None):
+        # Load the original dataset
         self.dataset = ImageFolder(root=data_dir)
         self.transform = transform
-        with open("../../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
-            interesting_labels = list(yaml.load(f, yaml.SafeLoader)["names"].values())
-        self.dataset.classes = interesting_labels
-        self.classes = interesting_labels
+
+        # Load class mapping from YAML
+        with open("../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
+            config = yaml.load(f, yaml.SafeLoader)
+            self.interesting_labels = config["names"]
+
+        # Create mapping from folder names to indices based on interesting_labels
+        folder_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.interesting_labels)}
+
+        # Get the reverse mapping from original dataset
+        original_idx_to_folder = {idx: cls_name for cls_name, idx in self.dataset.class_to_idx.items()}
+
+        # Remap samples to use our custom order
+        self.samples = []
+        self.targets = []
+
+        for path, original_idx in self.dataset:
+            folder_name = original_idx_to_folder[original_idx]
+            if folder_name in folder_to_idx:
+                new_idx = folder_to_idx[folder_name]
+                self.samples.append((path, new_idx))
+                self.targets.append(new_idx)
+
+        # Update class information
+        self.classes = self.interesting_labels
+        self.class_to_idx = folder_to_idx
 
     def __len__(self):
         return len(self.dataset)
@@ -123,7 +145,7 @@ def get_training_args(output_dir="./results"):
         per_device_eval_batch_size=16,
         warmup_steps=50,
         weight_decay=0.001,
-        learning_rate=0.001,
+        learning_rate=0.0001,
         logging_dir="./logs",
         logging_steps=100,
         eval_strategy="epoch",
@@ -165,29 +187,8 @@ def save_model_to_pt(model, filepath='model.pt'):
     print(f"Model saved to {filepath}")
 
 
-def load_pt_model(filepath='model.pt', num_classes=None):
-    """
-    Load a model from a PyTorch .pt file
-
-    Args:
-        filepath: Path to the saved model
-        num_classes: Number of output classes for the model
-
-    Returns:
-        Loaded model
-    """
-    # Create a new model instance with the same architecture
-    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
-    model = CzechRailwayLightNet(config)
-
-    # Load the state dict
-    model.load_state_dict(torch.load(filepath))
-
-    return model
-
-
 def main():
-    data_dir = '../../reconstructed/czech_railway_lights_dataset_extended_roi'
+    data_dir = '../reconstructed/czech_railway_lights_dataset_extended_roi'
     if not os.path.exists(data_dir):
         raise ValueError(f"Data directory {data_dir} does not exist!")
 
@@ -213,7 +214,7 @@ def main():
     results = train_model(train_loader, val_loader, model, training_args)
 
     # Save the model to a PyTorch .pt file
-    save_model_to_pt(model, filepath='czech_railway_lights_model.pt')
+    save_model_to_pt(model, filepath='czech_railway_lights_nett.pt')
 
     with open("results.json", "w", encoding="utf-8") as f:
         json.dump({

@@ -1,7 +1,6 @@
 import json
 import os
 
-import cv2
 import torch
 import torch.nn as nn
 import yaml
@@ -14,9 +13,7 @@ import networkx as nx
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoConfig
 
-from classifiers.combined_model import CombinedModel
-from classifiers.crl_classifier_net import CzechRailwayLightNet
-
+from crl_classifier_net import CzechRailwayLightNet
 
 
 def print_model_summary(model_path, num_classes):
@@ -28,12 +25,11 @@ def print_model_summary(model_path, num_classes):
         num_classes: Number of output classes
     """
     # Load the model
-    model = torch.load(model_path)
-
-    model.train()
+    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
+    model = CzechRailwayLightNet(config)
 
     # Print model summary with input size
-    model_summary = summary(model,
+    model_summary = summary(model, input_size=(1, 3, 34, 34),
                             col_names=["input_size", "output_size", "num_params", "kernel_size"],
                             verbose=1)
 
@@ -54,8 +50,9 @@ def visualize_feature_maps(model_path, image_path, num_classes):
     from PIL import Image
     import matplotlib.pyplot as plt
 
-
-    model = torch.load(model_path)
+    # Load the model
+    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
+    model = CzechRailwayLightNet(config)
     model.eval()
 
     # Prepare hooks to capture feature maps
@@ -69,10 +66,19 @@ def visualize_feature_maps(model_path, image_path, num_classes):
         if isinstance(module, nn.Conv2d):
             module.register_forward_hook(hook_fn)
 
+    # Load and preprocess image
+    transform = transforms.Compose([
+        transforms.Resize((16, 34)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+
     image = Image.open(image_path).convert('RGB')
+    image_tensor = transform(image).unsqueeze(0)
+
     # Forward pass
     with torch.no_grad():
-        model(pixel_values=image)
+        model(pixel_values=image_tensor)
 
     # Plot original image
     plt.figure(figsize=(15, 10))
@@ -110,19 +116,20 @@ def visualize_model_structure(model_path, num_classes, output_file='model_visual
         num_classes: Number of output classes
         output_file: Path to save the visualization
     """
+    # Load the model
+    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
+    model = CzechRailwayLightNet(config)
 
-    model = torch.load(model_path)
+    model.eval()
 
-    test_image_path = '/Users/danielschnurpfeil/PycharmProjects/czech-railway-trafic-lights-detection/reconstructed/czech_railway_lights_dataset_extended_1_class/train/images/multi_class/1135.jpg'  # Replace with your test image
-
-    image = cv2.imread(test_image_path)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # Create a dummy input
+    x = torch.randn(1, 3, 16, 34)
 
     # Generate model forward pass
-    outputs = model(image_rgb)
+    outputs = model(pixel_values=x)
 
     # Visualize computation graph
-    dot = make_dot(outputs[0].boxes.data, params=dict(model.named_parameters()))
+    dot = make_dot(outputs['logits'], params=dict(model.named_parameters()))
     dot.render(output_file.replace('.png', ''), format='png')
     print(f"Model visualization saved to {output_file}")
 
@@ -141,7 +148,6 @@ def plot_model_filters(model_path, num_classes):
     # Load the model
     config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
     model = CzechRailwayLightNet(config)
-    model.load_state_dict(torch.load(model_path))
 
     # Get the first convolutional layer's weights
     first_conv_layer = None
@@ -184,22 +190,11 @@ def plot_model_filters(model_path, num_classes):
 
 # Example usage
 if __name__ == "__main__":
-    model_path = './two_stage_czech_railway_lights_model.pt'
-    num_classes = 6  # Replace with your actual number of classes
-
-    import torch
-    import torchvision.models as models
-    from torch.utils.tensorboard import SummaryWriter
-
-    model = torch.load(model_path)
-    writer = SummaryWriter()
-    writer.add_graph(model, torch.rand(1, 3, 224, 224))
-    writer.close()
-
-    exit(0)
+    model_path = 'czech_railway_lights_nett.pt'
+    num_classes = 5  # Replace with your actual number of classes
 
     # Load class mapping
-    with open("../../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
+    with open("../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:
         interesting_labels = set(list(yaml.load(f, yaml.SafeLoader)["names"].values()))
 
         num_classes = len(interesting_labels)
@@ -210,7 +205,7 @@ if __name__ == "__main__":
 
 
     # For feature maps and filter visualization, you need an image
-    image_path = '403_roi_0.jpg'  # Replace with a path to a sample image
+    image_path = '1131_roi_0.jpg'  # Replace with a path to a sample image
     if os.path.exists(image_path):
         visualize_feature_maps(model_path, image_path, num_classes)
         plot_model_filters(model_path, num_classes)

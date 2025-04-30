@@ -43,7 +43,7 @@ def opencv_transforms(image):
 class CzechRailwayLightModel(nn.Module):
 
     def __init__(self, detection_nett_path="./czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
-                 classification_nett_path="./czech_railway_lights_model.pt"):
+                 classification_nett_path="./czech_railway_lights_nett.pt"):
         super(CzechRailwayLightModel, self).__init__()
         print("loading detection nett")
         yolov5nu_model = YOLO(detection_nett_path)

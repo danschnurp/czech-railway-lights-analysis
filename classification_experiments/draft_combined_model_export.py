@@ -8,7 +8,7 @@ from ultralytics.engine.results import Results, Boxes
 
 class CzechRailwayLightModel(torch.nn.Module):
     def __init__(self, yolo_path="./czech_railway_light_detection_backbone/detection_backbone/weights/best.torchscript",
-                 classifier_path="./czech_railway_lights_model.pt",
+                 classifier_path="./czech_railway_lights_nett.pt",
                  labels_path="../metacentrum_experiments/CRL_single_images_less_balanced.yaml"):
         super(CzechRailwayLightModel, self).__init__()
 
@@ -172,8 +172,8 @@ class CzechRailwayLightModel(torch.nn.Module):
 model = CzechRailwayLightModel()
 
 # For inference
-image = cv2.imread("29.733_clean.jpg")
-image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert to RGB
+image = cv2.imread("373.jpg")
+
 results = model(image)
 
 # Export the model

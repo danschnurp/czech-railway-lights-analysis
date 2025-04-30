@@ -6,7 +6,7 @@ from tqdm import tqdm
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator
 
-from classifiers.combined_model import CzechRailwayLightModel
+from classification_experiments.combined_model import CzechRailwayLightModel
 
 
 
@@ -38,61 +38,64 @@ def get_jpg_files(path):
 
 
 # Load YOLOv5 model
-model = CzechRailwayLightModel(
-    detection_nett_path="../../classifiers/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
-    classification_nett_path="../../classifiers/czech_railway_lights_model.pt"
+model_combined = CzechRailwayLightModel(
+    detection_nett_path="../../classification_experiments/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
+    classification_nett_path="../../classification_experiments/czech_railway_lights_nett.pt"
                                )
-# model = YOLO("../../classifiers/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt")
+
+model_yolo = YOLO("../../reconstructed/120_lights_0_yolov10n.pt_0.5/weights/best.pt")
+
+device = torch.device("cpu")
+
+model_combined.yolov5nu_model.to(device)
+model_combined.czech_railway_head.to(device)
 
 # Open video file
-video_path = "../../videos/Cabview 19  Pardubice-Polička duben 2023  strojvedoucicom"
-times_path = "../../reconstructed/all_yolov5mu_raw/Cabview 19  Pardubice-Polička duben 2023  strojvedoucicom/yolov5mu/traffic light"
+video_path = "/Volumes/zalohy/test_videos/"
+times_path = "../../reconstructed/test"
 
-to_process = sorted([float(i[i.rfind("\\")+1:].replace("_box.jpg", "")) for i in os.listdir(times_path) if "_box.jpg" in i])
-cap = cv2.VideoCapture(video_path + ".mp4")
-# Get video properties
-fps = cap.get(cv2.CAP_PROP_FPS)
-frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+def detect_yolo():
+    out.write(model_yolo(frame, conf=0.65, iou=0.55, verbose=False)[0].plot())
 
-# Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*'X264')
-out = cv2.VideoWriter(video_path + '.mp4', fourcc, fps, (frame_width, frame_height))
+def detect_combined():
+    results, classes = model_combined(frame, conf=0.65, iou=0.55, verbose=False)
+    for result in results:
+        annotator = Annotator(frame, line_width=2)
+        boxes = result.boxes
+        for cls, box in zip(classes, boxes):
+                b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
+                c = cls
 
-while cap.isOpened():
-    for i in tqdm(to_process[:6]):
+                annotator.box_label(b, model_combined.names[int(c)])
+    out.write(frame)
 
-        frame_number = int(fps * (i - 1))
-        cap.set(cv2.CAP_PROP_POS_FRAMES,
-                frame_number)
-        frames = []
-        for _ in tqdm(range(int(cap.get(cv2.CAP_PROP_POS_FRAMES)),
-                       int(np.ceil(cap.get(cv2.CAP_PROP_POS_FRAMES) + (fps))), 20)):
-            ret, frame = cap.read()
-            results = model(frame, conf=0.55, iou=0.55, verbose=False)
-            results, classes = model(frame, conf=0.55, iou=0.55, verbose=False)
-            for result in results:
-                boxes = result.boxes  # Boxes object for bbox outputs
-                class_indices = boxes.cls  # Class indices of the detections
-                class_names = [result.names[int(i)] for i in class_indices]  # Map indices to names
+to_process = {}
+for j in os.listdir(times_path):
+    to_process[j] = sorted([float(i[i.rfind("/")+1:].replace("_box.jpg", "")) for i in get_jpg_files(times_path + "/" + j) if "_box.jpg" in i])
+    try:
+        cap = cv2.VideoCapture(video_path + j + ".mp4")
+        # Get video properties
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
+        # Define the codec and create VideoWriter object
+        fourcc = cv2.VideoWriter_fourcc(*'X264')
+        out = cv2.VideoWriter(j + '.mp4', fourcc, fps, (frame_width, frame_height))
 
-                annotator = Annotator(frame, line_width=2)
-                boxes = result.boxes
-                for index, box in enumerate(boxes):
-                for cls, box in zip(classes, boxes):
-                        b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
-                        c = box.cls
+        while cap.isOpened():
+            for i in tqdm(to_process[j]):
 
-                        annotator.box_label(b, model.names[int(c)])
-            out.write(frame)
-                        annotator.box_label(b, model.names[cls])
-            cv2.imshow("", cv2.resize(frame, (1280,720)))
-            cv2.waitKey(100)
-            if not ret:
-                break
+                frame_number = int(fps * (i - 1))
+                cap.set(cv2.CAP_PROP_POS_FRAMES,
+                        frame_number)
 
-
-    cap.release()
-    out.release()
+                for _ in range(int(cap.get(cv2.CAP_PROP_POS_FRAMES)), int(np.ceil(cap.get(cv2.CAP_PROP_POS_FRAMES) + fps))):
+                    ret, frame = cap.read()
+                    detect_yolo()
+                    # detect_combined()
+            cap.release()
+            out.release()
+    except Exception as e:
+        raise e
 

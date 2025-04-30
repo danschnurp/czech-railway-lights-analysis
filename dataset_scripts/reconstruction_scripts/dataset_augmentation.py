@@ -100,11 +100,11 @@ def add_noise(img, destination):
 
     # Convert back to uint8
     noisy_img = (noisy * 255).astype(np.uint8)
-
+    # cv2.imwrite(name, noisy_img)
     return noisy_img
 
 
-def brightness_contrast(img, destination, alpha, beta):
+def brightness_contrast(img, destination, alpha=1.5 , beta=30):
     """
     Adjusts brightness and contrast of the image.
     :param img: input image
@@ -116,6 +116,7 @@ def brightness_contrast(img, destination, alpha, beta):
     name = f"{destination}_bright_contrast.jpg"
 
     adjusted = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    # cv2.imwrite(name, adjusted)
     return adjusted
 
 
@@ -128,4 +129,19 @@ def darker_image(img, destination, alpha=1.0, beta=-55):
     :param beta: brightness control
     :return: new filename
     """
-    return cv2.addWeighted(img, alpha, np.zeros(img.shape, img.dtype), 0, beta)
+    name = f"{destination}_darker.jpg"
+    adjusted =  cv2.addWeighted(img, alpha, np.zeros(img.shape, img.dtype), 0, beta)
+    # cv2.imwrite(name, adjusted)
+    return adjusted
+
+p = "../..//reconstructed/czech_railway_lights_dataset_extended_roi/"
+cls = "2/"
+pp = p + cls
+for frame in os.listdir(pp):
+    if frame.find("_noise.jpg") != -1:
+        continue
+    im = cv2.imread(pp + frame)
+    neame = (pp + frame).replace(".jpg", "")
+    # add_noise(im, neame)
+    # darker_image(im, neame)
+    # brightness_contrast(im, neame)
