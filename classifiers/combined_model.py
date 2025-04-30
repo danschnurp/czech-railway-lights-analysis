@@ -52,27 +52,16 @@ class CzechRailwayLightModel(nn.Module):
         # Load classifier head
         czech_railway_head = torch.load(
             classification_nett_path, device, weights_only=False)
-        self.names = {0: "adjust_speed_and_warning",
-
-1: "adjust_speed_and_go",
-
-2: "go",
-
-3: "lights_off",
-
-4: "stop",
-
-5: "warning"
-
-            }
+        yolov5nu_model.to(device)
+        self.names = {0: 'stop', 1: 'go', 2: 'warning', 3: 'adjust speed and warning', 4: 'adjust speed and go', 5: 'lights off'}
         self.yolov5nu_model = yolov5nu_model
         self.czech_railway_head = czech_railway_head
-
 
     def forward(self, x, conf=0.5, iou=0.5, verbose=True):
         features = self.yolov5nu_model(x, conf=conf, iou=iou, verbose=verbose)
 
         item_idx = None
+        predicted_classes = []
         for feature_idx, feature in enumerate(features):
             for item_idx, feature_data in enumerate(feature):
                 new_datas = []
@@ -86,34 +75,9 @@ class CzechRailwayLightModel(nn.Module):
 
                     # Get prediction
                     logits = output['logits']
-                    predicted_class_idx = argmax(logits, dim=1).item()
-                    # cv2.imshow("", crop)
-                    # print(self.names[predicted_class_idx])
-                    # cv2.waitKey(240)
+                    predicted_classes.append(argmax(logits, dim=1).item())
 
-
-                    # Get original box data
-                    original_box = box
-
-                    # Update the class value directly
-                    # First clone the original data to avoid modifying it in-place
-                    new_data = original_box.data.clone()
-                    # Update the class column (typically index 5 in YOLO format [x1, y1, x2, y2, conf, cls])
-                    new_data[:, 5] = predicted_class_idx
-                    new_datas.append(new_data)
-                if item_idx is not None:
-                    # Create a new Boxes object with the updated data
-
-
-                    new_boxes = Boxes(
-                                cat(new_datas),
-                                orig_shape=None
-                            )
-
-                    # Replace the original boxes with the updated ones
-                    features[feature_idx].boxes = new_boxes
-
-        return features
+        return features, predicted_classes
 
     def predict(self, x, conf=0.5, iou=0.5, verbose=True):
         return self.forward(x, conf, iou, verbose)

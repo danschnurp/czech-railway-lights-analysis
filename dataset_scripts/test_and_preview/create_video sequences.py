@@ -67,9 +67,10 @@ while cap.isOpened():
                 frame_number)
         frames = []
         for _ in tqdm(range(int(cap.get(cv2.CAP_PROP_POS_FRAMES)),
-                       int(np.ceil(cap.get(cv2.CAP_PROP_POS_FRAMES) + (fps))))):
+                       int(np.ceil(cap.get(cv2.CAP_PROP_POS_FRAMES) + (fps))), 20)):
             ret, frame = cap.read()
             results = model(frame, conf=0.55, iou=0.55, verbose=False)
+            results, classes = model(frame, conf=0.55, iou=0.55, verbose=False)
             for result in results:
                 boxes = result.boxes  # Boxes object for bbox outputs
                 class_indices = boxes.cls  # Class indices of the detections
@@ -79,14 +80,19 @@ while cap.isOpened():
                 annotator = Annotator(frame, line_width=2)
                 boxes = result.boxes
                 for index, box in enumerate(boxes):
+                for cls, box in zip(classes, boxes):
                         b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
                         c = box.cls
 
                         annotator.box_label(b, model.names[int(c)])
             out.write(frame)
+                        annotator.box_label(b, model.names[cls])
+            cv2.imshow("", cv2.resize(frame, (1280,720)))
+            cv2.waitKey(100)
             if not ret:
                 break
 
 
     cap.release()
     out.release()
+
