@@ -37,17 +37,14 @@ def process_files(directory, old, rep=0, remove=False):
         except Exception as e:
             print(f"Error processing {filename}: {str(e)}")
 
-# Usage
-directory_path = "."  # Current directory, change this to your directory path
 
 paths =[
-"../../reconstructed/czech_railway_lights_dataset_extended_1_class/train/labels/multi_class",
-"../../reconstructed/czech_railway_lights_dataset_extended_1_class/val/labels/multi_class"
+
+"../../reconstructed/czech_railway_lights_dataset_extended_TEST/val/labels/multi_class/"
 
 ]
-to_replace = [1,2,3,4,5,7]
+to_replace = [6,7]
 
 for i in paths:
     for j in to_replace:
-            process_files(directory=i, old=j)
-    process_files(directory=i, remove=True, old=6)
+            process_files(directory=i, remove=True, old=j)

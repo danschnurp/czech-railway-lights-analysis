@@ -1,10 +1,10 @@
 # CzechRailwayLightNet Configuration
-# Input: [1, 3, 16, 34]
+# Input: [1, 3, 34, 34]
 # Output: [1, 6]
 
 model:
   name: CzechRailwayLightNet
-  input_size: [3, 16, 34]
+  input_size: [3, 34, 34]
   num_classes: 6
 
 parameters:

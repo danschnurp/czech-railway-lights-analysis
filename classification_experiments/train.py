@@ -13,7 +13,7 @@ from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from transformers import Trainer, TrainingArguments
 
-from crl_classifier_net import CzechRailwayLightNet
+from czech_railway_lights_nett import CzechRailwayLightNet
 
 
 def confusion_matrix_to_pdf(confusion_matrix, class_names=None, output_path='confusion_matrix.pdf',
@@ -111,7 +111,7 @@ class CustomImageDataset(Dataset):
 
 def load_data(data_dir):
     transform = transforms.Compose([
-        transforms.Resize((34, 34)),  # Resize to the small image size
+        transforms.Resize((34, 34)), # Resize to the small image size
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -188,7 +188,7 @@ def save_model_to_pt(model, filepath='model.pt'):
 
 
 def main():
-    data_dir = '../reconstructed/czech_railway_lights_dataset_extended_roi'
+    data_dir = '../reconstructed/czech_railway_light_dataset_roi'
     if not os.path.exists(data_dir):
         raise ValueError(f"Data directory {data_dir} does not exist!")
 
