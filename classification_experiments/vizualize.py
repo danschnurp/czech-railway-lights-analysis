@@ -68,7 +68,7 @@ def visualize_feature_maps(model_path, image_path, num_classes):
 
     # Load and preprocess image
     transform = transforms.Compose([
-        transforms.Resize((34, 34)),
+        transforms.Resize((34, 16)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -123,7 +123,7 @@ def visualize_model_structure(model_path, num_classes, output_file='model_visual
     model.eval()
 
     # Create a dummy input
-    x = torch.randn(1, 3, 34, 34)
+    x = torch.randn(1, 3, 34, 16)
 
     # Generate model forward pass
     outputs = model(pixel_values=x)

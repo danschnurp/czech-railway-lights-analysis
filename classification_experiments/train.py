@@ -8,6 +8,7 @@ import torch
 import yaml
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
@@ -50,13 +51,11 @@ def confusion_matrix_to_pdf(confusion_matrix, class_names=None, output_path='con
 def compute_metrics(pred):
     labels = pred.label_ids
     preds = pred.predictions.argmax(-1)
-    accuracy = accuracy_score(labels, preds)
     precision = precision_score(labels, preds, average='weighted')
     recall = recall_score(labels, preds, average='weighted')
     f1 = f1_score(labels, preds, average='weighted')
     conf_matrix = confusion_matrix(labels, preds)
     return {
-        'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
         'f1': f1,
@@ -111,7 +110,7 @@ class CustomImageDataset(Dataset):
 
 def load_data(data_dir):
     transform = transforms.Compose([
-        transforms.Resize((34, 34)), # Resize to the small image size
+        transforms.Resize((34, 16)), # Resize to the small image size
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -134,28 +133,39 @@ def create_dataloader(train_dataset, val_dataset, batch_size=32):
     return train_loader, val_loader
 
 def load_model(num_classes, model_name='google/efficientnet-b0'):
-    model = CzechRailwayLightNet.from_pretrained(model_name, num_labels=num_classes)
+    model = CzechRailwayLightNet.from_pretrained()
     return model
 
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=20,
+        num_train_epochs=45,
         per_device_train_batch_size=8,
         per_device_eval_batch_size=16,
         warmup_steps=50,
         weight_decay=0.001,
-        learning_rate=0.0001,
+        learning_rate=0.00001,
         logging_dir="./logs",
         logging_steps=100,
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
-        save_total_limit=3,
+        save_total_limit=1,
     )
 
-def train_model(train_loader, val_loader, model, training_args):
+
+# Define custom loss function if needed
+class CustomLoss(nn.Module):
+    def __init__(self, weight=None):
+        super().__init__()
+        self.loss_fn = nn.CrossEntropyLoss(weight=weight)
+
+    def forward(self, logits, labels):
+        return self.loss_fn(logits.view(-1, logits.size(-1)), labels.view(-1))
+
+def train_model(train_loader, val_loader, model, training_args):# Initialize trainer with loss function
+
     trainer = Trainer(
         model=model,
         args=training_args,
