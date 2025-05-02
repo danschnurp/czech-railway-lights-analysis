@@ -23,7 +23,7 @@ def opencv_transforms(image):
     # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # Resize the image to (34, 34)
-    image = cv2.resize(image, (16, 34))
+    image = cv2.resize(image, (34, 74))
 
     # Convert the image to a tensor (normalize to [0, 1] and change shape)
     image = image.astype(np.float32) / 255.0
@@ -69,7 +69,7 @@ class CzechRailwayLightModel(nn.Module):
                     x_min, y_min, width, height = map(int, box.xyxy[0])
                     crop = x[y_min:height, x_min:width]
 
-                    image_tensor = opencv_transforms(crop).unsqueeze(1).reshape(1, 3, 34, 16)  # Add batch dimension
+                    image_tensor = opencv_transforms(crop).unsqueeze(1).reshape(1, 3, 74, 34)  # Add batch dimension
                     output = self.czech_railway_head(image_tensor)
 
 

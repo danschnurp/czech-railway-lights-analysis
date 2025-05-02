@@ -110,7 +110,7 @@ class CustomImageDataset(Dataset):
 
 def load_data(data_dir):
     transform = transforms.Compose([
-        transforms.Resize((34, 16)), # Resize to the small image size
+        transforms.Resize((74, 34)), # Resize to the small image size
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -139,12 +139,12 @@ def load_model(num_classes, model_name='google/efficientnet-b0'):
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=45,
+        num_train_epochs=30,
         per_device_train_batch_size=8,
         per_device_eval_batch_size=16,
         warmup_steps=50,
-        weight_decay=0.001,
-        learning_rate=0.00001,
+        weight_decay=0.01,
+        learning_rate=0.001,
         logging_dir="./logs",
         logging_steps=100,
         eval_strategy="epoch",
@@ -209,7 +209,7 @@ def main():
         if os.path.isdir(data_dir + "/" + i):
             dataset_dist[i] = len(list(os.listdir(data_dir + "/" + i)))
 
-    print(f"Number of classes in dataset: {len(dataset.classes)}")
+    print(f"Number of classes in dataset: {len(dataset.classes)}, \n dataset_dist: {dataset_dist}")
 
     val_size = 0.15
     train_dataset, val_dataset = split_data(dataset, val_size=val_size)

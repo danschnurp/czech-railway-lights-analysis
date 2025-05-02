@@ -15,10 +15,10 @@ class CNNConfig(PretrainedConfig):
             num_labels=6,
             image_size=(16, 34),
             in_channels=3,
-            conv_channels=[32, 64],
+            conv_channels=[64, 128, 256],
             kernel_size=(3, 3),
-            stride=(1, 1),
-            hidden_size=128,
+            stride=(2, 2),
+            hidden_size=256,
             dropout=0.2,
             **kwargs
     ):
@@ -38,26 +38,34 @@ class CzechRailwayLightNet(PreTrainedModel):
         super().__init__(config)
         # Create a small custom model for 16x34 pixel images
         self.config = config
-        self.conv1 = nn.Conv2d(3, 32, (3, 3), (1, 1))
-        self.conv2 = nn.Conv2d(32, 64, (3, 3), (1, 1))
-        self.dropout1 = nn.Dropout(dp)
-        self.dropout2 = nn.Dropout(dp)
-        self.fc1 = nn.Linear(5760, 512)
-        self.fc2 = nn.Linear(512, config.num_labels)
+       # Define improved convolutional layers for small pictures
+        self.conv1 = nn.Conv2d(config.in_channels, config.conv_channels[0], kernel_size=config.kernel_size, stride=config.stride, padding=1)
+        self.conv2 = nn.Conv2d(config.conv_channels[0], config.conv_channels[1], kernel_size=config.kernel_size, stride=config.stride, padding=1)
+        self.conv3 = nn.Conv2d(config.conv_channels[1], config.conv_channels[2], kernel_size=config.kernel_size, stride=config.stride, padding=1)
+              # Modify the classifier head for 6 classes
+        self.classifier = nn.Sequential(
+            nn.Linear(2560, config.hidden_size),
+            nn.ReLU(),
+            nn.Dropout(dp),
+            nn.Linear(config.hidden_size, config.num_labels)
+        )
+
 
     def forward(self, pixel_values, labels=None):
         x = self.conv1(pixel_values)
         x = F.relu(x)
         x = self.conv2(x)
         x = F.relu(x)
-        x = F.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = flatten(x, 1)
-        x = self.fc1(x)
+        x = self.conv3(x)
         x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        logits = F.log_softmax(x, dim=1)
+        x = F.max_pool2d(x, 2)  # Downsample by a factor of 2
+
+        # Flatten the tensor
+        x = flatten(x, 1)
+
+        # Get the logits from the modified classifier head
+        logits = self.classifier(x)
+
         loss = None
         if labels is not None:
             loss_fct = nn.CrossEntropyLoss()
@@ -68,15 +76,15 @@ class CzechRailwayLightNet(PreTrainedModel):
     def from_pretrained(cls, *model_args, **kwargs):
         # Later, load the model
         loaded_config = CNNConfig(
-        num_labels=6,               # Number of railway sign classes
-        image_size=(16, 34),        # Input image dimensions
-        in_channels=3,              # RGB images
-        conv_channels=[32, 64],     # Channels for each conv layer
-        kernel_size=(3, 3),         # Kernel size for convolutions
-        stride=(1, 1),              # Stride for convolutions
-        hidden_size=128,            # Size of FC hidden layer
-        dropout=0.2                 # Dropout rate
-    )
+            num_labels=6,               # Number of railway sign classes
+            image_size=(16, 34),        # Input image dimensions
+            in_channels=3,              # RGB images
+            conv_channels=[64, 128, 256],  # Channels for each conv layer
+            kernel_size=(3, 3),         # Kernel size for convolutions
+            stride=(2, 2),              # Stride for convolutions
+            hidden_size=128,            # Size of FC hidden layer
+            dropout=0.2                 # Dropout rate
+        )
 
         loaded_model = CzechRailwayLightNet.from_config(config=loaded_config)
         return loaded_model

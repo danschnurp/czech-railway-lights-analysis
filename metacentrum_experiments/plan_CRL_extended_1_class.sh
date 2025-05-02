@@ -9,7 +9,7 @@ models=(
 freeze_values=(0)
 epoch_values=(30 60)
 conf_thres=(0.5)
-data="CRL_extended.yaml"
+data="CRL_extended_1_class.yaml"
 
 
 # Counter for total jobs
@@ -21,7 +21,7 @@ for model in "${models[@]}"; do
         for epochs in "${epoch_values[@]}"; do
             for conf in "${conf_thres[@]}"; do
                 # Generate timestamp for this specific run
-                thistime=${epochs}_lights_${freeze}_${model}_${conf}
+                thistime=${epochs}_detect_${freeze}_${model}_${conf}
                 # Construct the qsub command
                 qsub -v model=${model},freeze=${freeze},epochs=${epochs},thistime=${thistime},data=${data},confthres=${conf} ./train_on_meta.sh
 
