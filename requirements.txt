@@ -1,10 +1,10 @@
-opencv-python-headless==4.8.1.78
+opencv-python-headless
 ultralytics
-numpy==1.26.4
+numpy
 pytube
 PyYAML
-torch==2.1.2
-torchvision==0.16
+torch
+torchvision
 requests
 pillow
 yt-dlp
