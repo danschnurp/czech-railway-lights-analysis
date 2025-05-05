@@ -1,24 +1,28 @@
 import os
-
-from tqdm import tqdm
+import torch
+import cv2
+import numpy as np
 import argparse
 from pathlib import Path
-import cv2
+from tqdm import tqdm
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
-from ultralytics.utils.plotting import Annotator
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Evaluate Czech Railway Light Detection and Classification Model')
-    parser.add_argument('--test-path', type=str, required=True,
+    parser.add_argument('--test-path', type=str, default="../../reconstructed/czech_railway_lights_dataset_extended_TEST/val",
                         help='Path to test dataset (should contain images/ and labels/ folders)')
-    parser.add_argument('--conf-thres', type=float, default=0.65, help='Confidence threshold for detection')
-    parser.add_argument('--iou-thres', type=float, default=0.55, help='IoU threshold for NMS')
+    parser.add_argument('--conf-thres', type=float, default=0.5, help='Confidence threshold for detection')
+    parser.add_argument('--iou-thres', type=float, default=0.5, help='IoU threshold for NMS')
     parser.add_argument('--output-dir', type=str, default='evaluation_results',
                         help='Directory to save evaluation results')
-    parser.add_argument('--visualize', action='store_false', default=True, help='Visualize detections on images')
+    parser.add_argument('--visualize', action='store_true', default=True, help='Visualize detections on images')
+    parser.add_argument('--detection-model', type=str,help='Path to detection model weights')
+    parser.add_argument('--classification-model', type=str,
+                        default="../classification_experiments/czech_railway_lights_net.pt",
+                        help='Path to classification model weights')
     return parser.parse_args()
 
 
@@ -86,7 +90,6 @@ def match_detections_to_ground_truth(detections, ground_truth, iou_threshold=0.5
 
         for gt_idx in unmatched_gt:
             gt = ground_truth[gt_idx]
-            # Make sure to compare boxes in the same format
             iou = compute_iou(detection, gt)
 
             if iou > best_iou:
@@ -102,7 +105,7 @@ def match_detections_to_ground_truth(detections, ground_truth, iou_threshold=0.5
 
 
 def calculate_metrics(all_detections, all_ground_truths, iou_threshold=0.5):
-    """Calculate precision, recall, F1 score for object detection."""
+    """Calculate precision, recall, F1 score for object detection and classification."""
     total_tp = 0  # True positives
     total_fp = 0  # False positives
     total_fn = 0  # False negatives
@@ -173,7 +176,7 @@ def calculate_metrics(all_detections, all_ground_truths, iou_threshold=0.5):
         cls_precision = tp / (tp + fp) if (tp + fp) > 0 else 0
         cls_recall = tp / (tp + fn) if (tp + fn) > 0 else 0
         cls_f1 = 2 * cls_precision * cls_recall / (cls_precision + cls_recall) if (
-                                                                                              cls_precision + cls_recall) > 0 else 0
+                                                                                          cls_precision + cls_recall) > 0 else 0
 
         class_metrics[cls] = {
             'precision': cls_precision,
@@ -210,20 +213,22 @@ def plot_confusion_matrix(y_true, y_pred, class_names, output_path):
     plt.close()
 
 
-def run_evaluation(args, model_combined):
+def run_evaluation(args, model):
+    """Run evaluation on test dataset."""
     test_path = Path(args.test_path)
     images_dir = test_path / 'images' / 'multi_class'
     labels_dir = test_path / 'labels' / 'multi_class'
 
     if not images_dir.exists() or not labels_dir.exists():
-        raise ValueError(f"Test dataset must contain 'images' and 'labels' directories at {test_path}")
+        raise ValueError(
+            f"Test dataset must contain 'images/multi_class' and 'labels/multi_class' directories at {test_path}")
 
     # Ensure output directory exists
     output_dir = Path(args.output_dir)
     output_dir.mkdir(exist_ok=True, parents=True)
 
     # Get list of image files
-    image_files = sorted([f for f in images_dir.glob('*') if f.suffix in ['.jpg', '.jpeg', '.png']])
+    image_files = sorted([f for f in images_dir.glob('*') if f.suffix.lower() in ['.jpg', '.jpeg', '.png']])
 
     if len(image_files) == 0:
         raise ValueError(f"No images found in {images_dir}")
@@ -238,8 +243,8 @@ def run_evaluation(args, model_combined):
     # Lists to store results
     all_detections = []
     all_ground_truths = []
-    y_true = []
-    y_pred = []
+    y_true = []  # For classification metrics
+    y_pred = []  # For classification metrics
 
     # Process each image
     for img_path in tqdm(image_files, desc="Evaluating images"):
@@ -255,7 +260,8 @@ def run_evaluation(args, model_combined):
         label_path = labels_dir / f"{img_path.stem}.txt"
 
         # Load ground truth labels
-        gt_labels = load_ground_truth_labels(label_path)
+        gt_labels = load_ground_truth_labels(str(label_path))
+
         # Scale normalized coordinates to actual image size
         for i in range(len(gt_labels)):
             gt_labels[i][0] *= img_width
@@ -264,56 +270,58 @@ def run_evaluation(args, model_combined):
             gt_labels[i][3] *= img_height
 
         # Run detection and classification
-        results, classes = model_combined(frame, conf=args.conf_thres, iou=args.iou_thres, verbose=False)
+        detections, classifications, results = model.predict(
+            frame, conf=args.conf_thres, iou=args.iou_thres, verbose=False
+        )
 
         # Process detection results
-        detections = []
-        for result, cls in zip(results, classes):
-            boxes = result.boxes
-            for i, box in enumerate(boxes):
-                xyxy = box.xyxy[0].cpu().numpy()  # get box coordinates in (left, top, right, bottom) format
-                conf = float(box.conf[0].cpu().numpy())
-                c = int(classes[i])  # Get class
+        detected_boxes = []
+        for i, (box, class_id, conf) in enumerate(zip(
+                results['boxes'], results['class_ids'], results['confidences']
+        )):
+            x1, y1, x2, y2 = box
+            # Store detection as [x1, y1, x2, y2, class, confidence]
+            detected_boxes.append([x1, y1, x2, y2, class_id, conf])
 
-                # Store detection as [x1, y1, x2, y2, class, confidence]
-                detections.append([xyxy[0], xyxy[1], xyxy[2], xyxy[3], c, conf])
+            # For classification metrics - find matching ground truth box
+            if gt_labels:
+                best_iou = 0
+                best_gt_idx = -1
+                for gt_idx, gt in enumerate(gt_labels):
+                    iou = compute_iou([x1, y1, x2, y2], gt[:4])
+                    if iou > 0.5 and iou > best_iou:  # Use 0.5 IoU threshold for matching
+                        best_iou = iou
+                        best_gt_idx = gt_idx
 
-                # For classification metrics
-                if gt_labels:
-                    # Find matching ground truth box
-                    best_iou = 0
-                    best_gt_idx = -1
-                    for gt_idx, gt in enumerate(gt_labels):
-                        iou = compute_iou([xyxy[0], xyxy[1], xyxy[2], xyxy[3]], gt[:4])
-                        if iou > best_iou:
-                            best_iou = iou
-                            best_gt_idx = gt_idx
-
-                    # If there's a match, add to classification metrics
-                    if best_iou > 0.5 and best_gt_idx >= 0:
-                        y_true.append(int(gt_labels[best_gt_idx][4]))
-                        y_pred.append(c)
+                # If there's a match, add to classification metrics
+                if best_gt_idx >= 0:
+                    y_true.append(int(gt_labels[best_gt_idx][4]))
+                    y_pred.append(class_id)
 
         # Store results for metrics calculation
-        all_detections.append(detections)
+        all_detections.append(detected_boxes)
         all_ground_truths.append(gt_labels)
 
         # Visualize if needed
         if args.visualize:
-            # Draw ground truth boxes in green
+            # Create a copy of the image for visualization
             vis_img = frame.copy()
-            annotator = Annotator(vis_img, line_width=2)
 
             # Draw ground truth boxes in green
             for gt in gt_labels:
-                annotator.box_label([gt[0], gt[1], gt[2], gt[3]], f"GT: {model_combined.names[int(gt[4])]}",
-                                    color=(0, 255, 0))
+                x1, y1, x2, y2, cls_id, _ = gt
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                cv2.rectangle(vis_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                cv2.putText(vis_img, f"GT: {model.names[int(cls_id)]}",
+                            (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
             # Draw detection boxes in blue
-            for det in detections:
-                annotator.box_label([det[0], det[1], det[2], det[3]],
-                                    f"{model_combined.names[int(det[4])]} {det[5]:.2f}",
-                                    color=(255, 0, 0))
+            for det in detected_boxes:
+                x1, y1, x2, y2, cls_id, conf = det
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                cv2.rectangle(vis_img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                cv2.putText(vis_img, f"{model.names[int(cls_id)]} {conf:.2f}",
+                            (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
             # Save visualization
             cv2.imwrite(str(vis_dir / f"{img_path.stem}_eval.jpg"), vis_img)
@@ -331,7 +339,7 @@ def run_evaluation(args, model_combined):
     # Print and save per-class metrics
     print("\nPer-Class Detection Metrics:")
     for cls, cls_metrics in metrics['per_class'].items():
-        print(f"Class {cls} ({model_combined.names[cls]}):")
+        print(f"Class {cls} ({model.names[cls]}):")
         print(f"  Precision: {cls_metrics['precision']:.4f}")
         print(f"  Recall: {cls_metrics['recall']:.4f}")
         print(f"  F1 Score: {cls_metrics['f1']:.4f}")
@@ -347,7 +355,7 @@ def run_evaluation(args, model_combined):
 
         f.write("Per-Class Detection Metrics:\n")
         for cls, cls_metrics in metrics['per_class'].items():
-            f.write(f"Class {cls} ({model_combined.names[cls]}):\n")
+            f.write(f"Class {cls} ({model.names[cls]}):\n")
             f.write(f"  Precision: {cls_metrics['precision']:.4f}\n")
             f.write(f"  Recall: {cls_metrics['recall']:.4f}\n")
             f.write(f"  F1 Score: {cls_metrics['f1']:.4f}\n")
@@ -368,40 +376,82 @@ def run_evaluation(args, model_combined):
             f.write(f"F1 Score: {f1:.4f}\n")
 
         # Plot confusion matrix
-        class_names = [model_combined.names[i] for i in range(len(model_combined.names))]
+        class_names = [model.names[i] for i in range(len(model.names))]
         plot_confusion_matrix(y_true, y_pred, class_names, output_dir / 'confusion_matrix.png')
 
     print(f"\nEvaluation complete. Results saved to {output_dir}")
+
+    # Create and save a summary plot
+    plot_performance_summary(metrics, model.names, output_dir / 'performance_summary.png')
+
     return metrics
+
+
+def plot_performance_summary(metrics, class_names, output_path):
+    """Create a summary plot of the model performance."""
+    plt.figure(figsize=(14, 8))
+
+    # Extract metrics
+    classes = list(metrics['per_class'].keys())
+    classes.sort()
+
+    precision = [metrics['per_class'][cls]['precision'] for cls in classes]
+    recall = [metrics['per_class'][cls]['recall'] for cls in classes]
+    f1 = [metrics['per_class'][cls]['f1'] for cls in classes]
+
+    # Create plot
+    x = np.arange(len(classes))
+    width = 0.25
+
+    plt.bar(x - width, precision, width, label='Precision')
+    plt.bar(x, recall, width, label='Recall')
+    plt.bar(x + width, f1, width, label='F1 Score')
+
+    plt.xlabel('Class')
+    plt.ylabel('Score')
+    plt.title('Detection Performance by Class')
+    plt.xticks(x, [class_names[cls] for cls in classes], rotation=45, ha='right')
+    plt.ylim(0, 1.1)
+    plt.legend()
+    plt.tight_layout()
+
+    plt.savefig(output_path)
+    plt.close()
 
 
 def main():
     args = parse_args()
 
-    # Import the model class and PyTorch
-    import torch
-    from classification_experiments.combined_model import CzechRailwayLightModel
-
-
+    # Import the model class
+    try:
+        # First try to import the improved model
+        from improved_czech_railway_light_model import CzechRailwayLightModel
+        print("Using improved model implementation")
+    except ImportError:
+        try:
+            # Fall back to the original implementation path
+            from classification_experiments.combined_model import CzechRailwayLightModel
+            print("Using original model implementation")
+        except ImportError:
+            # As a last resort, define the model class inline
+            print("Could not import model class, using inline implementation")
+            # Here you would copy the model class from the artifact
+            raise ImportError("Please ensure the CzechRailwayLightModel class is available")
 
     print("Loading model...")
-    # Initialize model (using paths from your provided example)
-    model_combined = CzechRailwayLightModel(
-        detection_nett_path="../../classification_experiments/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
-        classification_nett_path="../../classification_experiments/czech_railway_lights_nett.pt"
+    # Initialize model with paths from arguments
+    model = CzechRailwayLightModel(
+        detection_net_path=args.detection_model,
+        classification_net_path=args.classification_model
     )
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Display device information
+    device = model.device
     print(f"Using device: {device}")
 
-    model_combined.yolov5nu_model.to(device)
-    model_combined.czech_railway_head.to(device)
-
     # Run evaluation
-    run_evaluation(args, model_combined)
+    run_evaluation(args, model)
 
 
 if __name__ == "__main__":
     main()
-
-

@@ -13,11 +13,11 @@ class CNNConfig(PretrainedConfig):
     def __init__(
             self,
             num_labels=6,
-            image_size=(16, 34),
+            image_size=(72, 34),
             in_channels=3,
             conv_channels=[64, 128, 256],
             kernel_size=(3, 3),
-            stride=(2, 2),
+            stride=(3, 3),
             hidden_size=256,
             dropout=0.2,
             **kwargs
@@ -44,7 +44,7 @@ class CzechRailwayLightNet(PreTrainedModel):
         self.conv3 = nn.Conv2d(config.conv_channels[1], config.conv_channels[2], kernel_size=config.kernel_size, stride=config.stride, padding=1)
               # Modify the classifier head for 6 classes
         self.classifier = nn.Sequential(
-            nn.Linear(2560, config.hidden_size),
+            nn.Linear(768, config.hidden_size),
             nn.ReLU(),
             nn.Dropout(dp),
             nn.Linear(config.hidden_size, config.num_labels)
@@ -58,7 +58,7 @@ class CzechRailwayLightNet(PreTrainedModel):
         x = F.relu(x)
         x = self.conv3(x)
         x = F.relu(x)
-        x = F.max_pool2d(x, 2)  # Downsample by a factor of 2
+        x = F.max_pool2d(x, self.config.kernel_size)  # Downsample by a factor of 2
 
         # Flatten the tensor
         x = flatten(x, 1)
@@ -77,7 +77,7 @@ class CzechRailwayLightNet(PreTrainedModel):
         # Later, load the model
         loaded_config = CNNConfig(
             num_labels=6,               # Number of railway sign classes
-            image_size=(16, 34),        # Input image dimensions
+            image_size=(72, 34),        # Input image dimensions
             in_channels=3,              # RGB images
             conv_channels=[64, 128, 256],  # Channels for each conv layer
             kernel_size=(3, 3),         # Kernel size for convolutions

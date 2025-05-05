@@ -33,7 +33,7 @@ with open(args.sequences_jsom_path, encoding="utf-8", mode="r") as f:
 # Load a model
 model = CzechRailwayLightModel(
     detection_nett_path="../../classification_experiments/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
-    classification_nett_path="../../classification_experiments/czech_railway_lights_nett.pt"
+    classification_nett_path="../../classification_experiments/czech_railway_lights_net.pt"
                                )
 
 

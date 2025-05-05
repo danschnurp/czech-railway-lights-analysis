@@ -13,7 +13,7 @@ import networkx as nx
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoConfig
 
-from czech_railway_lights_nett import CzechRailwayLightNet
+from czech_railway_lights_net import CzechRailwayLightNet
 
 
 def print_model_summary(model_path, num_classes):
@@ -24,12 +24,11 @@ def print_model_summary(model_path, num_classes):
         model_path: Path to the saved .pt model
         num_classes: Number of output classes
     """
-    # Load the model
-    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
-    model = CzechRailwayLightNet(config)
+
+    model = CzechRailwayLightNet.from_pretrained()
 
     # Print model summary with input size
-    model_summary = summary(model, input_size=(1, 3, 34, 34),
+    model_summary = summary(model, input_size=(1, 3, 34, 72),
                             col_names=["input_size", "output_size", "num_params", "kernel_size"],
                             verbose=1)
 
@@ -51,8 +50,8 @@ def visualize_feature_maps(model_path, image_path, num_classes):
     import matplotlib.pyplot as plt
 
     # Load the model
-    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
-    model = CzechRailwayLightNet(config)
+
+    model = CzechRailwayLightNet.from_pretrained()
     model.eval()
 
     # Prepare hooks to capture feature maps
@@ -62,13 +61,13 @@ def visualize_feature_maps(model_path, image_path, num_classes):
         feature_maps.append(output)
 
     # Register hooks for each conv layer
-    for name, module in model.features.named_modules():
+    for name, module in model.named_modules():
         if isinstance(module, nn.Conv2d):
             module.register_forward_hook(hook_fn)
 
     # Load and preprocess image
     transform = transforms.Compose([
-        transforms.Resize((74, 34)),
+        transforms.Resize((72, 34)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -116,14 +115,13 @@ def visualize_model_structure(model_path, num_classes, output_file='model_visual
         num_classes: Number of output classes
         output_file: Path to save the visualization
     """
-    # Load the model
-    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
-    model = CzechRailwayLightNet(config)
+
+    model = CzechRailwayLightNet.from_pretrained()
 
     model.eval()
 
     # Create a dummy input
-    x = torch.randn(1, 3, 74, 34)
+    x = torch.randn(1, 3,  34, 72)
 
     # Generate model forward pass
     outputs = model(pixel_values=x)
@@ -146,12 +144,11 @@ def plot_model_filters(model_path, num_classes):
         num_classes: Number of output classes
     """
     # Load the model
-    config = AutoConfig.from_pretrained('google/efficientnet-b0', num_labels=num_classes)
-    model = CzechRailwayLightNet(config)
+    model = CzechRailwayLightNet.from_pretrained()
 
     # Get the first convolutional layer's weights
     first_conv_layer = None
-    for module in model.features.modules():
+    for module in model.modules():
         if isinstance(module, nn.Conv2d):
             first_conv_layer = module
             break
@@ -190,8 +187,7 @@ def plot_model_filters(model_path, num_classes):
 
 # Example usage
 if __name__ == "__main__":
-    model_path = 'czech_railway_lights_nett.pt'
-    num_classes = 5  # Replace with your actual number of classes
+    model_path = 'czech_railway_lights_net.pt'
 
     # Load class mapping
     with open("../metacentrum_experiments/CRL_single_images_less_balanced.yaml") as f:

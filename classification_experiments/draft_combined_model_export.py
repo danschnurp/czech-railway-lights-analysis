@@ -8,7 +8,7 @@ from ultralytics.engine.results import Results, Boxes
 
 class CzechRailwayLightModel(torch.nn.Module):
     def __init__(self, yolo_path="./czech_railway_light_detection_backbone/detection_backbone/weights/best.torchscript",
-                 classifier_path="./czech_railway_lights_nett.pt",
+                 classifier_path="./czech_railway_lights_net.pt",
                  labels_path="../metacentrum_experiments/CRL_single_images_less_balanced.yaml"):
         super(CzechRailwayLightModel, self).__init__()
 
@@ -30,8 +30,8 @@ class CzechRailwayLightModel(torch.nn.Module):
         if crop.size == 0 or crop.shape[0] == 0 or crop.shape[1] == 0:
             return None
 
-        # Resize the image to (34, 34)
-        crop_resized = cv2.resize(crop, (34, 34))
+        # Resize the image to (72, 34)
+        crop_resized = cv2.resize(crop, (72, 34))
 
         # Convert to float and normalize to [0, 1]
         img_float = crop_resized.astype(np.float32) / 255.0

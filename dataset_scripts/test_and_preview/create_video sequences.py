@@ -40,7 +40,7 @@ def get_jpg_files(path):
 # Load YOLOv5 model
 model_combined = CzechRailwayLightModel(
     detection_nett_path="../../classification_experiments/czech_railway_light_detection_backbone/detection_backbone/weights/best.pt",
-    classification_nett_path="../../classification_experiments/czech_railway_lights_nett.pt"
+    classification_nett_path="../../classification_experiments/czech_railway_lights_net.pt"
                                )
 
 model_yolo = YOLO("../../reconstructed/120_lights_0_yolov10n.pt_0.5/weights/best.pt")

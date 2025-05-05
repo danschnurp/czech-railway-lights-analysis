@@ -9,7 +9,7 @@
     "5": 268
     },
     "dataset_val_size": 0.15,
-    "model_name": "google/efficientnet-b0",
+    "model_name": "czech_railway_lights_net",
     "results": [
       {
         "eval_loss": 0.3436785042285919,
@@ -82,7 +82,7 @@
           "lights_off": 268
         },
         "dataset_val_size": 0.15,
-        "model_name": "google/efficientnet-b0",
+        "model_name": "czech_railway_lights_net",
         "results": {
           "eval_loss": 0.3528912365436554,
           "eval_accuracy": 0.9234972677595629,
@@ -412,7 +412,7 @@
     "5": 268
   },
   "dataset_val_size": 0.15,
-  "model_name": "google/efficientnet-b0",
+  "model_name": "czech_railway_lights_net",
   "results": {
     "eval_loss": 0.16214416921138763,
     "eval_accuracy": 0.9473684210526315,
@@ -491,7 +491,7 @@
     "5": 268
   },
   "dataset_val_size": 0.15,
-  "model_name": "google/efficientnet-b0",
+  "model_name": "czech_railway_lights_net",
   "results": {
     "eval_loss": 0.2198975682258606,
     "eval_accuracy": 0.9615384615384616,
@@ -570,7 +570,7 @@
     "5": 268
   },
   "dataset_val_size": 0.15,
-  "model_name": "google/efficientnet-b0",
+  "model_name": "czech_railway_lights_net",
   "results": {
     "eval_loss": 0.26866623759269714,
     "eval_accuracy": 0.905982905982906,
@@ -636,6 +636,84 @@
     "learning_rate": 0.0001,
     "num_train_epochs": 20,
     "weight_decay": 0.001
+  }
+},
+  {
+  "dataset_classes": {
+    "0": 401,
+    "1": 399,
+    "4": 387,
+    "3": 337,
+    "2": 404,
+    "5": 398
+  },
+  "dataset_val_size": 0.15,
+        "name": "extended_dataset",
+  "model_name": "czech_railway_lights_net",
+  "results": {
+    "eval_loss": 0.264483243227005,
+    "eval_precision": 0.9521958483983584,
+    "eval_recall": 0.9512893982808023,
+    "eval_f1": 0.9512838030437772,
+    "eval_conf_matrix": [
+      [
+        54,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        67,
+        2,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        56,
+        2,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        46,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        51,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        1,
+        1,
+        58
+      ]
+    ],
+    "eval_runtime": 0.3327,
+    "eval_samples_per_second": 1048.99,
+    "eval_steps_per_second": 66.125,
+    "epoch": 90.0
+  },
+  "training_args": {
+    "learning_rate": 0.001,
+    "num_train_epochs": 90,
+    "weight_decay": 0.01
   }
 }
 ]}

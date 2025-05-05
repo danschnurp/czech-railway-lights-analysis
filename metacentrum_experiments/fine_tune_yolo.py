@@ -35,33 +35,33 @@ parser.add_argument('--resume', action='store_true', help='Resume training from 
 # Training parameters
 parser.add_argument('--epochs', type=int, default=30, help='Number of epochs to train for')
 parser.add_argument('--batch-size', type=int, default=1, help='Batch size')
-parser.add_argument('--workers', type=int, default=8, help='Number of worker threads')
+parser.add_argument('--workers', type=int, default=1, help='Number of worker threads')
 parser.add_argument('--device', default=control_torch(), help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
 # Optimization parameters
 # architecture https://github.com/ultralytics/ultralytics/tree/main/ultralytics/cfg/models yamls
 parser.add_argument('--freeze', default=0, help='Freezes the first N layers of the model or specified layers '
                                                 'by index')
 parser.add_argument('--optimizer', type=str, default='auto', help='Optimizer (SGD, Adam, AdamW)')
-parser.add_argument('--lr0', type=float, default=0.01, help='Initial learning rate')
+parser.add_argument('--lr0', type=float, default=0.001, help='Initial learning rate')
 parser.add_argument('--momentum', type=float, default=0.937, help='SGD momentum/Adam beta1')
 parser.add_argument('--weight-decay', type=float, default=0.0005, help='Weight decay coefficient')
 # Logging parameters
 parser.add_argument('--project', default='runs/train', help='Project name')
 parser.add_argument('--name', default='exp', help='Experiment name')
 parser.add_argument('--exist-ok', action='store_true', help='Allow existing project')
-parser.add_argument('--save-period', type=int, default=10, help='Save checkpoint every x epochs')
+parser.add_argument('--save-period', type=int, default=10000, help='Save checkpoint every x epochs')
 # Validation parameters
 parser.add_argument('--conf-thres', type=float, default=0.5, help='Confidence threshold')
 parser.add_argument('--iou-thres', type=float, default=0.4, help='Non-Maximum Suppression IoU Intersection over '
                                                                  'Union threshold')  #
 # Augmentation parameters
-parser.add_argument('--hsv-h', type=float, default=0.015, help='HSV-Hue augmentation')
-parser.add_argument('--hsv-s', type=float, default=0.07, help='HSV-Saturation augmentation')
-parser.add_argument('--hsv-v', type=float, default=0.04, help='HSV-Value augmentation')
-parser.add_argument('--degrees', type=float, default=0.001, help='Rotation augmentation')
+parser.add_argument('--hsv-h', type=float, default=0.0, help='HSV-Hue augmentation')
+parser.add_argument('--hsv-s', type=float, default=0.0, help='HSV-Saturation augmentation')
+parser.add_argument('--hsv-v', type=float, default=0.0, help='HSV-Value augmentation')
+parser.add_argument('--degrees', type=float, default=0.0, help='Rotation augmentation')
 parser.add_argument('--translate', type=float, default=0.1, help='Translation augmentation')
-parser.add_argument('--scale', type=float, default=0.25, help='Scale augmentation')
-parser.add_argument('--shear', type=float, default=0.05, help='Shear augmentation')
+parser.add_argument('--scale', type=float, default=0.5, help='Scale augmentation')
+parser.add_argument('--shear', type=float, default=0.1, help='Shear augmentation')
 parser.add_argument('--perspective', type=float, default=0.0, help='perspective augmentation')
 args = parser.parse_args()
 
@@ -70,6 +70,13 @@ if args.model.find("rtdetr") != -1:
 else:
     from ultralytics import YOLO as YOLOv10
 
+control_torch()
+
+import gc
+
+gc.collect()
+
+torch.cuda.empty_cache()
 
 model = YOLOv10(args.model)
 
@@ -94,7 +101,7 @@ train_args = {
         'plots': True,  # save plots
         'save': True, # save checkpoints
         'save_period': args.save_period,
-        'project': "./runs",
+        'project': "runs",
         'name': args.project,
         'exist_ok': args.exist_ok,
         # Validation parameters
@@ -124,22 +131,22 @@ with open(args.data, encoding="utf-8") as f:
 
 class_mapping = class_mapping["names"]
 
-nc = 100  # Number of classes
-conf_matrix = ConfusionMatrix(nc=len(class_mapping))
+#nc = 100  # Number of classes
+#conf_matrix = ConfusionMatrix(nc=len(class_mapping))
 
 # Assuming you already have detections and ground truth data
 # Update the confusion matrix with your data
 # conf_matrix.process_batch(detections, ground_truth_boxes, ground_truth_classes)
 
 # Save the confusion matrix to a CSV file
-import numpy as np
-import pandas as pd
+#import numpy as np
+#import pandas as pd
 
 # Convert the matrix to a DataFrame for better readability
-df = pd.DataFrame(conf_matrix.matrix,
-                  columns=[f'Class_{i}' for i in range(nc + 1)],
-                  index=[f'Class_{i}' for i in range(nc + 1)])
+#df = pd.DataFrame(conf_matrix.matrix,
+#                  columns=[f'Class_{i}' for i in range(nc + 1)],
+#                  index=[f'Class_{i}' for i in range(nc + 1)])
 
 # Save to CSV
-df.to_csv(f'{args.project}/confusion_matrix.csv', index=True)
-print("Confusion matrix saved as 'confusion_matrix.csv'")
+#df.to_csv(f'{args.project}/confusion_matrix.csv', index=True)
+#print("Confusion matrix saved as 'confusion_matrix.csv'")
