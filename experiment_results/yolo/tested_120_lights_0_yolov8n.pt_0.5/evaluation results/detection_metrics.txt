@@ -1,0 +1,43 @@
+Overall Detection Metrics:
+Precision: 0.9370
+Recall: 0.8836
+F1 Score: 0.9095
+TP: 372, FP: 25, FN: 49
+
+Per-Class Detection Metrics:
+Class 0 (stop):
+  Precision: 0.8026
+  Recall: 0.9531
+  F1 Score: 0.8714
+  TP: 122, FP: 30, FN: 6
+
+Class 1 (go):
+  Precision: 0.9778
+  Recall: 0.7719
+  F1 Score: 0.8627
+  TP: 44, FP: 1, FN: 13
+
+Class 2 (warning):
+  Precision: 0.9200
+  Recall: 0.7419
+  F1 Score: 0.8214
+  TP: 23, FP: 2, FN: 8
+
+Class 3 (adjust speed and warning):
+  Precision: 1.0000
+  Recall: 0.7407
+  F1 Score: 0.8511
+  TP: 20, FP: 0, FN: 7
+
+Class 4 (adjust speed and go):
+  Precision: 0.9677
+  Recall: 0.7317
+  F1 Score: 0.8333
+  TP: 30, FP: 1, FN: 11
+
+Class 5 (lights off):
+  Precision: 0.7903
+  Recall: 0.7153
+  F1 Score: 0.7510
+  TP: 98, FP: 26, FN: 39
+

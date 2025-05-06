@@ -715,5 +715,179 @@
     "num_train_epochs": 90,
     "weight_decay": 0.01
   }
+},
+  {
+   "dataset_classes": {
+      "0": 401,
+      "1": 399,
+      "4": 387,
+      "3": 337,
+      "2": 404,
+      "5": 398
+   },
+   "dataset_val_size": 0.15,
+   "model_name": "czech_railway_lights_net",
+   "model_config": {
+      "return_dict": true,
+      "output_hidden_states": false,
+      "output_attentions": false,
+      "torchscript": false,
+      "torch_dtype": "float32",
+      "use_bfloat16": false,
+      "tf_legacy_loss": false,
+      "pruned_heads": {},
+      "tie_word_embeddings": true,
+      "chunk_size_feed_forward": 0,
+      "is_encoder_decoder": false,
+      "is_decoder": false,
+      "cross_attention_hidden_size": null,
+      "add_cross_attention": false,
+      "tie_encoder_decoder": false,
+      "max_length": 20,
+      "min_length": 0,
+      "do_sample": false,
+      "early_stopping": false,
+      "num_beams": 1,
+      "num_beam_groups": 1,
+      "diversity_penalty": 0.0,
+      "temperature": 1.0,
+      "top_k": 50,
+      "top_p": 1.0,
+      "typical_p": 1.0,
+      "repetition_penalty": 1.0,
+      "length_penalty": 1.0,
+      "no_repeat_ngram_size": 0,
+      "encoder_no_repeat_ngram_size": 0,
+      "bad_words_ids": null,
+      "num_return_sequences": 1,
+      "output_scores": false,
+      "return_dict_in_generate": false,
+      "forced_bos_token_id": null,
+      "forced_eos_token_id": null,
+      "remove_invalid_values": false,
+      "exponential_decay_length_penalty": null,
+      "suppress_tokens": null,
+      "begin_suppress_tokens": null,
+      "architectures": [
+         "CzechRailwayLightNet"
+      ],
+      "finetuning_task": null,
+      "id2label": {
+         "0": "stop",
+         "1": "go",
+         "2": "warning",
+         "3": "adjust speed and warning",
+         "4": "adjust speed and go",
+         "5": "lights off"
+      },
+      "label2id": {
+         "stop": 0,
+         "go": 1,
+         "warning": 2,
+         "adjust speed and warning": 3,
+         "adjust speed and go": 4,
+         "lights off": 5
+      },
+      "tokenizer_class": null,
+      "prefix": null,
+      "bos_token_id": null,
+      "pad_token_id": null,
+      "eos_token_id": null,
+      "sep_token_id": null,
+      "decoder_start_token_id": null,
+      "task_specific_params": null,
+      "problem_type": null,
+      "_name_or_path": "",
+      "_commit_hash": null,
+      "_attn_implementation_internal": null,
+      "_attn_implementation_autoset": false,
+      "transformers_version": null,
+      "image_size": [
+         72,
+         34
+      ],
+      "in_channels": 3,
+      "conv_channels": [
+         64,
+         128,
+         256
+      ],
+      "kernel_size": [
+         3,
+         3
+      ],
+      "stride": [
+         2,
+         2
+      ],
+      "hidden_size": 128,
+      "dropout": 0.2
+   },
+   "results": {
+      "eval_loss": 0.10437121242284775,
+      "eval_precision": 0.9771997444128819,
+      "eval_recall": 0.9770773638968482,
+      "eval_f1": 0.9770668075402156,
+      "eval_conf_matrix": [
+         [
+            57,
+            0,
+            0,
+            0,
+            0,
+            1
+         ],
+         [
+            0,
+            58,
+            1,
+            0,
+            0,
+            2
+         ],
+         [
+            0,
+            0,
+            64,
+            0,
+            0,
+            0
+         ],
+         [
+            0,
+            0,
+            0,
+            50,
+            1,
+            0
+         ],
+         [
+            0,
+            1,
+            0,
+            0,
+            66,
+            0
+         ],
+         [
+            1,
+            0,
+            0,
+            1,
+            0,
+            46
+         ]
+      ],
+      "eval_runtime": 0.2021,
+      "eval_samples_per_second": 1726.969,
+      "eval_steps_per_second": 108.863,
+      "epoch": 30.0
+   },
+   "training_args": {
+      "learning_rate": 0.0001,
+      "num_train_epochs": 30,
+      "weight_decay": 0.001
+   }
 }
+
 ]}

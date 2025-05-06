@@ -133,8 +133,8 @@ def create_dataloader(train_dataset, val_dataset, batch_size=32):
     return train_loader, val_loader
 
 def load_model(num_classes, model_name='google/efficientnet-b0'):
-    model = CzechRailwayLightNet.from_pretrained()
-    return model
+    model, config = CzechRailwayLightNet.from_pretrained()
+    return model, config
 
 # Step 4: Load Pre-trained EfficientNet Model
 def load_model_mobilenet(num_classes, model_name="google/mobilenet_v2_1.0_224", img_size=(72, 34)):
@@ -305,7 +305,7 @@ def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=30,
-        per_device_train_batch_size=1,
+        per_device_train_batch_size=4,
         per_device_eval_batch_size=16,
         warmup_steps=500,
         weight_decay=0.001,
@@ -382,7 +382,19 @@ def main():
 
     num_classes = len(dataset.classes)
     model_name = "czech_railway_lights_net"
-    model = load_model(num_classes, model_name=model_name)
+    model, config = load_model(num_classes, model_name=model_name)
+    id2label = {
+        0: 'stop',
+        1: 'go',
+        2: 'warning',
+        3: 'adjust speed and warning',
+        4: 'adjust speed and go',
+        5: 'lights off'
+    }
+    label2id = {value: key for key, value in id2label.items()}
+    config.id2label =   id2label
+    config.label2id = label2id
+
 
     training_args = get_training_args()
 
@@ -396,10 +408,11 @@ def main():
             "dataset_classes": dataset_dist,
             "dataset_val_size": val_size,
             "model_name": model_name,
+            "model_config": config.__dict__,
             "results": results,
             "training_args": {"learning_rate": training_args.learning_rate,
                               "num_train_epochs": training_args.num_train_epochs,
-                              "weight_decay": training_args.weight_decay}}, f, indent=2, ensure_ascii=True)
+                              "weight_decay": training_args.weight_decay}}, f, indent=3, ensure_ascii=True)
 
     confusion_matrix_to_pdf(
         confusion_matrix=np.array(results["eval_conf_matrix"]),

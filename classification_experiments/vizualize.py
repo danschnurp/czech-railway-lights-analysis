@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import torch
 import torch.nn as nn
@@ -25,7 +26,7 @@ def print_model_summary(model_path, num_classes):
         num_classes: Number of output classes
     """
 
-    model = CzechRailwayLightNet.from_pretrained()
+    model, _ = CzechRailwayLightNet.from_pretrained()
 
     # Print model summary with input size
     model_summary = summary(model, input_size=(1, 3, 34, 72),
@@ -51,7 +52,7 @@ def visualize_feature_maps(model_path, image_path, num_classes):
 
     # Load the model
 
-    model = CzechRailwayLightNet.from_pretrained()
+    model, _ = CzechRailwayLightNet.from_pretrained()
     model.eval()
 
     # Prepare hooks to capture feature maps
@@ -102,7 +103,7 @@ def visualize_feature_maps(model_path, image_path, num_classes):
             except ValueError:
                 break
     plt.tight_layout()
-    plt.savefig('feature_maps.png')
+    plt.savefig(str(time.time()) + 'feature_maps.png')
     plt.close()
     print("Feature maps saved to feature_maps.png")
 
@@ -116,7 +117,7 @@ def visualize_model_structure(model_path, num_classes, output_file='model_visual
         output_file: Path to save the visualization
     """
 
-    model = CzechRailwayLightNet.from_pretrained()
+    model, _ = CzechRailwayLightNet.from_pretrained()
 
     model.eval()
 
@@ -144,7 +145,7 @@ def plot_model_filters(model_path, num_classes):
         num_classes: Number of output classes
     """
     # Load the model
-    model = CzechRailwayLightNet.from_pretrained()
+    model, _ = CzechRailwayLightNet.from_pretrained()
 
     # Get the first convolutional layer's weights
     first_conv_layer = None
@@ -201,7 +202,11 @@ if __name__ == "__main__":
 
 
     # For feature maps and filter visualization, you need an image
-    image_path = '1131_roi_0.jpg'  # Replace with a path to a sample image
+    image_path = '1131_roi_0.jpg'
+    image_path2 = '403_roi_0.jpg'
     if os.path.exists(image_path):
         visualize_feature_maps(model_path, image_path, num_classes)
+        plot_model_filters(model_path, num_classes)
+    if os.path.exists(image_path2):
+        visualize_feature_maps(model_path, image_path2, num_classes)
         plot_model_filters(model_path, num_classes)
