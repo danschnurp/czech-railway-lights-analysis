@@ -8,7 +8,7 @@ from tqdm import tqdm
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
-from ultralytics import YOLO
+
 
 
 def parse_args():
@@ -23,6 +23,8 @@ def parse_args():
                         help='Directory to save evaluation results')
     parser.add_argument('--visualize', action='store_true', default=True, help='Visualize detections on images')
     parser.add_argument('--model', type=str, required=True, help='Path to Ultralytics YOLO model weights (.pt file)')
+    parser.add_argument('--model-type', type=str, default='yolo', help='Ultralytics YOLO or RTDETR model')
+
     return parser.parse_args()
 
 
@@ -421,10 +423,15 @@ def plot_performance_summary(metrics, class_names, output_path):
 
 def main():
     args = parse_args()
-
+    if args.model_type == 'yolo':
+        from ultralytics import YOLO as YOLO_RT_DETR
+    elif args.model_type == 'rtdetr':
+        from ultralytics import RTDETR as YOLO_RT_DETR
+    else:
+        raise ValueError(f"Unsupported model type: {args.model_type}")
     # Load Ultralytics YOLO model
     print(f"Loading YOLO model from {args.model}...")
-    model = YOLO(args.model)
+    model = YOLO_RT_DETR(args.model)
 
     # Display device information
     device = model.device

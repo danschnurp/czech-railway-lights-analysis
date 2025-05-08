@@ -34,15 +34,15 @@ def get_jpg_files(path):
     return jpg_files
 
 # Load YOLO model
-model = YOLO('../../reconstructed/100_lights_2_yolov10n.pt_0.55/weights/best.pt')
+model = YOLO("../../experiment_results/yolo/CRL_extended_v2/60_lr001_0_yolov8n.pt_0.5/weights/best.pt")
 
 # Open video file
-video_path = "/Volumes/zalohy/test_videos"
-times_path = "../../reconstructed/test"
+video_path = "../../reconstructed/videos/"
+times_path = "../../reconstructed/preview"
 
 to_process = {}
 for j in reversed(os.listdir(times_path)):
-    to_process[j] = sorted([float(i[i.rfind("/")+1:].replace("_box.jpg", "")) for i in get_jpg_files(times_path + "/" + j) if "_box.jpg" in i])
+    to_process[j] = sorted([float(i[i.rfind("/")+1:].replace("_clean.jpg", "")) for i in get_jpg_files(times_path + "/" + j) if "_clean.jpg" in i])
     try:
         cap = cv2.VideoCapture(video_path + j + ".mp4")
         # Get video properties
