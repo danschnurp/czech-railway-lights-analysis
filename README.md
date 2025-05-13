@@ -1,5 +1,15 @@
 # Computer Vision Applications in Video Recordings for Traffic Signal Detection and Classification on Czech Railways  
 
+
+https://github.com/danschnurp/czech-railway-lights-analysis
+
+
+https://huggingface.co/spaces/danschnurp/czech-railway-trafic-lights
+
+
+Computer vision utils for detection and classification of railway traffic signals from videos on Czech Railways. Implements YOLO or RTDetr based detection pipeline. Includes custom dataset of annotated frames capturing diverse signal types according to Czech Railways standards.
+
+
 This repository focuses on the application of computer vision techniques to detect and classify railway traffic signals in video recordings from Czech railways. The project aims to improve railway safety and efficiency by leveraging advanced deep learning methodologies.  
 
 ## Key Contributions  
