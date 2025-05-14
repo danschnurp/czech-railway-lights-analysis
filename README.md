@@ -7,6 +7,8 @@ https://github.com/danschnurp/czech-railway-lights-analysis
 https://huggingface.co/spaces/danschnurp/czech-railway-trafic-lights
 
 
+[![YouTube Video Title](https://img.youtube.com/vi/No-B6CUmJ7I/0.jpg)](https://www.youtube.com/watch?v=No-B6CUmJ7I)
+
 Computer vision utils for detection and classification of railway traffic signals from videos on Czech Railways. Implements YOLO or RTDetr based detection pipeline. Includes custom dataset of annotated frames capturing diverse signal types according to Czech Railways standards.
 
 
