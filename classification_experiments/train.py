@@ -12,7 +12,8 @@ from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
-from transformers import Trainer, TrainingArguments, AutoModelForImageClassification, AutoImageProcessor
+from transformers import Trainer, TrainingArguments, AutoModelForImageClassification, AutoImageProcessor, \
+    EfficientNetImageProcessor, EfficientNetForImageClassification
 
 from czech_railway_lights_net import CzechRailwayLightNet
 
@@ -47,6 +48,7 @@ def confusion_matrix_to_pdf(confusion_matrix, class_names=None, output_path='con
         pdf.savefig(fig)
     plt.close()
     return output_path
+
 
 def compute_metrics(pred):
     labels = pred.label_ids
@@ -108,9 +110,10 @@ class CustomImageDataset(Dataset):
             'label': label
         }
 
-def load_data(data_dir):
+
+def load_data(data_dir, processor=None):
     transform = transforms.Compose([
-        transforms.Resize((72, 34)), # Resize to the small image size
+        transforms.Resize((144,144)),  # Resize to the small image size
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -119,6 +122,7 @@ def load_data(data_dir):
     dataset = CustomImageDataset(data_dir=data_dir, transform=transform)
     return dataset
 
+
 def split_data(dataset, val_size=0.2):
     # Splitting dataset into train and validation sets
     train_size = int((1 - val_size) * len(dataset))
@@ -126,18 +130,21 @@ def split_data(dataset, val_size=0.2):
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
     return train_dataset, val_dataset
 
+
 def create_dataloader(train_dataset, val_dataset, batch_size=32):
     # Creating DataLoaders for training and validation
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     return train_loader, val_loader
 
+
 def load_model(num_classes, model_name='google/efficientnet-b0'):
     model, config = CzechRailwayLightNet.from_pretrained()
     return model, config
 
+
 # Step 4: Load Pre-trained EfficientNet Model
-def load_model_mobilenet(num_classes, model_name="google/mobilenet_v2_1.0_224", img_size=(72, 34)):
+def load_model_efficientnet(num_classes, model_name='google/efficientnet-b0', img_size=(144,144)):
     """
     Load and modify a pre-trained MobileNet model for rectangular tensor dimensions
 
@@ -157,7 +164,7 @@ def load_model_mobilenet(num_classes, model_name="google/mobilenet_v2_1.0_224", 
 
     # Load the pre-trained model and processor from Hugging Face hub
     try:
-        processor = AutoImageProcessor.from_pretrained(model_name)
+        processor = EfficientNetImageProcessor.from_pretrained(model_name)
 
         # Configure processor for rectangular images
         if hasattr(processor, 'size'):
@@ -170,14 +177,13 @@ def load_model_mobilenet(num_classes, model_name="google/mobilenet_v2_1.0_224", 
                 pass
 
         # Load model with custom config for rectangular input
-        model = AutoModelForImageClassification.from_pretrained(
+        model = EfficientNetForImageClassification.from_pretrained(
             model_name,
             num_labels=num_classes,
             ignore_mismatched_sizes=True
         )
     except Exception as e:
         print(f"Error loading model: {e}")
-        return None, None, None
 
     # Create a custom transform pipeline for the specific input size
     transform = transforms.Compose([
@@ -301,6 +307,7 @@ def load_model_mobilenet(num_classes, model_name="google/mobilenet_v2_1.0_224", 
 
     print("Model architecture modification complete")
     return model
+
 def get_training_args(output_dir="./results"):
     return TrainingArguments(
         output_dir=output_dir,
@@ -337,7 +344,6 @@ def train_model(train_loader, val_loader, model, training_args):# Initialize tra
         train_dataset=train_loader.dataset,
         eval_dataset=val_loader.dataset,
         compute_metrics=compute_metrics,
-
     )
 
     # Start training
@@ -355,8 +361,6 @@ def save_model_to_pt(model, filepath='model.pt'):
         model: The trained model to save
         filepath: Path where to save the model
     """
-    # Assume `model` is your instance of CzechRailwayLightNet
-
     # Save the model
     torch.save(model, filepath)
     print(f"Model saved to {filepath}")

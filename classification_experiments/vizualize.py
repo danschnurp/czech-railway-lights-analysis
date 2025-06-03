@@ -29,7 +29,7 @@ def print_model_summary(model_path, num_classes):
     model, _ = CzechRailwayLightNet.from_pretrained()
 
     # Print model summary with input size
-    model_summary = summary(model, input_size=(1, 3, 34, 72),
+    model_summary = summary(model, input_size=(1, 3, 144,144),
                             col_names=["input_size", "output_size", "num_params", "kernel_size"],
                             verbose=1)
 
@@ -68,7 +68,7 @@ def visualize_feature_maps(model_path, image_path, num_classes):
 
     # Load and preprocess image
     transform = transforms.Compose([
-        transforms.Resize((72, 34)),
+        transforms.Resize((144,144)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
@@ -122,7 +122,7 @@ def visualize_model_structure(model_path, num_classes, output_file='model_visual
     model.eval()
 
     # Create a dummy input
-    x = torch.randn(1, 3,  34, 72)
+    x = torch.randn(1, 3,  144,144)
 
     # Generate model forward pass
     outputs = model(pixel_values=x)
